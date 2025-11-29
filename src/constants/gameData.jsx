@@ -20,23 +20,35 @@ export const THEME_CONFIG = {
         skills: { reading: { name: 'Reading', boss: 'Ender Dragon', mobType: 'Standard' }, math: { name: 'Math', boss: 'Wither', mobType: 'Creeper' }, writing: { name: 'Writing', boss: 'Warden', mobType: 'Skeleton' }, cleaning: { name: 'Cleaning', boss: 'Ender Chest', mobType: 'Chest' }, memory: { name: 'Memory', boss: 'Axolotl', mobType: 'Mascot' }, patterns: { name: 'Pattern Recognition', boss: 'Iron Golem', mobType: 'Standard' } }
     },
     'kpop': {
-        name: 'K-Pop Demon Hunters', style: { backgroundColor: '#000022', backgroundImage: `radial-gradient(circle, #1a1a4a 10%, #000022 90%)` },
-        assets: { logo: '/assets/themes/kpop.jpg', cardBack: '/assets/themes/kpop.jpg', mobs: {} },
+        name: 'K-Pop Demon Hunters',
+		style: { backgroundImage: `url('/assets/kpop.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' },
+        assets: { 
+			logo: '/assets/themes/kpop_logo.jpg', cardBack: '/assets/themes/kpop_memorycard.jpg', 
+			mobs: {} 
+		},
         skills: { reading: { name: 'Decryption', boss: 'Cyborg King' }, math: { name: 'Engineering', boss: 'Mecha-Brain' }, writing: { name: 'Hacking', boss: 'Mainframe' }, cleaning: { name: 'Waste Mgmt', boss: 'Trash Bot' }, memory: { name: 'Droid Repair', boss: 'Droid' }, patterns: { name: 'Navigation', boss: 'Star Map' } }
     },
     'pokemon': {
-        name: 'Pokemon', style: { backgroundColor: '#2a1a0a', backgroundImage: `linear-gradient(to bottom, #2a1a0a, #4a3a2a)` },
-        assets: { logo: '/assets/themes/pokemon.jpg', cardBack: '/assets/themes/pokemon.jpg', mobs: {} },
+        name: 'Pokemon', 
+		style: { backgroundImage: `url('/assets/themes/pokemon.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' },
+        assets: { 
+			logo: '/assets/themes/pokemon_logo.jpg', cardBack: '/assets/themes/pokemon_memorycard.jpg', 
+			mobs: {} 
+		},
         skills: { reading: { name: 'Spellcasting', boss: 'Lich King' }, math: { name: 'Alchemy', boss: 'Golem' }, writing: { name: 'Scribing', boss: 'Dragon' }, cleaning: { name: 'Looting', boss: 'Mimic' }, memory: { name: 'Runes', boss: 'Wisp' }, patterns: { name: 'Rituals', boss: 'Cultist' } }
     },
     'spy': {
-        name: 'Spy', style: { backgroundColor: '#333', backgroundImage: `repeating-linear-gradient(45deg, #333 25%, #444 25%, #444 50%, #333 50%, #333 75%, #444 75%, #444 100%)`, backgroundSize: '20px 20px' },
-        assets: { logo: '/assets/themes/spy_logo.png', cardBack: '/assets/themes/spy_card.png', mobs: {} },
+        name: 'Spy', 
+		style: { backgroundImage: `url('/assets/themes/minecraft.png')`, backgroundSize: 'cover', backgroundPosition: 'center' },
+        assets: { 
+			logo: '/assets/themes/spy_logo.png', cardBack: '/assets/themes/spy_memorycard.jpg', 
+			mobs: {} 
+		},
         skills: { reading: { name: 'Intel Analysis', boss: 'Double Agent' }, math: { name: 'Gadgetry', boss: 'Mad Scientist' }, writing: { name: 'Forgery', boss: 'Bureaucrat' }, cleaning: { name: 'Evidence', boss: 'Safe' }, memory: { name: 'Identities', boss: 'Mole' }, patterns: { name: 'Code Breaking', boss: 'Hacker' } }
     }
 };
 
-export const THEMES_LIST = [ { id: 'minecraft', name: 'Minecraft', img: '/assets/themes/minecraft.png' }, { id: 'scifi', name: 'Sci-Fi', img: '/assets/themes/Scifi.png' }, { id: 'fantasy', name: 'Fantasy', img: '/assets/themes/fantasy.png' }, { id: 'spy', name: 'Spy', img: '/assets/themes/spy.png' } ];
+export const THEMES_LIST = [ { id: 'minecraft', name: 'Minecraft', img: '/assets/themes/minecraft.png' }, { id: 'kpop', name: 'K-Pop Demon Hunters', img: '/assets/themes/kpop.png' }, { id: 'pokemon', name: 'Pokemon', img: '/assets/themes/pokemon.png' }, { id: 'spy', name: 'Spy', img: '/assets/themes/spy.png' } ];
 export const BADGE_TIERS = [ { level: 20, title: "Wood" }, { level: 40, title: "Stone" }, { level: 60, title: "Gold" }, { level: 80, title: "Iron" }, { level: 100, title: "Emerald" }, { level: 120, title: "Diamond" }, { level: 140, title: "Netherite" }, { level: 160, title: "Obsidian" } ];
 export const SIGHT_WORDS = ["THE", "AND", "YOU", "THAT", "WAS", "FOR", "ON", "ARE", "WITH", "HIS", "THEY", "CAT", "DOG", "BAT", "RUN", "JUMP", "BIG", "RED", "FOX", "SUN", "MOM", "DAD", "PLAY", "SEE", "LOOK", "IT", "IS", "GO", "TO", "MY", "NO", "YES"];
 export const SPELLING_ITEMS = [ { word: "TNT" }, { word: "BED" }, { word: "BOW" }, { word: "MAP" }, { word: "EGG" }, { word: "ICE" }, { word: "AXE" }, { word: "HOE" }, { word: "BOOK" }, { word: "CAKE" }, { word: "BOAT" }, { word: "DOOR" }, { word: "WOOL" }, { word: "SAND" }, { word: "DIRT" }, { word: "MILK" } ];
