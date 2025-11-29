@@ -21,9 +21,9 @@ export const THEME_CONFIG = {
     },
     'kpop': {
         name: 'K-Pop Demon Hunters',
-		style: { backgroundImage: `url('/assets/kpop.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' },
+		style: { backgroundImage: `url('/assets/themes/kpop.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' },
         assets: { 
-			logo: '/assets/themes/kpop_logo.jpg', cardBack: '/assets/themes/kpop_memorycard.jpg', 
+			logo: '/assets/themes/kpop_logo.png', cardBack: '/assets/themes/kpop_memorycard.jpg', 
 			mobs: {} 
 		},
         skills: { reading: { name: 'Decryption', boss: 'Cyborg King' }, math: { name: 'Engineering', boss: 'Mecha-Brain' }, writing: { name: 'Hacking', boss: 'Mainframe' }, cleaning: { name: 'Waste Mgmt', boss: 'Trash Bot' }, memory: { name: 'Droid Repair', boss: 'Droid' }, patterns: { name: 'Navigation', boss: 'Star Map' } }
@@ -32,7 +32,7 @@ export const THEME_CONFIG = {
         name: 'Pokemon', 
 		style: { backgroundImage: `url('/assets/themes/pokemon.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' },
         assets: { 
-			logo: '/assets/themes/pokemon_logo.jpg', cardBack: '/assets/themes/pokemon_memorycard.jpg', 
+			logo: '/assets/themes/pokemon_logo.png', cardBack: '/assets/themes/pokemon_memorycard.jpg', 
 			mobs: {} 
 		},
         skills: { reading: { name: 'Spellcasting', boss: 'Lich King' }, math: { name: 'Alchemy', boss: 'Golem' }, writing: { name: 'Scribing', boss: 'Dragon' }, cleaning: { name: 'Looting', boss: 'Mimic' }, memory: { name: 'Runes', boss: 'Wisp' }, patterns: { name: 'Rituals', boss: 'Cultist' } }
