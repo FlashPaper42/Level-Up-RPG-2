@@ -161,6 +161,13 @@ const App = () => {
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
             <button onClick={() => setIsMenuOpen(true)} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
             <MenuDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} skills={skills} />
+            {/* Backdrop overlay when battling - click to exit */}
+            {battlingSkillId && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40"
+                    onClick={endBattle}
+                />
+            )}
             <main className="flex-1 relative flex flex-col items-center justify-center w-full">
                 <div className="z-10 relative mb-[-30px] md:mb-[-50px] pointer-events-none opacity-90"><SafeImage src={currentThemeData.assets.logo} fallbackSrc="https://placehold.co/800x300/333/FFD700?text=LOGO+PLACEHOLDER&font=monsterrat" alt="Game Logo" className="w-[480px] md:w-[720px] lg:w-[960px] object-contain drop-shadow-2xl" /></div>
                 <h1 className="text-9xl text-yellow-400 tracking-widest uppercase mb-[80px] z-20 relative drop-shadow-[4px_4px_0_#000]" style={{ textShadow: '6px 6px 0 #000' }}>Level Up!</h1>

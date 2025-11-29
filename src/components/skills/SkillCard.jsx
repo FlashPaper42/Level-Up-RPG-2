@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mic, X, Plus, Minus } from 'lucide-react';
+import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { BASE_ASSETS, NICE_MOBS, SHAPE_COMPONENTS } from '../../constants/gameData';
 
@@ -215,13 +215,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     return (
         <div className="relative">
-            {/* Backdrop overlay when battling - click to exit */}
-            {isBattlingCenter && (
-                <div
-                    className="fixed inset-0 bg-black/50 z-40"
-                    onClick={onEndBattle}
-                />
-            )}
             {/* Difficulty adjuster positioned above the card */}
             {(!isBattling || config.id !== 'memory') && (
                 <div className="absolute -top-10 left-0 flex items-center gap-2 z-20">
@@ -231,8 +224,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                 </div>
             )}
             <div
-                className={`relative w-[300px] h-[600px] bg-[#2b2b2b] border-4 rounded-lg overflow-visible flex flex-col transition-all duration-500 ${isCenter ? `selected-card-glow ${borderClass}` : 'border-stone-700'} ${isBattlingCenter ? 'z-50' : ''}`}
-                style={isBattlingCenter ? { transform: 'scale(1.5)' } : undefined}
+                className={`w-[300px] h-[600px] bg-[#2b2b2b] border-4 rounded-lg overflow-visible flex flex-col transition-all duration-500 ${isCenter ? `selected-card-glow ${borderClass}` : 'border-stone-700'} ${isBattlingCenter ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150 z-50' : 'relative'}`}
                 onClick={isBattlingCenter ? (e) => e.stopPropagation() : undefined}
             >
                 {isCenter && data.level >= PRESTIGE_LEVEL_THRESHOLD && <div className="gem-socket"><div className="gem-stone" style={gemStyle}></div></div>}
@@ -247,7 +239,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             <div className={bottomSectionClass}>
                 {isBattling ? (
                     <div className="flex flex-col h-full animate-in slide-in-from-bottom-10 duration-300">
-                        <button onClick={onEndBattle} className="absolute top-0 right-0 text-gray-500 hover:text-white p-1 z-30"><X size={20} /></button>
                         <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>
                         {config.id === 'memory' ? (
                             <div className="flex-1 grid grid-cols-4 gap-2 bg-black/20 p-2 rounded items-center">
