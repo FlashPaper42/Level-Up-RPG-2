@@ -211,8 +211,17 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const topSectionBaseClass = config.id === 'memory' && isBattling ? 'hidden' : 'h-[55%] relative flex items-center justify-center overflow-hidden rounded-t-sm';
     const bottomSectionClass = config.id === 'memory' && isBattling ? 'h-full bg-[#3a3a3a] p-4 flex flex-col relative rounded-lg' : 'flex-1 bg-[#3a3a3a] p-4 flex flex-col relative rounded-b-sm';
 
+    const isBattlingCenter = isBattling && isCenter;
+
     return (
         <div className="relative">
+            {/* Backdrop overlay when battling - click to exit */}
+            {isBattlingCenter && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40"
+                    onClick={onEndBattle}
+                />
+            )}
             {/* Difficulty adjuster positioned above the card */}
             {(!isBattling || config.id !== 'memory') && (
                 <div className="absolute -top-10 left-0 flex items-center gap-2 z-20">
@@ -221,7 +230,11 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                     <button onClick={() => setDifficulty(Math.min(unlockedDifficulty, difficulty + 1))} className="bg-stone-700 text-white rounded p-1 border border-stone-500 hover:bg-stone-600"><Plus size={16} /></button>
                 </div>
             )}
-            <div className={`relative w-[300px] h-[600px] bg-[#2b2b2b] border-4 rounded-lg overflow-visible flex flex-col transition-colors duration-500 ${isCenter ? `selected-card-glow ${borderClass}` : 'border-stone-700'}`}>
+            <div
+                className={`relative w-[300px] h-[600px] bg-[#2b2b2b] border-4 rounded-lg overflow-visible flex flex-col transition-all duration-500 ${isCenter ? `selected-card-glow ${borderClass}` : 'border-stone-700'} ${isBattlingCenter ? 'z-50' : ''}`}
+                style={isBattlingCenter ? { transform: 'scale(1.5)' } : undefined}
+                onClick={isBattlingCenter ? (e) => e.stopPropagation() : undefined}
+            >
                 {isCenter && data.level >= PRESTIGE_LEVEL_THRESHOLD && <div className="gem-socket"><div className="gem-stone" style={gemStyle}></div></div>}
                 <div className={topSectionBaseClass} style={config.colorStyle}>
                     <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
