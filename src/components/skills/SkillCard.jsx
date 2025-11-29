@@ -213,20 +213,11 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     const isBattlingCenter = isBattling && isCenter;
 
-    return (
-        <div className="relative">
-            {/* Difficulty adjuster positioned above the card */}
-            {(!isBattling || config.id !== 'memory') && (
-                <div className="absolute -top-10 left-0 flex items-center gap-2 z-20">
-                    <button onClick={() => setDifficulty(Math.max(1, difficulty - 1))} className="bg-stone-700 text-white rounded p-1 border border-stone-500 hover:bg-stone-600"><Minus size={16} /></button>
-                    <span className="text-yellow-400 font-bold bg-black/80 px-2 rounded border border-yellow-500 text-sm">Diff: {difficulty}</span>
-                    <button onClick={() => setDifficulty(Math.min(unlockedDifficulty, difficulty + 1))} className="bg-stone-700 text-white rounded p-1 border border-stone-500 hover:bg-stone-600"><Plus size={16} /></button>
-                </div>
-            )}
-            <div
-                className={`w-[300px] h-[600px] bg-[#2b2b2b] border-4 rounded-lg overflow-visible flex flex-col transition-all duration-500 ${isCenter ? `selected-card-glow ${borderClass}` : 'border-stone-700'} ${isBattlingCenter ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150 z-50' : 'relative'}`}
-                onClick={isBattlingCenter ? (e) => e.stopPropagation() : undefined}
-            >
+    const cardContent = (
+        <div
+            className={`w-[300px] h-[600px] bg-[#2b2b2b] border-4 rounded-lg overflow-visible flex flex-col transition-all duration-500 ${isCenter ? `selected-card-glow ${borderClass}` : 'border-stone-700'} ${isBattlingCenter ? 'scale-150' : 'relative'}`}
+            onClick={isBattlingCenter ? (e) => e.stopPropagation() : undefined}
+        >
                 {isCenter && data.level >= PRESTIGE_LEVEL_THRESHOLD && <div className="gem-socket"><div className="gem-stone" style={gemStyle}></div></div>}
                 <div className={topSectionBaseClass} style={config.colorStyle}>
                     <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
@@ -319,6 +310,27 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                 )}
             </div>
         </div>
+    );
+
+    if (isBattlingCenter) {
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+                {cardContent}
+            </div>
+        );
+    }
+
+    return (
+        <div className="relative">
+            {/* Difficulty adjuster positioned above the card */}
+            {(!isBattling || config.id !== 'memory') && (
+                <div className="absolute -top-10 left-0 flex items-center gap-2 z-20">
+                    <button onClick={() => setDifficulty(Math.max(1, difficulty - 1))} className="bg-stone-700 text-white rounded p-1 border border-stone-500 hover:bg-stone-600"><Minus size={16} /></button>
+                    <span className="text-yellow-400 font-bold bg-black/80 px-2 rounded border border-yellow-500 text-sm">Diff: {difficulty}</span>
+                    <button onClick={() => setDifficulty(Math.min(unlockedDifficulty, difficulty + 1))} className="bg-stone-700 text-white rounded p-1 border border-stone-500 hover:bg-stone-600"><Plus size={16} /></button>
+                </div>
+            )}
+            {cardContent}
         </div>
     );
 };
