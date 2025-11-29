@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, X, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
-import { BASE_ASSETS, SHAPE_COMPONENTS } from '../../constants/gameData';
+import { BASE_ASSETS, NICE_MOBS, SHAPE_COMPONENTS } from '../../constants/gameData';
 
 const PRESTIGE_LEVEL_THRESHOLD = 20;
 
@@ -16,6 +16,14 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const [matchedPairs, setMatchedPairs] = useState([]);
     const [isProcessingMatch, setIsProcessingMatch] = useState(false);
     const [mismatchShake, setMismatchShake] = useState(false);
+
+    // Simon Says state for Pattern Recognition
+    const [simonSequence, setSimonSequence] = useState([]);
+    const [playerIndex, setPlayerIndex] = useState(0);
+    const [isShowingSequence, setIsShowingSequence] = useState(false);
+    const [completedRounds, setCompletedRounds] = useState(0);
+    const [litAxolotl, setLitAxolotl] = useState(null);
+    const [simonGameActive, setSimonGameActive] = useState(false);
 
     const hpPercent = 100 - data.xp; 
     
@@ -73,9 +81,13 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     
     useEffect(() => {
         if (isBattling && config.id === 'memory') {
-            const axolotlColors = Object.keys(BASE_ASSETS.axolotls);
-            let deck = [...axolotlColors, ...axolotlColors].sort(() => Math.random() - 0.5);
-            setMemoryCards(deck.map((color, i) => ({ id: i, color, img: BASE_ASSETS.axolotls[color] })));
+            // Get all mob keys and shuffle to pick 8 random ones
+            const allMobKeys = Object.keys(NICE_MOBS);
+            const shuffledMobs = [...allMobKeys].sort(() => Math.random() - 0.5);
+            const selectedMobs = shuffledMobs.slice(0, 8);
+            // Create pairs from the 8 selected mobs
+            let deck = [...selectedMobs, ...selectedMobs].sort(() => Math.random() - 0.5);
+            setMemoryCards(deck.map((mobKey, i) => ({ id: i, color: mobKey, img: NICE_MOBS[mobKey] })));
             setFlippedIndices([]); setMatchedPairs([]); setIsProcessingMatch(false); setMismatchShake(false);
         }
     }, [isBattling, config.id]);
@@ -84,6 +96,86 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         if (damageNumbers.length > prevDamageCount.current) { setIsHit(true); setTimeout(() => setIsHit(false), 400); }
         prevDamageCount.current = damageNumbers.length;
     }, [damageNumbers]);
+
+    // Simon Says initialization and sequence playback
+    const axolotlColors = Object.keys(BASE_ASSETS.axolotls);
+    
+    const playSequence = (sequence) => {
+        setIsShowingSequence(true);
+        setPlayerIndex(0);
+        let i = 0;
+        const playNext = () => {
+            if (i < sequence.length) {
+                setLitAxolotl(sequence[i]);
+                new Audio(BASE_ASSETS.audio.click).play().catch(() => {});
+                setTimeout(() => {
+                    setLitAxolotl(null);
+                    i++;
+                    setTimeout(playNext, 200);
+                }, 600);
+            } else {
+                setIsShowingSequence(false);
+            }
+        };
+        setTimeout(playNext, 500);
+    };
+
+    const startSimonGame = () => {
+        const firstColor = axolotlColors[Math.floor(Math.random() * axolotlColors.length)];
+        const newSequence = [firstColor];
+        setSimonSequence(newSequence);
+        setPlayerIndex(0);
+        setCompletedRounds(0);
+        setSimonGameActive(true);
+        playSequence(newSequence);
+    };
+
+    const handleAxolotlClick = (color) => {
+        if (isShowingSequence || !simonGameActive) return;
+        
+        new Audio(BASE_ASSETS.audio.click).play().catch(() => {});
+        
+        if (color === simonSequence[playerIndex]) {
+            // Correct click
+            if (playerIndex === simonSequence.length - 1) {
+                // Completed the sequence
+                new Audio(BASE_ASSETS.audio.match).play().catch(() => {});
+                const newRounds = completedRounds + 1;
+                setCompletedRounds(newRounds);
+                // Add new random axolotl to sequence
+                const nextColor = axolotlColors[Math.floor(Math.random() * axolotlColors.length)];
+                const newSequence = [...simonSequence, nextColor];
+                setSimonSequence(newSequence);
+                setPlayerIndex(0);
+                setTimeout(() => playSequence(newSequence), 800);
+            } else {
+                // Move to next in sequence
+                setPlayerIndex(playerIndex + 1);
+            }
+        } else {
+            // Wrong click - game over
+            new Audio(BASE_ASSETS.audio.mismatch).play().catch(() => {});
+            setSimonGameActive(false);
+            // Deal damage based on completed rounds (submit WIN with rounds as damage multiplier)
+            setTimeout(() => {
+                onMathSubmit("WIN", completedRounds);
+            }, 500);
+        }
+    };
+
+    useEffect(() => {
+        if (isBattling && config.id === 'patterns') {
+            startSimonGame();
+        } else if (!isBattling && config.id === 'patterns') {
+            // Reset Simon Says state when not battling
+            setSimonSequence([]);
+            setPlayerIndex(0);
+            setIsShowingSequence(false);
+            setCompletedRounds(0);
+            setLitAxolotl(null);
+            setSimonGameActive(false);
+        }
+    }, [isBattling, config.id]);
 
     const handleMathSubmit = (e) => {
         if (e && e.preventDefault) e.preventDefault();
@@ -161,7 +253,42 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                         ) : (
                             <div className="flex-1 flex flex-col items-center justify-center">
                                 {config.id === 'patterns' ? (
-                                    <div className="w-full flex flex-col items-center gap-4"><div className="flex gap-2 text-4xl">{challenge.question.map((q, i) => <div key={i} className="bg-black/40 p-2 rounded border border-stone-600">{q === '?' ? '?' : SHAPE_COMPONENTS[q] || q}</div>)}</div><div className="flex gap-4">{['Circle','Square','Triangle','Hexagon'].map(opt => <button key={opt} onClick={() => { if(opt.toUpperCase() === challenge.answer) { onMathSubmit(opt.toUpperCase()); } else { setMathInput(''); onMathSubmit("WRONG"); } }} className="bg-stone-700 p-2 rounded hover:bg-stone-600 border border-stone-500">{SHAPE_COMPONENTS[opt] || opt}</button>)}</div></div>
+                                    <div className="w-full flex flex-col items-center gap-4">
+                                        {/* Round counter */}
+                                        <div className="text-white text-lg font-bold">
+                                            Round: {completedRounds} {isShowingSequence && <span className="text-yellow-400 animate-pulse">Watch!</span>}
+                                            {!isShowingSequence && simonGameActive && <span className="text-green-400">Your turn!</span>}
+                                        </div>
+                                        {/* Star formation with 5 axolotls */}
+                                        <div className="relative w-[240px] h-[240px]">
+                                            {axolotlColors.map((color, index) => {
+                                                // Pentagon star positions (72 degrees apart, starting from top)
+                                                const angle = (index * 72 - 90) * (Math.PI / 180);
+                                                const radius = 85;
+                                                const x = 120 + radius * Math.cos(angle) - 40;
+                                                const y = 120 + radius * Math.sin(angle) - 40;
+                                                const isLit = litAxolotl === color;
+                                                return (
+                                                    <div
+                                                        key={color}
+                                                        onClick={() => handleAxolotlClick(color)}
+                                                        className={`absolute w-[80px] h-[80px] cursor-pointer transition-all duration-200 rounded-full p-1 ${isLit ? 'scale-125 ring-4 ring-yellow-400 brightness-150 z-10' : 'hover:scale-110'} ${isShowingSequence ? 'pointer-events-none' : ''}`}
+                                                        style={{ left: x, top: y }}
+                                                    >
+                                                        <SafeImage
+                                                            src={BASE_ASSETS.axolotls[color]}
+                                                            alt={color}
+                                                            className="w-full h-full object-contain drop-shadow-lg"
+                                                        />
+                                                        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] text-white bg-black/60 px-1 rounded">{color}</span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                        {!simonGameActive && completedRounds > 0 && (
+                                            <div className="text-red-400 text-lg font-bold animate-pulse">Game Over! Rounds: {completedRounds}</div>
+                                        )}
+                                    </div>
                                 ) : (
                                     <>
                                         <div className="flex-1 bg-black/40 rounded border-2 border-[#555] flex items-center justify-center mb-3 p-2 relative overflow-hidden w-full">
