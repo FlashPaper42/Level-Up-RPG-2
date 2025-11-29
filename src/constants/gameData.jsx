@@ -19,14 +19,14 @@ export const THEME_CONFIG = {
         },
         skills: { reading: { name: 'Reading', boss: 'Ender Dragon', mobType: 'Standard' }, math: { name: 'Math', boss: 'Wither', mobType: 'Creeper' }, writing: { name: 'Writing', boss: 'Warden', mobType: 'Skeleton' }, cleaning: { name: 'Cleaning', boss: 'Ender Chest', mobType: 'Chest' }, memory: { name: 'Memory', boss: 'Axolotl', mobType: 'Mascot' }, patterns: { name: 'Pattern Recognition', boss: 'Iron Golem', mobType: 'Standard' } }
     },
-    'scifi': {
-        name: 'Sci-Fi', style: { backgroundColor: '#000022', backgroundImage: `radial-gradient(circle, #1a1a4a 10%, #000022 90%)` },
-        assets: { logo: '/assets/themes/scifi_logo.png', cardBack: '/assets/themes/scifi_card.png', mobs: {} },
+    'kpop': {
+        name: 'K-Pop Demon Hunters', style: { backgroundColor: '#000022', backgroundImage: `radial-gradient(circle, #1a1a4a 10%, #000022 90%)` },
+        assets: { logo: '/assets/themes/kpop.jpg', cardBack: '/assets/themes/kpop.jpg', mobs: {} },
         skills: { reading: { name: 'Decryption', boss: 'Cyborg King' }, math: { name: 'Engineering', boss: 'Mecha-Brain' }, writing: { name: 'Hacking', boss: 'Mainframe' }, cleaning: { name: 'Waste Mgmt', boss: 'Trash Bot' }, memory: { name: 'Droid Repair', boss: 'Droid' }, patterns: { name: 'Navigation', boss: 'Star Map' } }
     },
-    'fantasy': {
-        name: 'Fantasy', style: { backgroundColor: '#2a1a0a', backgroundImage: `linear-gradient(to bottom, #2a1a0a, #4a3a2a)` },
-        assets: { logo: '/assets/themes/fantasy_logo.png', cardBack: '/assets/themes/fantasy_card.png', mobs: {} },
+    'pokemon': {
+        name: 'Pokemon', style: { backgroundColor: '#2a1a0a', backgroundImage: `linear-gradient(to bottom, #2a1a0a, #4a3a2a)` },
+        assets: { logo: '/assets/themes/pokemon.jpg', cardBack: '/assets/themes/pokemon.jpg', mobs: {} },
         skills: { reading: { name: 'Spellcasting', boss: 'Lich King' }, math: { name: 'Alchemy', boss: 'Golem' }, writing: { name: 'Scribing', boss: 'Dragon' }, cleaning: { name: 'Looting', boss: 'Mimic' }, memory: { name: 'Runes', boss: 'Wisp' }, patterns: { name: 'Rituals', boss: 'Cultist' } }
     },
     'spy': {
