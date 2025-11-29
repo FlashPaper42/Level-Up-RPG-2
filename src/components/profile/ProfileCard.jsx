@@ -39,11 +39,11 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename }) => {
             {themeBg && <div className="absolute inset-0"><SafeImage src={themeBg} className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black/60"></div></div>}
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] opacity-10 pointer-events-none"></div>
             <div className="relative flex h-full p-2 gap-2 z-10">
-                <div className="flex flex-col justify-center items-center px-3 border-r-2 border-white/20">
+                <div className="w-1/3 flex flex-col justify-center items-center px-3 border-r-2 border-white/20">
                     <div className="bg-black/60 text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded-full inline-block border border-white/10 mb-1 backdrop-blur-sm">FILE {id}</div>
                     {isEditing ? (
                         <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-                            <input type="text" value={tempName} onChange={e => setTempName(e.target.value)} className="bg-black text-white w-full text-lg font-bold p-0.5 rounded border border-yellow-500 outline-none uppercase text-center" autoFocus />
+                            <input type="text" value={tempName} onChange={e => setTempName(e.target.value)} className="bg-black text-white w-full text-lg font-bold p-0.5 rounded border border-yellow-500 outline-none uppercase" autoFocus />
                             <button onClick={(e) => { e.stopPropagation(); onRename(id, tempName); setIsEditing(false); }} className="text-green-400 hover:text-green-300"><Check size={16} /></button>
                         </div>
                     ) : (
