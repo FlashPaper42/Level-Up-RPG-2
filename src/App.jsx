@@ -165,6 +165,7 @@ const App = () => {
             {battlingSkillId && (
                 <div
                     className="fixed inset-0 bg-black/50 z-40"
+                    style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', minWidth: '100vw', minHeight: '100vh' }}
                     onClick={endBattle}
                 />
             )}
