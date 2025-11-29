@@ -157,9 +157,24 @@ function navigate(direction) {
 }
 
 // Drag functionality
+
+// Helper function to get X coordinate from mouse or touch event
+function getEventX(e) {
+    if (e.type === 'mousedown' || e.type === 'mousemove' || e.type === 'mouseup') {
+        return e.pageX;
+    }
+    if (e.touches && e.touches.length > 0) {
+        return e.touches[0].pageX;
+    }
+    if (e.changedTouches && e.changedTouches.length > 0) {
+        return e.changedTouches[0].pageX;
+    }
+    return startX;
+}
+
 function handleDragStart(e) {
     isDragging = true;
-    startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
+    startX = getEventX(e);
     scrollLeft = currentIndex * getCardWidth();
     carouselTrack.style.transition = 'none';
 }
@@ -168,7 +183,7 @@ function handleDragMove(e) {
     if (!isDragging) return;
     e.preventDefault();
     
-    const x = e.type === 'mousemove' ? e.pageX : e.touches[0].pageX;
+    const x = getEventX(e);
     const walk = startX - x;
     const newOffset = scrollLeft + walk;
     
@@ -181,7 +196,7 @@ function handleDragEnd(e) {
     
     carouselTrack.style.transition = 'transform 0.5s ease';
     
-    const x = e.type === 'mouseup' ? e.pageX : (e.changedTouches ? e.changedTouches[0].pageX : startX);
+    const x = getEventX(e);
     const walk = startX - x;
     const cardWidth = getCardWidth();
     const threshold = cardWidth / 3;
@@ -234,8 +249,8 @@ carouselTrack.addEventListener('mousemove', handleDragMove);
 carouselTrack.addEventListener('mouseup', handleDragEnd);
 carouselTrack.addEventListener('mouseleave', handleDragEnd);
 
-// Touch events for mobile
-carouselTrack.addEventListener('touchstart', handleDragStart, { passive: true });
+// Touch events for mobile - passive:false allows preventDefault in handlers
+carouselTrack.addEventListener('touchstart', handleDragStart, { passive: false });
 carouselTrack.addEventListener('touchmove', handleDragMove, { passive: false });
 carouselTrack.addEventListener('touchend', handleDragEnd);
 

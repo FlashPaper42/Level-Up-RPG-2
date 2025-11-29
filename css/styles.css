@@ -19,7 +19,8 @@
 
 html, body {
     height: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 body {
@@ -127,7 +128,7 @@ body {
 
 /* Carousel Arrows - Positioned at Screen Edges */
 .carousel-arrow {
-    position: fixed;
+    position: absolute;
     top: 50%;
     transform: translateY(-50%);
     width: clamp(40px, 5vw, 60px);
