@@ -16,7 +16,7 @@ import PhantomEvent from './components/PhantomEvent';
 import { getRandomMob, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getItemsForLength, calculateDamage, calculateMobHealth, calculateXPReward } from './utils/gameUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
-    HOMOPHONES, DIFFICULTY_CONTENT 
+    HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS
 } from './constants/gameData';
 
 const App = () => {
@@ -397,7 +397,7 @@ const App = () => {
                 level: skills[skillId].level + 1, 
                 skillName: skillConfig.fantasyName, 
                 item: "Phantom Bonus!", 
-                img: '/assets/mobs/hostile/phantom.gif' 
+                img: HOSTILE_MOBS['Phantom']
             });
         }
     };

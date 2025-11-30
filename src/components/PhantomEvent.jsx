@@ -73,8 +73,8 @@ const PhantomEvent = ({ battlingSkillId, onAwardLevel }) => {
         
         setClicked(true);
         
-        // Play hit sound
-        new Audio(BASE_ASSETS.audio.hit[0]).play().catch(() => {});
+        // Play hit sound (errors logged for debugging)
+        new Audio(BASE_ASSETS.audio.hit[0]).play().catch(err => console.warn('Hit sound failed:', err));
         
         // Award level if skill is active
         if (battlingSkillId) {
@@ -113,8 +113,7 @@ const PhantomEvent = ({ battlingSkillId, onAwardLevel }) => {
         <div
             className="fixed top-4 z-[9999] cursor-pointer select-none"
             style={{
-                animation: `phantomFly ${FLIGHT_DURATION_MS}ms linear forwards`,
-                animationName: fromLeft ? 'phantomFlyLeft' : 'phantomFlyRight',
+                animation: `${fromLeft ? 'phantomFlyLeft' : 'phantomFlyRight'} ${FLIGHT_DURATION_MS}ms linear forwards`,
                 opacity: clicked ? 0 : 1,
                 transition: 'opacity 0.2s ease-out',
             }}
