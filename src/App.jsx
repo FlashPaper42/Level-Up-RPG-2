@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
-    Menu, Sparkles, ChevronLeft, ChevronRight, Gift, Heart, Circle, Square, Triangle, Hexagon
+    Menu, Sparkles, ChevronLeft, ChevronRight, Gift, Heart
 } from 'lucide-react';
 
 // Modules
@@ -74,10 +74,23 @@ const App = () => {
                 }); 
                 return initial; 
             } 
-        } catch (e) {}
+        } catch (e) {
+            console.warn('Failed to parse saved skills:', e);
+        }
         return initial;
     };
-    const loadTheme = (profileId) => { let saved = localStorage.getItem(getStorageKey(profileId)); if(!saved && profileId === 1) saved = localStorage.getItem('heroSkills_v23'); try { return JSON.parse(saved).theme || 'minecraft'; } catch(e){} return 'minecraft'; };
+    const loadTheme = (profileId) => {
+        let saved = localStorage.getItem(getStorageKey(profileId));
+        if (!saved && profileId === 1) {
+            saved = localStorage.getItem('heroSkills_v23');
+        }
+        try {
+            return JSON.parse(saved).theme || 'minecraft';
+        } catch (e) {
+            console.warn('Failed to parse theme:', e);
+        }
+        return 'minecraft';
+    };
     
     const getProfileStats = (id) => {
         const initial = {};
@@ -99,7 +112,10 @@ const App = () => {
                 }
             });
             return { totalLevel, highestLevel, skills: skillsData, theme };
-        } catch(e) { return null; }
+        } catch (e) {
+            console.warn('Failed to parse profile stats:', e);
+            return null;
+        }
     };
 
     const [skills, setSkills] = useState(() => loadSkills(currentProfile));
@@ -131,7 +147,10 @@ const App = () => {
     }, [skills, currentProfile, activeTheme, profileNames]);
 
     useEffect(() => { bgmRef.current.volume = bgmVol; }, [bgmVol]);
-    const playSfx = (src) => { if(!src) return; new Audio(src).play().catch(e=>{}); };
+    const playSfx = (src) => {
+        if (!src) return;
+        new Audio(src).play().catch(() => {});
+    };
 
     const generateChallenge = (type, diff) => {
         // Math: Use difficulty-based problem generation
@@ -370,9 +389,23 @@ const App = () => {
         playSfx('click');
     };
 
-    const handleSwitchProfile = (newId) => { if (newId === currentProfile) return; playSfx(BASE_ASSETS.audio.click); const newSkills = loadSkills(newId); const newTheme = loadTheme(newId); setSkills(newSkills); setActiveTheme(newTheme); setCurrentProfile(newId); };
-    const handleRenameProfile = (id, newName) => { setProfileNames(prev => ({ ...prev, [id]: newName })); };
-    const handleReset = () => { localStorage.removeItem(getStorageKey(currentProfile)); if (currentProfile === 1) localStorage.removeItem('heroSkills_v23'); window.location.reload(); };
+    const handleSwitchProfile = (newId) => {
+        if (newId === currentProfile) return;
+        playSfx(BASE_ASSETS.audio.click);
+        const newSkills = loadSkills(newId);
+        const newTheme = loadTheme(newId);
+        setSkills(newSkills);
+        setActiveTheme(newTheme);
+        setCurrentProfile(newId);
+    };
+    const handleRenameProfile = (id, newName) => {
+        setProfileNames(prev => ({ ...prev, [id]: newName }));
+    };
+    const handleReset = () => {
+        localStorage.removeItem(getStorageKey(currentProfile));
+        if (currentProfile === 1) localStorage.removeItem('heroSkills_v23');
+        window.location.reload();
+    };
 
     const startVoiceListener = (targetId) => {
         if (!window.webkitSpeechRecognition) return;
@@ -383,7 +416,17 @@ const App = () => {
     };
 
     useEffect(() => { if(lootBox) setTimeout(() => setLootBox(null), 4000); }, [lootBox]);
-    const getVisibleItems = () => { const items = []; for (let i = -2; i <= 2; i++) { let idx = selectedIndex + i; let dataIndex = idx % SKILL_DATA.length; if (dataIndex < 0) dataIndex += SKILL_DATA.length; items.push({ ...SKILL_DATA[dataIndex], offset: i, key: idx }); } return items; };
+    
+    const getVisibleItems = () => {
+        const items = [];
+        for (let i = -2; i <= 2; i++) {
+            let idx = selectedIndex + i;
+            let dataIndex = idx % SKILL_DATA.length;
+            if (dataIndex < 0) dataIndex += SKILL_DATA.length;
+            items.push({ ...SKILL_DATA[dataIndex], offset: i, key: idx });
+        }
+        return items;
+    };
     const currentThemeData = THEME_CONFIG[activeTheme] || THEME_CONFIG.minecraft;
     const containerStyle = { ...currentThemeData.style, fontFamily: '"VT323", monospace' };
 
