@@ -70,6 +70,85 @@ export const BOSS_MOBS = {
     'Warden': '/assets/mobs/boss/warden.gif'
 };
 
+export const MINIBOSS_MOBS = {
+    'Creaking': '/assets/mobs/miniboss/creaking.png',
+    'Elder Guardian': '/assets/mobs/miniboss/elderguardian.gif',
+    'Ravager': '/assets/mobs/miniboss/ravager.png',
+    'Wither Skeleton': '/assets/mobs/miniboss/witherskeleton.png'
+};
+
+// Difficulty content framework - 7 tiers of content per skill
+// This structure can hold different content for each difficulty level
+// Content will be populated in future updates
+export const DIFFICULTY_CONTENT = {
+    reading: {
+        1: { /* Tier 1 content placeholder */ },
+        2: { /* Tier 2 content placeholder */ },
+        3: { /* Tier 3 content placeholder */ },
+        4: { /* Tier 4 content placeholder */ },
+        5: { /* Tier 5 content placeholder */ },
+        6: { /* Tier 6 content placeholder */ },
+        7: { /* Tier 7 content placeholder */ }
+    },
+    math: {
+        1: { /* Tier 1 content placeholder */ },
+        2: { /* Tier 2 content placeholder */ },
+        3: { /* Tier 3 content placeholder */ },
+        4: { /* Tier 4 content placeholder */ },
+        5: { /* Tier 5 content placeholder */ },
+        6: { /* Tier 6 content placeholder */ },
+        7: { /* Tier 7 content placeholder */ }
+    },
+    writing: {
+        1: { /* Tier 1 content placeholder */ },
+        2: { /* Tier 2 content placeholder */ },
+        3: { /* Tier 3 content placeholder */ },
+        4: { /* Tier 4 content placeholder */ },
+        5: { /* Tier 5 content placeholder */ },
+        6: { /* Tier 6 content placeholder */ },
+        7: { /* Tier 7 content placeholder */ }
+    },
+    patterns: {
+        1: { /* Tier 1 content placeholder */ },
+        2: { /* Tier 2 content placeholder */ },
+        3: { /* Tier 3 content placeholder */ },
+        4: { /* Tier 4 content placeholder */ },
+        5: { /* Tier 5 content placeholder */ },
+        6: { /* Tier 6 content placeholder */ },
+        7: { /* Tier 7 content placeholder */ }
+    },
+    memory: {
+        1: { /* Tier 1 content placeholder */ },
+        2: { /* Tier 2 content placeholder */ },
+        3: { /* Tier 3 content placeholder */ },
+        4: { /* Tier 4 content placeholder */ },
+        5: { /* Tier 5 content placeholder */ },
+        6: { /* Tier 6 content placeholder */ },
+        7: { /* Tier 7 content placeholder */ }
+    },
+    cleaning: {
+        // Cleaning is exempt from difficulty changes
+        1: { /* Exempt */ },
+        2: { /* Exempt */ },
+        3: { /* Exempt */ },
+        4: { /* Exempt */ },
+        5: { /* Exempt */ },
+        6: { /* Exempt */ },
+        7: { /* Exempt */ }
+    }
+};
+
+// Difficulty image assets
+export const DIFFICULTY_IMAGES = {
+    1: '/assets/difficulty/Difficulty_1.png',
+    2: '/assets/difficulty/Difficulty_2.png',
+    3: '/assets/difficulty/Difficulty_3.png',
+    4: '/assets/difficulty/Difficulty_4.png',
+    5: '/assets/difficulty/Difficulty_5.png',
+    6: '/assets/difficulty/Difficulty_6.png',
+    7: '/assets/difficulty/Difficulty_7.png'
+};
+
 export const THEME_CONFIG = {
     'minecraft': {
         name: 'Minecraft',

@@ -12,7 +12,7 @@ import MenuDrawer from './components/drawers/MenuDrawer';
 import SkillCard from './components/skills/SkillCard';
 
 // Utils & Constants
-import { getRandomMob, getMobForSkill } from './utils/gameUtils';
+import { getRandomMob, getMobForSkill, getEncounterType } from './utils/gameUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
     SIGHT_WORDS, SPELLING_ITEMS, HOMOPHONES 
@@ -26,10 +26,36 @@ const App = () => {
     const getStorageKey = (profileId) => `heroSkills_v23_p${profileId}`;
     const loadSkills = (profileId) => {
         const initial = {};
-        SKILL_DATA.forEach(skill => { initial[skill.id] = { level: 1, xp: 0, currentMob: getRandomMob(null) }; });
+        // Initialize each skill with level, xp, currentMob, difficulty (1-7), and earnedBadges array
+        SKILL_DATA.forEach(skill => { 
+            initial[skill.id] = { 
+                level: 1, 
+                xp: 0, 
+                currentMob: getRandomMob(null),
+                difficulty: 1,  // Per-skill difficulty (1-7)
+                earnedBadges: [] // Array of earned badge tier numbers (1-7)
+            }; 
+        });
         let saved = localStorage.getItem(getStorageKey(profileId));
         if (!saved && profileId === 1) saved = localStorage.getItem('heroSkills_v23');
-        try { if (saved) { const parsed = JSON.parse(saved); const data = parsed.skills || parsed; Object.keys(data).forEach(key => { initial[key] = { ...initial[key], ...data[key] }; }); return initial; } } catch (e) {}
+        try { 
+            if (saved) { 
+                const parsed = JSON.parse(saved); 
+                const data = parsed.skills || parsed; 
+                Object.keys(data).forEach(key => { 
+                    initial[key] = { ...initial[key], ...data[key] };
+                    // Ensure difficulty exists (backward compatibility)
+                    if (typeof initial[key].difficulty !== 'number') {
+                        initial[key].difficulty = 1;
+                    }
+                    // Ensure earnedBadges array exists (backward compatibility)
+                    if (!Array.isArray(initial[key].earnedBadges)) {
+                        initial[key].earnedBadges = [];
+                    }
+                }); 
+                return initial; 
+            } 
+        } catch (e) {}
         return initial;
     };
     const loadTheme = (profileId) => { let saved = localStorage.getItem(getStorageKey(profileId)); if(!saved && profileId === 1) saved = localStorage.getItem('heroSkills_v23'); try { return JSON.parse(saved).theme || 'minecraft'; } catch(e){} return 'minecraft'; };
@@ -59,7 +85,6 @@ const App = () => {
 
     const [skills, setSkills] = useState(() => loadSkills(currentProfile));
     const [activeTheme, setActiveTheme] = useState(() => loadTheme(currentProfile));
-    const [difficulty, setDifficulty] = useState(1);
     const [battlingSkillId, setBattlingSkillId] = useState(null);
     const [challengeData, setChallengeData] = useState(null);
     const [lootBox, setLootBox] = useState(null); 
@@ -99,32 +124,85 @@ const App = () => {
 
     const handleSuccessHit = (skillId, isWrong) => {
         if (isWrong === 'WRONG') {
-            setPlayerHealth(h => { const newH = h - 1; if (newH <= 0) { new Audio(BASE_ASSETS.audio.faint).play().catch(e=>{}); setBattlingSkillId(null); return 10; } new Audio(BASE_ASSETS.audio.damage).play().catch(e=>{}); return newH; }); return;
+            setPlayerHealth(h => { const newH = h - 1; if (newH <= 0) { new Audio(BASE_ASSETS.audio.faint).play().catch(()=>{}); setBattlingSkillId(null); return 10; } new Audio(BASE_ASSETS.audio.damage).play().catch(()=>{}); return newH; }); return;
         }
         if (!skillId) return;
         const skillConfig = SKILL_DATA.find(s => s.id === skillId);
-        const multiplier = 1 + (difficulty - 1) * 0.2;
-        const dmg = (skillConfig.id === 'cleaning' || skillConfig.id === 'memory') ? 100 : 20;
-        const scaledDmg = Math.round(dmg * multiplier);
-        if(skillConfig.id !== 'memory') { const id = Date.now(); setDamageNumbers(prev => [...prev, { id, skillId, val: scaledDmg, x: Math.random() * 100 - 50, y: Math.random() * 50 - 25 }]); setTimeout(() => setDamageNumbers(prev => prev.filter(n => n.id !== id)), 800); new Audio(BASE_ASSETS.audio.hit[0]).play().catch(e=>{}); }
         const currentSkillState = skills[skillId];
-        if (skillConfig.id !== 'memory') { 
-            const mob = getMobForSkill(skillConfig, currentSkillState);
-        }
+        const skillDifficulty = currentSkillState.difficulty || 1;
+        const multiplier = 1 + (skillDifficulty - 1) * 0.2;
+        
+        // Get encounter type for current level
+        const encounterType = getEncounterType(currentSkillState.level);
+        
+        // Minibosses and cleaning/memory are defeated in single hit (100 XP)
+        const isMiniboss = encounterType === 'miniboss' && skillConfig.id !== 'cleaning';
+        const dmg = (skillConfig.id === 'cleaning' || skillConfig.id === 'memory' || isMiniboss) ? 100 : 20;
+        const scaledDmg = Math.round(dmg * multiplier);
+        
+        if(skillConfig.id !== 'memory') { const id = Date.now(); setDamageNumbers(prev => [...prev, { id, skillId, val: scaledDmg, x: Math.random() * 100 - 50, y: Math.random() * 50 - 25 }]); setTimeout(() => setDamageNumbers(prev => prev.filter(n => n.id !== id)), 800); new Audio(BASE_ASSETS.audio.hit[0]).play().catch(()=>{}); }
+        
         setSkills(prev => {
-            const current = prev[skillId]; let newXp = current.xp + scaledDmg; let newLevel = current.level; let leveledUp = false; let newMob = current.currentMob;
-            if (newXp >= 100) { const levelsGained = Math.floor(newXp / 100); newLevel += levelsGained; newXp = newXp % 100; leveledUp = true; new Audio(BASE_ASSETS.audio.success).play().catch(e=>{}); if (newLevel % 20 !== 0 && (newLevel - 1) % 20 !== 0) newMob = getRandomMob(current.currentMob); }
-            if (leveledUp) { new Audio(BASE_ASSETS.audio.levelup).play().catch(e=>{}); if (newLevel % 20 === 0) setLootBox({ level: newLevel, skillName: skillConfig.fantasyName, item: "New Rank!", img: BASE_ASSETS.badges.Wood }); }
-            return { ...prev, [skillId]: { ...current, level: newLevel, xp: newXp, currentMob: newMob } };
+            const current = prev[skillId]; 
+            let newXp = current.xp + scaledDmg; 
+            let newLevel = current.level; 
+            let leveledUp = false; 
+            let newMob = current.currentMob;
+            let newDifficulty = current.difficulty || 1;
+            let newBadges = [...(current.earnedBadges || [])];
+            
+            if (newXp >= 100) { 
+                const levelsGained = Math.floor(newXp / 100); 
+                const oldLevel = newLevel;
+                newLevel += levelsGained; 
+                newXp = newXp % 100; 
+                leveledUp = true; 
+                new Audio(BASE_ASSETS.audio.success).play().catch(()=>{}); 
+                
+                // Check if we just defeated a boss (crossed a level divisible by 20)
+                // Cleaning is exempt from difficulty auto-increment
+                if (skillConfig.id !== 'cleaning') {
+                    for (let lvl = oldLevel + 1; lvl <= newLevel; lvl++) {
+                        if (lvl % 20 === 0) {
+                            // Boss defeated at this level - increment difficulty (max 7)
+                            const newTier = Math.floor(lvl / 20);
+                            if (newDifficulty < 7) {
+                                newDifficulty++;
+                            }
+                            // Award badge for this tier if not already earned
+                            if (!newBadges.includes(newTier) && newTier <= 7) {
+                                newBadges.push(newTier);
+                            }
+                        }
+                    }
+                }
+                
+                if (newLevel % 20 !== 0 && (newLevel - 1) % 20 !== 0) newMob = getRandomMob(current.currentMob); 
+            }
+            if (leveledUp) { 
+                new Audio(BASE_ASSETS.audio.levelup).play().catch(()=>{}); 
+                if (newLevel % 20 === 0) setLootBox({ level: newLevel, skillName: skillConfig.fantasyName, item: "New Rank!", img: BASE_ASSETS.badges.Wood }); 
+            }
+            return { ...prev, [skillId]: { ...current, level: newLevel, xp: newXp, currentMob: newMob, difficulty: newDifficulty, earnedBadges: newBadges } };
         });
-        if (skillConfig.hasChallenge && skillConfig.id !== 'memory') { setChallengeData(generateChallenge(skillConfig.challengeType, difficulty)); } else if (skillConfig.id === 'memory') { setBattlingSkillId(null); }
+        if (skillConfig.hasChallenge && skillConfig.id !== 'memory') { setChallengeData(generateChallenge(skillConfig.challengeType, skillDifficulty)); } else if (skillConfig.id === 'memory') { setBattlingSkillId(null); }
+    };
+
+    // Helper function to set difficulty for a specific skill
+    const setSkillDifficulty = (skillId, newDiff) => {
+        setSkills(prev => ({
+            ...prev,
+            [skillId]: { ...prev[skillId], difficulty: newDiff }
+        }));
     };
 
     const startBattle = (id) => {
-        const skill = SKILL_DATA.find(s => s.id === id); setBattlingSkillId(id);
-        const maxDiff = Math.max(1, Math.floor(skills[id].level / 20) + 1); setDifficulty(maxDiff);
-        setChallengeData(generateChallenge(skill.challengeType, maxDiff));
-        new Audio(BASE_ASSETS.audio.click).play().catch(e=>{});
+        const skill = SKILL_DATA.find(s => s.id === id); 
+        setBattlingSkillId(id);
+        // Use the skill's current difficulty setting
+        const currentDiff = skills[id].difficulty || 1;
+        setChallengeData(generateChallenge(skill.challengeType, currentDiff));
+        new Audio(BASE_ASSETS.audio.click).play().catch(()=>{});
         if (skill.challengeType === 'reading' && window.webkitSpeechRecognition) startVoiceListener(id);
     };
 
@@ -224,7 +302,9 @@ const App = () => {
                                 mobName={getMobForSkill(item, skills[item.id])} challenge={challengeData} isListening={isListening} spokenText={spokenText} damageNumbers={damageNumbers.filter(d => d.skillId === item.id)}
                                 onStartBattle={() => startBattle(item.id)} onEndBattle={endBattle}
                                 onMathSubmit={(val) => handleSuccessHit(item.id, val)} onMicClick={() => startVoiceListener(item.id)}
-                                difficulty={difficulty} setDifficulty={setDifficulty} unlockedDifficulty={Math.floor(skills[item.id].level / 20) + 1}
+                                difficulty={skills[item.id].difficulty || 1} 
+                                setDifficulty={(newDiff) => setSkillDifficulty(item.id, newDiff)} 
+                                unlockedDifficulty={Math.floor(skills[item.id].level / 20) + 1}
                             />
                         </div>
                         );

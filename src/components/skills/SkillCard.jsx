@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
-import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, SHAPE_COMPONENTS } from '../../constants/gameData';
+import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, MINIBOSS_MOBS, DIFFICULTY_IMAGES } from '../../constants/gameData';
 
 const PRESTIGE_LEVEL_THRESHOLD = 20;
 
@@ -52,7 +52,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         mobSrc = CHEST_BLOCKS[mobName] || themeData.assets.mobs[mobName] || BASE_ASSETS.axolotls.Pink;
     } else {
         // Combat skills (reading, writing, math, patterns) - validate mob exists
-        mobSrc = HOSTILE_MOBS[mobName] || BOSS_MOBS[mobName] || themeData.assets.mobs[mobName];
+        // Check hostile mobs, boss mobs, and miniboss mobs
+        mobSrc = HOSTILE_MOBS[mobName] || BOSS_MOBS[mobName] || MINIBOSS_MOBS[mobName] || themeData.assets.mobs[mobName];
         if (!mobSrc) {
             // Fallback to a random hostile mob if the provided name is invalid
             const hostileMobKeys = Object.keys(HOSTILE_MOBS);
@@ -60,9 +61,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             mobSrc = HOSTILE_MOBS[displayMobName] || BASE_ASSETS.axolotls.Pink;
         }
     }
-
-    const difficultyMultiplier = 1 + (difficulty - 1) * 0.2;
-    const displayHP = Math.round(100 * difficultyMultiplier);
 
     const gemStyle = {}; 
 
@@ -344,11 +342,21 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     return (
         <div className="relative">
-            {/* Difficulty adjuster positioned above the card */}
-            {(!isBattling || config.id !== 'memory') && (
+            {/* Difficulty adjuster positioned above the card - hidden for cleaning skill */}
+            {(!isBattling || config.id !== 'memory') && config.id !== 'cleaning' && (
                 <div className="absolute -top-10 left-0 flex items-center gap-2 z-20">
                     <button onClick={() => setDifficulty(Math.max(1, difficulty - 1))} className="bg-stone-700 text-white rounded p-1 border border-stone-500 hover:bg-stone-600"><Minus size={16} /></button>
-                    <span className="text-yellow-400 font-bold bg-black/80 px-2 rounded border border-yellow-500 text-sm">Diff: {difficulty}</span>
+                    <div className="relative">
+                        <SafeImage 
+                            src={DIFFICULTY_IMAGES[difficulty] || DIFFICULTY_IMAGES[1]} 
+                            alt={`Difficulty ${difficulty}`} 
+                            className="w-8 h-8 object-contain"
+                        />
+                        {/* Difficulty level number indicator in bottom-right corner */}
+                        <span className="absolute -bottom-1 -right-1 bg-black/90 text-yellow-400 text-xs font-bold px-1 rounded border border-yellow-500/50 min-w-[16px] text-center">
+                            {difficulty}
+                        </span>
+                    </div>
                     <button onClick={() => setDifficulty(Math.min(unlockedDifficulty, difficulty + 1))} className="bg-stone-700 text-white rounded p-1 border border-stone-500 hover:bg-stone-600"><Plus size={16} /></button>
                 </div>
             )}
