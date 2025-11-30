@@ -5,6 +5,18 @@ export const getRandomMob = (exclude) => {
     return pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] : 'Zombie';
 };
 
+// Get a random friendly mob key for the Memory skill
+export const getRandomFriendlyMob = () => {
+    const friendlyMobKeys = Object.keys(FRIENDLY_MOBS);
+    return friendlyMobKeys.length > 0 ? friendlyMobKeys[Math.floor(Math.random() * friendlyMobKeys.length)] : 'Allay';
+};
+
+// Get a random axolotl key for the Patterns skill
+export const getRandomAxolotl = () => {
+    const axolotlKeys = Object.keys(BASE_ASSETS.axolotls);
+    return axolotlKeys.length > 0 ? axolotlKeys[Math.floor(Math.random() * axolotlKeys.length)] : 'Pink';
+};
+
 export const getRandomMiniboss = () => {
     const minibossKeys = Object.keys(MINIBOSS_MOBS);
     return minibossKeys.length > 0 ? minibossKeys[Math.floor(Math.random() * minibossKeys.length)] : 'Wither Skeleton';
@@ -27,9 +39,13 @@ export const getMobForSkill = (skillConfig, userSkill) => {
             const standardChests = Object.keys(CHEST_BLOCKS).filter(k => !SPECIAL_CHESTS.includes(k));
             return standardChests[(userSkill.level - 1) % standardChests.length];
     }
+    // Memory skill: Return stored memoryMob to prevent random changes on re-render
     if (skillConfig.id === 'memory') {
-        const friendlyMobKeys = Object.keys(FRIENDLY_MOBS);
-        return friendlyMobKeys.length > 0 ? friendlyMobKeys[Math.floor(Math.random() * friendlyMobKeys.length)] : 'Allay';
+        return userSkill.memoryMob || getRandomFriendlyMob();
+    }
+    // Patterns skill: Return stored patternMob to prevent random changes on re-render
+    if (skillConfig.id === 'patterns') {
+        return userSkill.patternMob || getRandomAxolotl();
     }
     
     // Determine encounter type based on level cycle

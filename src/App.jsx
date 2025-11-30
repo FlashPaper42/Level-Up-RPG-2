@@ -13,7 +13,7 @@ import SkillCard from './components/skills/SkillCard';
 import PhantomEvent from './components/PhantomEvent';
 
 // Utils & Constants
-import { getRandomMob, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getItemsForLength, calculateDamage, calculateMobHealth, calculateXPReward } from './utils/gameUtils';
+import { getRandomMob, getRandomFriendlyMob, getRandomAxolotl, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getItemsForLength, calculateDamage, calculateMobHealth, calculateXPReward } from './utils/gameUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
     HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS
@@ -40,7 +40,9 @@ const App = () => {
                 mobHealth: calculateMobHealth(initialDifficulty), // Mob's current HP
                 mobMaxHealth: calculateMobHealth(initialDifficulty), // Mob's max HP
                 lostLevel: false, // True if player died and lost a level
-                recoveryDifficulty: null // Difficulty to suggest for recovery
+                recoveryDifficulty: null, // Difficulty to suggest for recovery
+                memoryMob: skill.id === 'memory' ? getRandomFriendlyMob() : null, // Stable mob for Memory card display
+                patternMob: skill.id === 'patterns' ? getRandomAxolotl() : null // Stable axolotl for Patterns card display
             }; 
         });
         let saved = localStorage.getItem(getStorageKey(profileId));
@@ -71,6 +73,14 @@ const App = () => {
                     }
                     if (initial[key].recoveryDifficulty === undefined) {
                         initial[key].recoveryDifficulty = null;
+                    }
+                    // Ensure memoryMob exists for memory skill (backward compatibility)
+                    if (key === 'memory' && !initial[key].memoryMob) {
+                        initial[key].memoryMob = getRandomFriendlyMob();
+                    }
+                    // Ensure patternMob exists for patterns skill (backward compatibility)
+                    if (key === 'patterns' && !initial[key].patternMob) {
+                        initial[key].patternMob = getRandomAxolotl();
                     }
                 }); 
                 return initial; 
@@ -265,12 +275,22 @@ const App = () => {
             let newMobMaxHealth = current.mobMaxHealth;
             let newLostLevel = current.lostLevel;
             let newRecoveryDifficulty = current.recoveryDifficulty;
+            let newMemoryMob = current.memoryMob;
+            let newPatternMob = current.patternMob;
             
             // Mob defeated!
             if (newMobHealth <= 0) {
                 // Calculate XP reward
                 const xpReward = calculateXPReward(skillDifficulty, playerLevel);
                 newXp += xpReward;
+                
+                // Update stable mobs for memory and patterns skills on completion
+                if (skillConfig.id === 'memory') {
+                    newMemoryMob = getRandomFriendlyMob();
+                }
+                if (skillConfig.id === 'patterns') {
+                    newPatternMob = getRandomAxolotl();
+                }
                 
                 // Check for level restoration first
                 if (newLostLevel) {
@@ -342,7 +362,9 @@ const App = () => {
                     mobHealth: newMobHealth,
                     mobMaxHealth: newMobMaxHealth,
                     lostLevel: newLostLevel,
-                    recoveryDifficulty: newRecoveryDifficulty
+                    recoveryDifficulty: newRecoveryDifficulty,
+                    memoryMob: newMemoryMob,
+                    patternMob: newPatternMob
                 }
             };
         });

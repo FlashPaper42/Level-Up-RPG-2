@@ -59,8 +59,11 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         mobSrc = FRIENDLY_MOBS[mobName] || themeData.assets.mobs[mobName] || BASE_ASSETS.axolotls.Pink;
     } else if (config.id === 'cleaning') {
         mobSrc = CHEST_BLOCKS[mobName] || themeData.assets.mobs[mobName] || BASE_ASSETS.axolotls.Pink;
+    } else if (config.id === 'patterns') {
+        // Patterns skill uses axolotls from BASE_ASSETS.axolotls
+        mobSrc = BASE_ASSETS.axolotls[mobName] || BASE_ASSETS.axolotls.Pink;
     } else {
-        // Combat skills (reading, writing, math, patterns) - validate mob exists
+        // Combat skills (reading, writing, math) - validate mob exists
         // Check hostile mobs, boss mobs, and miniboss mobs
         mobSrc = HOSTILE_MOBS[mobName] || BOSS_MOBS[mobName] || MINIBOSS_MOBS[mobName] || themeData.assets.mobs[mobName];
         if (!mobSrc) {
