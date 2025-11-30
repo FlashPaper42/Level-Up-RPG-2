@@ -398,8 +398,14 @@ const App = () => {
         setActiveTheme(newTheme);
         setCurrentProfile(newId);
     };
-    const handleRenameProfile = (id, newName) => { setProfileNames(prev => ({ ...prev, [id]: newName })); };
-    const handleReset = () => { localStorage.removeItem(getStorageKey(currentProfile)); if (currentProfile === 1) localStorage.removeItem('heroSkills_v23'); window.location.reload(); };
+    const handleRenameProfile = (id, newName) => {
+        setProfileNames(prev => ({ ...prev, [id]: newName }));
+    };
+    const handleReset = () => {
+        localStorage.removeItem(getStorageKey(currentProfile));
+        if (currentProfile === 1) localStorage.removeItem('heroSkills_v23');
+        window.location.reload();
+    };
 
     const startVoiceListener = (targetId) => {
         if (!window.webkitSpeechRecognition) return;
