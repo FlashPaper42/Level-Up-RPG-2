@@ -17,6 +17,8 @@ export const getMobForSkill = (skillConfig, userSkill) => {
         return friendlyMobKeys.length > 0 ? friendlyMobKeys[Math.floor(Math.random() * friendlyMobKeys.length)] : 'Allay';
     }
     if (userSkill.level % 20 === 0) return skillConfig.boss;
+    // For combat skills - validate currentMob exists in HOSTILE_MOBS
     const hostileMobKeys = Object.keys(HOSTILE_MOBS);
-    return userSkill.currentMob || (hostileMobKeys.length > 0 ? hostileMobKeys[Math.floor(Math.random() * hostileMobKeys.length)] : 'Zombie');
+    const currentMobIsValid = userSkill.currentMob && hostileMobKeys.includes(userSkill.currentMob);
+    return currentMobIsValid ? userSkill.currentMob : (hostileMobKeys.length > 0 ? hostileMobKeys[Math.floor(Math.random() * hostileMobKeys.length)] : 'Zombie');
 };
