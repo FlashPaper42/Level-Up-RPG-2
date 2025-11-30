@@ -70,6 +70,8 @@ const App = () => {
     const [spokenText, setSpokenText] = useState("");
     const [damageNumbers, setDamageNumbers] = useState([]);
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStartX, setDragStartX] = useState(0);
     const recognitionRef = useRef(null);
     const [bgmVol, setBgmVol] = useState(0.3);
     const [sfxVol, setSfxVol] = useState(0.5);
@@ -151,6 +153,34 @@ const App = () => {
     const currentThemeData = THEME_CONFIG[activeTheme] || THEME_CONFIG.minecraft;
     const containerStyle = { ...currentThemeData.style, fontFamily: '"VT323", monospace' };
 
+    // Drag handlers for carousel navigation
+    const handleDragStart = (clientX) => {
+        if (battlingSkillId) return;
+        setIsDragging(true);
+        setDragStartX(clientX);
+    };
+    const handleDragMove = (clientX) => {
+        if (!isDragging || battlingSkillId) return;
+        const diff = dragStartX - clientX;
+        if (Math.abs(diff) >= 100) {
+            if (diff > 0) {
+                setSelectedIndex(p => p + 1);
+            } else {
+                setSelectedIndex(p => p - 1);
+            }
+            new Audio(BASE_ASSETS.audio.click).play().catch(() => {});
+            setIsDragging(false);
+        }
+    };
+    const handleDragEnd = () => {
+        setIsDragging(false);
+    };
+    const handleCardClick = (offset) => {
+        if (battlingSkillId || offset === 0) return;
+        setSelectedIndex(p => p + offset);
+        new Audio(BASE_ASSETS.audio.click).play().catch(() => {});
+    };
+
     return (
         <div className="min-h-screen overflow-hidden relative flex flex-col bg-cover bg-center bg-no-repeat font-sans text-stone-100" style={containerStyle}>
             <GlobalStyles />
@@ -174,11 +204,21 @@ const App = () => {
                 <h1 className="text-9xl text-yellow-400 tracking-widest uppercase mb-[80px] z-20 relative drop-shadow-[4px_4px_0_#000]" style={{ textShadow: '6px 6px 0 #000' }}>Level Up!</h1>
                 <button onClick={() => {setSelectedIndex(p => p - 1); new Audio(BASE_ASSETS.audio.click).play();}} className="flex absolute left-4 md:left-8 z-30 bg-stone-800/80 text-white p-3 md:p-4 border-4 border-stone-600 rounded-sm"><ChevronLeft size={32} className="md:w-10 md:h-10" /></button>
                 <button onClick={() => {setSelectedIndex(p => p + 1); new Audio(BASE_ASSETS.audio.click).play();}} className="flex absolute right-4 md:right-8 z-30 bg-stone-800/80 text-white p-3 md:p-4 border-4 border-stone-600 rounded-sm"><ChevronRight size={32} className="md:w-10 md:h-10" /></button>
-                <div className={`relative w-full flex items-center justify-center perspective-1000 h-[650px] mb-12 ${battlingSkillId ? 'z-50' : ''}`}>
+                <div 
+                    className={`relative w-full flex items-center justify-center perspective-1000 h-[650px] mb-12 ${battlingSkillId ? 'z-50' : ''}`}
+                    style={{ cursor: battlingSkillId ? 'default' : (isDragging ? 'grabbing' : 'grab') }}
+                    onMouseDown={(e) => handleDragStart(e.clientX)}
+                    onMouseMove={(e) => handleDragMove(e.clientX)}
+                    onMouseUp={handleDragEnd}
+                    onMouseLeave={handleDragEnd}
+                    onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
+                    onTouchMove={(e) => { e.preventDefault(); handleDragMove(e.touches[0].clientX); }}
+                    onTouchEnd={handleDragEnd}
+                >
                     {getVisibleItems().map((item) => {
                         const isItemBattling = item.offset === 0 && battlingSkillId === item.id;
                         return (
-                        <div key={item.key} className="absolute transition-all duration-500 ease-out" style={{ transform: `translateX(${item.offset * 320}px) scale(${item.offset === 0 ? 1.1 : 0.85})`, opacity: item.offset === 0 ? 1 : 0.6, zIndex: isItemBattling ? 50 : (item.offset === 0 ? 20 : 10 - Math.abs(item.offset)), filter: item.offset === 0 ? 'none' : 'brightness(0.5) blur(1px)' }}>
+                        <div key={item.key} className="absolute transition-all duration-500 ease-out" style={{ transform: `translateX(${item.offset * 320}px) scale(${item.offset === 0 ? 1.1 : 0.85})`, opacity: item.offset === 0 ? 1 : 0.6, zIndex: isItemBattling ? 50 : (item.offset === 0 ? 20 : 10 - Math.abs(item.offset)), filter: item.offset === 0 ? 'none' : 'brightness(0.5) blur(1px)', cursor: item.offset !== 0 && !battlingSkillId ? 'pointer' : 'default' }} onClick={() => handleCardClick(item.offset)}>
                             <SkillCard 
                                 config={item} data={skills[item.id]} themeData={currentThemeData} isCenter={item.offset === 0} isBattling={item.offset === 0 && battlingSkillId === item.id}
                                 mobName={getMobForSkill(item, skills[item.id])} challenge={challengeData} isListening={isListening} spokenText={spokenText} damageNumbers={damageNumbers.filter(d => d.skillId === item.id)}
