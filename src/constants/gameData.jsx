@@ -61,6 +61,9 @@ export const CHEST_BLOCKS = {
     'Ender Chest': '/assets/blocks/ender_chest.gif'
 };
 
+// Special chests that appear at milestone levels (used for cleaning skill)
+export const SPECIAL_CHESTS = ['Ender Chest', 'Shulker Box'];
+
 export const BOSS_MOBS = {
     'Ender Dragon': '/assets/mobs/boss/enderdragon.gif',
     'Wither': '/assets/mobs/boss/wither.png',
