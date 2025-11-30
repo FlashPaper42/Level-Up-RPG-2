@@ -1,6 +1,3 @@
-import { Circle, Square, Triangle, Hexagon } from 'lucide-react';
-import React from 'react';
-
 export const BASE_ASSETS = {
     skillIcons: { 'Reading': '/assets/skills/reading_icon.gif', 'Math': '/assets/skills/math_icon.png', 'Writing': '/assets/skills/writing_icon.png', 'Cleaning': '/assets/skills/cleaning_icon.gif', 'Memory': '/assets/skills/memory_icon.png', 'Patterns': '/assets/skills/patterns_icon.png' },
     badges: { 'Wood': '/assets/badges/wood_badge.png', 'Stone': '/assets/badges/stone_badge.png', 'Gold': '/assets/badges/gold_badge.png', 'Iron': '/assets/badges/iron_badge.png', 'Emerald': '/assets/badges/emerald_badge.png', 'Diamond': '/assets/badges/diamond_badge.png', 'Netherite': '/assets/badges/netherite_badge.png', 'Obsidian': '/assets/badges/obsidian_badge.png', 'Legendary': '/assets/badges/star_badge.png' },
@@ -189,7 +186,6 @@ export const THEME_CONFIG = {
 
 export const THEMES_LIST = [ { id: 'minecraft', name: 'Minecraft', img: '/assets/themes/minecraft.png' }, { id: 'kpop', name: 'K-Pop Demon Hunters', img: '/assets/themes/kpop.png' }, { id: 'pokemon', name: 'Pokemon', img: '/assets/themes/pokemon.png' }, { id: 'spy', name: 'Spy', img: '/assets/themes/spy.png' } ];
 export const BADGE_TIERS = [ { level: 20, title: "Wood" }, { level: 40, title: "Stone" }, { level: 60, title: "Gold" }, { level: 80, title: "Iron" }, { level: 100, title: "Emerald" }, { level: 120, title: "Diamond" }, { level: 140, title: "Netherite" }, { level: 160, title: "Obsidian" } ];
-export const SIGHT_WORDS = ["THE", "AND", "YOU", "THAT", "WAS", "FOR", "ON", "ARE", "WITH", "HIS", "THEY", "CAT", "DOG", "BAT", "RUN", "JUMP", "BIG", "RED", "FOX", "SUN", "MOM", "DAD", "PLAY", "SEE", "LOOK", "IT", "IS", "GO", "TO", "MY", "NO", "YES"];
 
 // Reading words organized by character length for difficulty scaling
 export const READING_WORDS = {
@@ -273,10 +269,3 @@ export const SKILL_DATA = [
     { id: 'memory', name: 'Memory', class: 'Memory', fantasyName: 'Match n\' Hatch', actionName: 'Match!', taskDescription: "Match the animals to hatch eggs!", img: BASE_ASSETS.skillIcons['Memory'], colorStyle: { background: 'linear-gradient(to bottom, #db2777, #be123c)' }, accent: 'text-pink-400', boss: 'Axolotl Mascot', hasChallenge: true, challengeType: 'memory', mobOffset: 16 },
     { id: 'patterns', name: 'Patterns', class: 'Patterns', fantasyName: 'Logic Building', actionName: 'Solve!', taskDescription: "Complete the pattern!", img: BASE_ASSETS.skillIcons['Patterns'], colorStyle: { background: 'linear-gradient(to bottom, #ea580c, #c2410c)' }, accent: 'text-orange-400', boss: 'Iron Golem', hasChallenge: true, challengeType: 'patterns', mobOffset: 20 },
 ];
-
-export const SHAPE_COMPONENTS = {
-    Circle: <Circle />,
-    Square: <Square />,
-    Triangle: <Triangle />,
-    Hexagon: <Hexagon />
-};
