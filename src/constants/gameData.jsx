@@ -53,12 +53,12 @@ export const HOSTILE_MOBS = {
 };
 
 export const CHEST_BLOCKS = {
-    'Chest': '/assets/blocks/chest.gif',
-    'Trapped Chest': '/assets/blocks/trapped_chest.gif',
-    'Barrel': '/assets/blocks/barrel.png',
-    'Bundle': '/assets/items/bundle.png',
-    'Shulker Box': '/assets/blocks/shulker_box.png',
-    'Ender Chest': '/assets/blocks/ender_chest.gif'
+    'Chest': '/assets/blocks/chests/chest.gif',
+    'Trapped Chest': '/assets/blocks/chests/trapped_chest.gif',
+    'Barrel': '/assets/blocks/chests/barrel.png',
+    'Bundle': '/assets/blocks/chests/bundle.png',
+    'Shulker Box': '/assets/blocks/chests/shulker_box.png',
+    'Ender Chest': '/assets/blocks/chests/ender_chest.gif'
 };
 
 // Special chests that appear at milestone levels (used for cleaning skill)
