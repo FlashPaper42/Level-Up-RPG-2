@@ -117,13 +117,13 @@ export const DIFFICULTY_CONTENT = {
         7: { axolotlCount: 8, resetSequence: true }
     },
     memory: {
-        1: { pairs: 3, gridCols: 3 },
-        2: { pairs: 4, gridCols: 4 },
-        3: { pairs: 5, gridCols: 5 },
-        4: { pairs: 6, gridCols: 4 },
-        5: { pairs: 7, gridCols: 7 },
-        6: { pairs: 8, gridCols: 4 },
-        7: { pairs: 10, gridCols: 5 }
+        1: { pairs: 3, gridCols: 3 },  // 6 cards: 3x2
+        2: { pairs: 4, gridCols: 4 },  // 8 cards: 4x2
+        3: { pairs: 5, gridCols: 5 },  // 10 cards: 5x2
+        4: { pairs: 6, gridCols: 4 },  // 12 cards: 4x3
+        5: { pairs: 7, gridCols: 4 },  // 14 cards: 4x4 (2 empty)
+        6: { pairs: 8, gridCols: 4 },  // 16 cards: 4x4
+        7: { pairs: 10, gridCols: 5 } // 20 cards: 5x4
     },
     cleaning: {
         // Cleaning is exempt from difficulty changes

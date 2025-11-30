@@ -36,8 +36,8 @@ const App = () => {
                 currentMob: getRandomMob(null),
                 difficulty: initialDifficulty,  // Per-skill difficulty (1-7)
                 earnedBadges: [], // Array of earned badge tier numbers (1-7)
-                mobHealth: calculateMobHealth(initialDifficulty, 1), // Mob's current HP
-                mobMaxHealth: calculateMobHealth(initialDifficulty, 1), // Mob's max HP
+                mobHealth: calculateMobHealth(initialDifficulty), // Mob's current HP
+                mobMaxHealth: calculateMobHealth(initialDifficulty), // Mob's max HP
                 lostLevel: false, // True if player died and lost a level
                 recoveryDifficulty: null // Difficulty to suggest for recovery
             }; 
@@ -61,8 +61,8 @@ const App = () => {
                     // Ensure mobHealth exists (backward compatibility)
                     if (typeof initial[key].mobHealth !== 'number') {
                         const diff = initial[key].difficulty || 1;
-                        initial[key].mobHealth = calculateMobHealth(diff, initial[key].level);
-                        initial[key].mobMaxHealth = calculateMobHealth(diff, initial[key].level);
+                        initial[key].mobHealth = calculateMobHealth(diff);
+                        initial[key].mobMaxHealth = calculateMobHealth(diff);
                     }
                     // Ensure death/recovery state exists
                     if (typeof initial[key].lostLevel !== 'boolean') {
