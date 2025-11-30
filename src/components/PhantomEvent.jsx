@@ -5,6 +5,7 @@ const PHANTOM_COOLDOWN_KEY = 'phantomEvent_lastSpawn_v1';
 const MIN_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 const MAX_COOLDOWN_MS = 10 * 60 * 1000; // 10 minutes
 const FLIGHT_DURATION_MS = 8000; // 8 seconds to cross the screen (slow enough for a child to click)
+const PHANTOM_OFFSCREEN_LEFT = '-120px'; // Start position offscreen on the left
 
 const PhantomEvent = ({ battlingSkillId, onAwardLevel }) => {
     const [isActive, setIsActive] = useState(false);
@@ -113,7 +114,7 @@ const PhantomEvent = ({ battlingSkillId, onAwardLevel }) => {
         <div
             className="fixed top-4 z-[9999] cursor-pointer select-none"
             style={{
-                left: fromLeft ? '-120px' : 'calc(100vw)',
+                left: fromLeft ? PHANTOM_OFFSCREEN_LEFT : 'calc(100vw)',
                 animation: `${fromLeft ? 'phantomFlyLeft' : 'phantomFlyRight'} ${FLIGHT_DURATION_MS}ms linear forwards`,
                 opacity: clicked ? 0 : 1,
                 transition: 'opacity 0.2s ease-out',
