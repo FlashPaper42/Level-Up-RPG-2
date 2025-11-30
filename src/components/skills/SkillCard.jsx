@@ -315,16 +315,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     if (isBattlingCenter) {
         return ReactDOM.createPortal(
-            <div 
-                className="fixed inset-0 z-50 flex items-center justify-center"
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100vw',
-                    height: '100vh',
-                }}
-            >
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
                 <div 
                     style={{
                         transform: 'scale(1.5)',
