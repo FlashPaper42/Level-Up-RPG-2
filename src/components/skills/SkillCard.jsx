@@ -17,6 +17,9 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const [matchedPairs, setMatchedPairs] = useState([]);
     const [isProcessingMatch, setIsProcessingMatch] = useState(false);
     const [mismatchShake, setMismatchShake] = useState(false);
+    
+    // Ref to track if memory game session was initialized for the current battle
+    const memorySessionStartedRef = useRef(false);
 
     // Simon Says state for Pattern Recognition
     const [simonSequence, setSimonSequence] = useState([]);
@@ -25,6 +28,9 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const [completedRounds, setCompletedRounds] = useState(0);
     const [litAxolotl, setLitAxolotl] = useState(null);
     const [simonGameActive, setSimonGameActive] = useState(false);
+    
+    // Ref to track if patterns game session was initialized for the current battle
+    const simonSessionStartedRef = useRef(false);
 
     // Calculate HP percentage based on mobHealth/mobMaxHealth for HP bar display
     const mobHealth = data.mobHealth || 100;
@@ -104,8 +110,9 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const memoryGridCols = memoryConfig.gridCols || 4;
     
     useEffect(() => {
-        if (isBattling && config.id === 'memory' && memoryCards.length === 0) {
-            // Only regenerate cards when entering battle if no game is in progress
+        if (isBattling && config.id === 'memory' && !memorySessionStartedRef.current) {
+            // Only regenerate cards when entering battle if no session started yet
+            memorySessionStartedRef.current = true;
             const allMobKeys = Object.keys(FRIENDLY_MOBS);
             const shuffledMobs = [...allMobKeys].sort(() => Math.random() - 0.5);
             const selectedMobs = shuffledMobs.slice(0, memoryPairs);
@@ -114,11 +121,12 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             setMemoryCards(deck.map((mobKey, i) => ({ id: i, color: mobKey, img: FRIENDLY_MOBS[mobKey] })));
             setFlippedIndices([]); setMatchedPairs([]); setIsProcessingMatch(false); setMismatchShake(false);
         } else if (!isBattling && config.id === 'memory') {
-            // Reset memory game state when exiting battle
+            // Reset memory game state and session ref when exiting battle
+            memorySessionStartedRef.current = false;
             setMemoryCards([]);
             setFlippedIndices([]); setMatchedPairs([]); setIsProcessingMatch(false); setMismatchShake(false);
         }
-    }, [isBattling, config.id, memoryPairs, memoryCards.length]);
+    }, [isBattling, config.id, memoryPairs]);
 
     useEffect(() => {
         if (damageNumbers.length > prevDamageCount.current) { setIsHit(true); setTimeout(() => setIsHit(false), 400); }
@@ -211,11 +219,13 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     };
 
     useEffect(() => {
-        if (isBattling && config.id === 'patterns' && !simonGameActive) {
-            // Only start a new game when entering battle if no game is currently active
+        if (isBattling && config.id === 'patterns' && !simonSessionStartedRef.current) {
+            // Only start a new game when entering battle if no session started yet
+            simonSessionStartedRef.current = true;
             startSimonGame();
         } else if (!isBattling && config.id === 'patterns') {
-            // Reset Simon Says state when not battling
+            // Reset Simon Says state and session ref when not battling
+            simonSessionStartedRef.current = false;
             setSimonSequence([]);
             setPlayerIndex(0);
             setIsShowingSequence(false);
@@ -223,7 +233,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             setLitAxolotl(null);
             setSimonGameActive(false);
         }
-    }, [isBattling, config.id, simonGameActive]);
+    }, [isBattling, config.id]);
 
     const handleCardClick = (index) => {
         if (isProcessingMatch || flippedIndices.includes(index) || matchedPairs.includes(memoryCards[index].color)) return;
