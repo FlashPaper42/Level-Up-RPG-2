@@ -104,8 +104,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const memoryGridCols = memoryConfig.gridCols || 4;
     
     useEffect(() => {
-        if (isBattling && config.id === 'memory') {
-            // Get all mob keys and shuffle to pick pairs based on difficulty
+        if (isBattling && config.id === 'memory' && memoryCards.length === 0) {
+            // Only regenerate cards when entering battle if no game is in progress
             const allMobKeys = Object.keys(FRIENDLY_MOBS);
             const shuffledMobs = [...allMobKeys].sort(() => Math.random() - 0.5);
             const selectedMobs = shuffledMobs.slice(0, memoryPairs);
@@ -113,8 +113,12 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             let deck = [...selectedMobs, ...selectedMobs].sort(() => Math.random() - 0.5);
             setMemoryCards(deck.map((mobKey, i) => ({ id: i, color: mobKey, img: FRIENDLY_MOBS[mobKey] })));
             setFlippedIndices([]); setMatchedPairs([]); setIsProcessingMatch(false); setMismatchShake(false);
+        } else if (!isBattling && config.id === 'memory') {
+            // Reset memory game state when exiting battle
+            setMemoryCards([]);
+            setFlippedIndices([]); setMatchedPairs([]); setIsProcessingMatch(false); setMismatchShake(false);
         }
-    }, [isBattling, config.id, memoryPairs]);
+    }, [isBattling, config.id, memoryPairs, memoryCards.length]);
 
     useEffect(() => {
         if (damageNumbers.length > prevDamageCount.current) { setIsHit(true); setTimeout(() => setIsHit(false), 400); }
@@ -207,7 +211,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     };
 
     useEffect(() => {
-        if (isBattling && config.id === 'patterns') {
+        if (isBattling && config.id === 'patterns' && !simonGameActive) {
+            // Only start a new game when entering battle if no game is currently active
             startSimonGame();
         } else if (!isBattling && config.id === 'patterns') {
             // Reset Simon Says state when not battling
@@ -218,7 +223,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             setLitAxolotl(null);
             setSimonGameActive(false);
         }
-    }, [isBattling, config.id]);
+    }, [isBattling, config.id, simonGameActive]);
 
     const handleCardClick = (index) => {
         if (isProcessingMatch || flippedIndices.includes(index) || matchedPairs.includes(memoryCards[index].color)) return;
