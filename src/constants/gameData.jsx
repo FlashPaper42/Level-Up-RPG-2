@@ -184,7 +184,7 @@ export const THEME_CONFIG = {
     }
 };
 
-export const THEMES_LIST = [ { id: 'minecraft', name: 'Minecraft', img: '/assets/themes/minecraft.png' }, { id: 'kpop', name: 'K-Pop Demon Hunters', img: '/assets/themes/kpop.png' }, { id: 'pokemon', name: 'Pokemon', img: '/assets/themes/pokemon.png' }, { id: 'spy', name: 'Spy', img: '/assets/themes/spy.png' } ];
+export const THEMES_LIST = [ { id: 'minecraft', name: 'Minecraft', img: '/assets/themes/minecraft.png' }, { id: 'kpop', name: 'K-Pop Demon Hunters', img: '/assets/themes/kpop.jpg' }, { id: 'pokemon', name: 'Pokemon', img: '/assets/themes/pokemon.jpg' }, { id: 'spy', name: 'Spy', img: '/assets/themes/spy.png' } ];
 export const BADGE_TIERS = [ { level: 20, title: "Wood" }, { level: 40, title: "Stone" }, { level: 60, title: "Gold" }, { level: 80, title: "Iron" }, { level: 100, title: "Emerald" }, { level: 120, title: "Diamond" }, { level: 140, title: "Netherite" }, { level: 160, title: "Obsidian" } ];
 
 // Reading words organized by character length for difficulty scaling
