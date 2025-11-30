@@ -215,7 +215,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     const cardContent = (
         <div
-            className={`w-[300px] h-[600px] bg-[#2b2b2b] border-4 rounded-lg overflow-visible flex flex-col transition-all duration-500 ${isCenter ? `selected-card-glow ${borderClass}` : 'border-stone-700'} ${isBattlingCenter ? 'scale-150' : 'relative'}`}
+            className={`bg-[#2b2b2b] border-4 rounded-lg overflow-visible flex flex-col transition-all duration-500 ${isCenter ? `selected-card-glow ${borderClass}` : 'border-stone-700'} ${isBattlingCenter ? 'w-[450px] h-[900px] max-h-[85vh]' : 'w-[300px] h-[600px] relative'}`}
+            style={isBattlingCenter ? { aspectRatio: '1/2' } : undefined}
             onClick={isBattlingCenter ? (e) => e.stopPropagation() : undefined}
         >
                 {isCenter && data.level >= PRESTIGE_LEVEL_THRESHOLD && <div className="gem-socket"><div className="gem-stone" style={gemStyle}></div></div>}

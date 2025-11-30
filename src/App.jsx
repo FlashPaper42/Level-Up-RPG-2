@@ -174,7 +174,7 @@ const App = () => {
                 <h1 className="text-9xl text-yellow-400 tracking-widest uppercase mb-[80px] z-20 relative drop-shadow-[4px_4px_0_#000]" style={{ textShadow: '6px 6px 0 #000' }}>Level Up!</h1>
                 <button onClick={() => {setSelectedIndex(p => p - 1); new Audio(BASE_ASSETS.audio.click).play();}} className="flex absolute left-4 md:left-8 z-30 bg-stone-800/80 text-white p-3 md:p-4 border-4 border-stone-600 rounded-sm"><ChevronLeft size={32} className="md:w-10 md:h-10" /></button>
                 <button onClick={() => {setSelectedIndex(p => p + 1); new Audio(BASE_ASSETS.audio.click).play();}} className="flex absolute right-4 md:right-8 z-30 bg-stone-800/80 text-white p-3 md:p-4 border-4 border-stone-600 rounded-sm"><ChevronRight size={32} className="md:w-10 md:h-10" /></button>
-                <div className={`relative w-full flex items-center justify-center perspective-1000 h-[650px] ${battlingSkillId ? 'z-50' : ''}`}>
+                <div className={`relative w-full flex items-center justify-center perspective-1000 h-[650px] mb-12 ${battlingSkillId ? 'z-50' : ''}`}>
                     {getVisibleItems().map((item) => {
                         const isItemBattling = item.offset === 0 && battlingSkillId === item.id;
                         return (
