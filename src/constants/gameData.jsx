@@ -32,13 +32,19 @@ export const NICE_MOBS = {
     'Wolf': '/assets/mobs/nice/wolf.png'
 };
 
+export const BOSS_MOBS = {
+    'Ender Dragon': '/assets/mobs/boss/enderdragon.gif',
+    'Wither': '/assets/mobs/boss/wither.png',
+    'Warden': '/assets/mobs/boss/warden.gif'
+};
+
 export const THEME_CONFIG = {
     'minecraft': {
         name: 'Minecraft',
         style: { backgroundImage: `url('/assets/themes/minecraft.png')`, backgroundSize: 'cover', backgroundPosition: 'center' },
         assets: {
             logo: '/assets/themes/minecraft_logo.png', cardBack: '/assets/themes/memorycard.jpg',
-            mobs: { 'Zombie': '/assets/mobs/zombie.png', 'Creeper': '/assets/mobs/creeper.png', 'Skeleton': '/assets/mobs/skeleton.png', 'Ender Dragon': '/assets/mobs/enderdragon.gif', 'Chest': '/assets/blocks/chest.gif', 'Axolotl': '/assets/mobs/axolotl_pink.gif', 'Wither Skeleton': '/assets/mobs/witherskeleton.png', 'Spider': '/assets/mobs/spider.png', 'Phantom': '/assets/mobs/phantom.gif', 'Enderman': '/assets/mobs/enderman.png', 'Blaze': '/assets/mobs/blaze.gif', 'Ghast': '/assets/mobs/ghast.gif', 'Slime': '/assets/mobs/slime.png', 'Witch': '/assets/mobs/witch.png', 'Pillager': '/assets/mobs/pillager.png', 'Wither': '/assets/mobs/wither.png', 'Warden': '/assets/mobs/warden.gif', 'Barrel': '/assets/blocks/barrel.png', 'Bundle': '/assets/items/bundle.png', 'Ender Chest': '/assets/blocks/ender_chest.gif', 'Trapped Chest': '/assets/blocks/trapped_chest.gif', 'Shulker Box': '/assets/blocks/shulker_box.png' }
+            mobs: { 'Zombie': '/assets/mobs/zombie.png', 'Creeper': '/assets/mobs/creeper.png', 'Skeleton': '/assets/mobs/skeleton.png', 'Ender Dragon': '/assets/mobs/boss/enderdragon.gif', 'Chest': '/assets/blocks/chest.gif', 'Axolotl': '/assets/mobs/axolotl_pink.gif', 'Wither Skeleton': '/assets/mobs/witherskeleton.png', 'Spider': '/assets/mobs/spider.png', 'Phantom': '/assets/mobs/phantom.gif', 'Enderman': '/assets/mobs/enderman.png', 'Blaze': '/assets/mobs/blaze.gif', 'Ghast': '/assets/mobs/ghast.gif', 'Slime': '/assets/mobs/slime.png', 'Witch': '/assets/mobs/witch.png', 'Pillager': '/assets/mobs/pillager.png', 'Wither': '/assets/mobs/boss/wither.png', 'Warden': '/assets/mobs/boss/warden.gif', 'Barrel': '/assets/blocks/barrel.png', 'Bundle': '/assets/items/bundle.png', 'Ender Chest': '/assets/blocks/ender_chest.gif', 'Trapped Chest': '/assets/blocks/trapped_chest.gif', 'Shulker Box': '/assets/blocks/shulker_box.png' }
         },
         skills: { reading: { name: 'Reading', boss: 'Ender Dragon', mobType: 'Standard' }, math: { name: 'Math', boss: 'Wither', mobType: 'Creeper' }, writing: { name: 'Writing', boss: 'Warden', mobType: 'Skeleton' }, cleaning: { name: 'Cleaning', boss: 'Ender Chest', mobType: 'Chest' }, memory: { name: 'Memory', boss: 'Axolotl', mobType: 'Mascot' }, patterns: { name: 'Pattern Recognition', boss: 'Iron Golem', mobType: 'Standard' } }
     },
@@ -76,7 +82,7 @@ export const BADGE_TIERS = [ { level: 20, title: "Wood" }, { level: 40, title: "
 export const SIGHT_WORDS = ["THE", "AND", "YOU", "THAT", "WAS", "FOR", "ON", "ARE", "WITH", "HIS", "THEY", "CAT", "DOG", "BAT", "RUN", "JUMP", "BIG", "RED", "FOX", "SUN", "MOM", "DAD", "PLAY", "SEE", "LOOK", "IT", "IS", "GO", "TO", "MY", "NO", "YES"];
 export const SPELLING_ITEMS = [ { word: "TNT" }, { word: "BED" }, { word: "BOW" }, { word: "MAP" }, { word: "EGG" }, { word: "ICE" }, { word: "AXE" }, { word: "HOE" }, { word: "BOOK" }, { word: "CAKE" }, { word: "BOAT" }, { word: "DOOR" }, { word: "WOOL" }, { word: "SAND" }, { word: "DIRT" }, { word: "MILK" } ];
 export const HOMOPHONES = { "SEE": ["SEA", "C"], "TO": ["TWO", "TOO", "2"], "FOR": ["FOUR", "4"], "SUN": ["SON"], "RED": ["READ"], "NO": ["KNOW"], "ARE": ["R", "OUR"], "YOU": ["U", "EWE"], "EYE": ["I"], "BEE": ["BE"], "ONE": ["WON", "1"] };
-export const MOB_KEYS = Object.keys(THEME_CONFIG.minecraft.assets.mobs).filter(k => !['Ender Dragon', 'Chest', 'Axolotl'].includes(k));
+export const MOB_KEYS = Object.keys(THEME_CONFIG.minecraft.assets.mobs).filter(k => !['Ender Dragon', 'Chest', 'Axolotl', 'Wither', 'Warden', 'Trapped Chest', 'Barrel', 'Bundle', 'Shulker Box', 'Ender Chest'].includes(k));
 
 export const SKILL_DATA = [
     { id: 'reading', name: 'Reading', class: 'Reading', fantasyName: 'Enchanting Table', actionName: 'Enchant!', taskDescription: "Read words into the microphone!", img: BASE_ASSETS.skillIcons['Reading'], colorStyle: { background: 'linear-gradient(to bottom, #7e22ce, #3730a3)' }, accent: 'text-purple-400', boss: 'Ender Dragon', hasChallenge: true, challengeType: 'reading', mobOffset: 0 },
