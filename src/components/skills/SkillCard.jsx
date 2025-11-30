@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
-import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, MINIBOSS_MOBS, DIFFICULTY_IMAGES } from '../../constants/gameData';
+import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, MINIBOSS_MOBS, DIFFICULTY_IMAGES, DIFFICULTY_CONTENT } from '../../constants/gameData';
 
 const PRESTIGE_LEVEL_THRESHOLD = 20;
 
@@ -26,7 +26,10 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const [litAxolotl, setLitAxolotl] = useState(null);
     const [simonGameActive, setSimonGameActive] = useState(false);
 
-    const hpPercent = 100 - data.xp; 
+    // Calculate HP percentage based on mobHealth/mobMaxHealth for HP bar display
+    const mobHealth = data.mobHealth || 100;
+    const mobMaxHealth = data.mobMaxHealth || 100;
+    const hpPercent = Math.round((mobHealth / mobMaxHealth) * 100);
     
     let borderClass = 'border-stone-500';
     let levelTextColor = 'text-white';
@@ -95,26 +98,38 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     useEffect(() => { setMathInput(''); }, [challenge]);
     
+    // Memory game config based on difficulty
+    const memoryConfig = DIFFICULTY_CONTENT.memory[difficulty] || DIFFICULTY_CONTENT.memory[1];
+    const memoryPairs = memoryConfig.pairs || 3;
+    const memoryGridCols = memoryConfig.gridCols || 4;
+    
     useEffect(() => {
         if (isBattling && config.id === 'memory') {
-            // Get all mob keys and shuffle to pick 8 random ones
+            // Get all mob keys and shuffle to pick pairs based on difficulty
             const allMobKeys = Object.keys(FRIENDLY_MOBS);
             const shuffledMobs = [...allMobKeys].sort(() => Math.random() - 0.5);
-            const selectedMobs = shuffledMobs.slice(0, 8);
-            // Create pairs from the 8 selected mobs
+            const selectedMobs = shuffledMobs.slice(0, memoryPairs);
+            // Create pairs from the selected mobs
             let deck = [...selectedMobs, ...selectedMobs].sort(() => Math.random() - 0.5);
             setMemoryCards(deck.map((mobKey, i) => ({ id: i, color: mobKey, img: FRIENDLY_MOBS[mobKey] })));
             setFlippedIndices([]); setMatchedPairs([]); setIsProcessingMatch(false); setMismatchShake(false);
         }
-    }, [isBattling, config.id]);
+    }, [isBattling, config.id, memoryPairs]);
 
     useEffect(() => {
         if (damageNumbers.length > prevDamageCount.current) { setIsHit(true); setTimeout(() => setIsHit(false), 400); }
         prevDamageCount.current = damageNumbers.length;
     }, [damageNumbers]);
 
+    // Pattern config based on difficulty
+    const patternConfig = DIFFICULTY_CONTENT.patterns[difficulty] || DIFFICULTY_CONTENT.patterns[1];
+    const axolotlCount = patternConfig.axolotlCount || 2;
+    const shouldResetSequence = patternConfig.resetSequence || false;
+
     // Simon Says initialization and sequence playback
-    const axolotlColors = Object.keys(BASE_ASSETS.axolotls);
+    // Only use the number of axolotls specified by difficulty
+    const allAxolotlColors = Object.keys(BASE_ASSETS.axolotls);
+    const axolotlColors = allAxolotlColors.slice(0, Math.min(axolotlCount, allAxolotlColors.length));
     
     const playSequence = (sequence) => {
         setIsShowingSequence(true);
@@ -158,9 +173,21 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                 new Audio(BASE_ASSETS.audio.match).play().catch(() => {});
                 const newRounds = completedRounds + 1;
                 setCompletedRounds(newRounds);
-                // Add new random axolotl to sequence
-                const nextColor = axolotlColors[Math.floor(Math.random() * axolotlColors.length)];
-                const newSequence = [...simonSequence, nextColor];
+                
+                // For difficulty 7, reset sequence each round instead of building
+                let newSequence;
+                if (shouldResetSequence) {
+                    // Generate completely new sequence of same length + 1
+                    newSequence = [];
+                    for (let i = 0; i < simonSequence.length + 1; i++) {
+                        newSequence.push(axolotlColors[Math.floor(Math.random() * axolotlColors.length)]);
+                    }
+                } else {
+                    // Normal mode: Add new random axolotl to sequence
+                    const nextColor = axolotlColors[Math.floor(Math.random() * axolotlColors.length)];
+                    newSequence = [...simonSequence, nextColor];
+                }
+                
                 setSimonSequence(newSequence);
                 setPlayerIndex(0);
                 setTimeout(() => playSequence(newSequence), 800);
@@ -206,7 +233,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                     new Audio(BASE_ASSETS.audio.match).play().catch(e=>{});
                     const newMatched = [...matchedPairs, memoryCards[newFlipped[0]].color];
                     setMatchedPairs(newMatched); setFlippedIndices([]); setIsProcessingMatch(false);
-                    if (newMatched.length === 8) setTimeout(() => onMathSubmit("WIN"), 500);
+                    // Win when all pairs are matched (use memoryPairs from difficulty config)
+                    if (newMatched.length === memoryPairs) setTimeout(() => onMathSubmit("WIN"), 500);
                 } else {
                     new Audio(BASE_ASSETS.audio.mismatch).play().catch(e=>{});
                     setMismatchShake(true);
@@ -240,7 +268,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                     <div className="flex flex-col h-full animate-in slide-in-from-bottom-10 duration-300">
                         <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>
                         {config.id === 'memory' ? (
-                            <div className="flex-1 grid grid-cols-4 gap-2 bg-black/20 p-2 rounded items-center">
+                            <div className={`flex-1 grid gap-2 bg-black/20 p-2 rounded items-center`} style={{ gridTemplateColumns: `repeat(${memoryGridCols}, 1fr)` }}>
                                 {memoryCards.map((card, index) => {
                                     const isFlipped = flippedIndices.includes(index);
                                     const isMatched = matchedPairs.includes(card.color);
@@ -261,12 +289,14 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                         <div className="text-white text-lg font-bold">
                                             Round: {completedRounds} {isShowingSequence && <span className="text-yellow-400 animate-pulse">Watch!</span>}
                                             {!isShowingSequence && simonGameActive && <span className="text-green-400">Your turn!</span>}
+                                            {shouldResetSequence && <span className="text-purple-400 text-sm ml-2">(New sequence each round!)</span>}
                                         </div>
-                                        {/* Star formation with 5 axolotls */}
+                                        {/* Dynamic axolotl formation based on difficulty */}
                                         <div className="relative w-[240px] h-[240px]">
                                             {axolotlColors.map((color, index) => {
-                                                // Pentagon star positions (72 degrees apart, starting from top)
-                                                const angle = (index * 72 - 90) * (Math.PI / 180);
+                                                // Calculate angle based on number of axolotls (evenly distributed around circle)
+                                                const anglePerAxolotl = 360 / axolotlColors.length;
+                                                const angle = (index * anglePerAxolotl - 90) * (Math.PI / 180);
                                                 const radius = 85;
                                                 const x = 120 + radius * Math.cos(angle) - 40;
                                                 const y = 120 + radius * Math.sin(angle) - 40;
@@ -295,11 +325,21 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                 ) : (
                                     <>
                                         <div className="flex-1 bg-black/40 rounded border-2 border-[#555] flex items-center justify-center mb-3 p-2 relative overflow-hidden w-full">
-                                            {config.challengeType === 'writing' ? <SafeImage src={challenge?.img} className="w-16 h-16 object-contain animate-bob" /> : <span className="text-4xl text-white font-bold tracking-wider">{challenge?.question.replace('Write: ', '')}</span>}
+                                            {config.challengeType === 'writing' ? (
+                                                // Display single or multiple item images for writing challenge
+                                                <div className="flex items-center justify-center gap-2">
+                                                    {challenge?.images?.map((img, idx) => (
+                                                        <React.Fragment key={idx}>
+                                                            {idx > 0 && <span className="text-3xl text-yellow-400 font-bold">+</span>}
+                                                            <SafeImage src={img} className="w-16 h-16 object-contain animate-bob" />
+                                                        </React.Fragment>
+                                                    ))}
+                                                </div>
+                                            ) : <span className="text-4xl text-white font-bold tracking-wider">{challenge?.question.replace('Write: ', '')}</span>}
                                             {config.challengeType === 'reading' && <div className="absolute bottom-1 text-xs text-gray-400">{spokenText || (isListening ? "Listening..." : "Mic Off")}</div>}
                                         </div>
                                         {config.challengeType === 'math' && <div className="relative w-full flex justify-center"><input type="text" inputMode="numeric" pattern="[0-9]*" value={mathInput} onChange={(e) => { const val = e.target.value.replace(/[^0-9-]/g, ''); setMathInput(val); if (val === String(challenge?.answer)) { onMathSubmit(val); setMathInput(''); } else if (val.length === String(challenge?.answer).length) { setIsWrong(true); new Audio(BASE_ASSETS.audio.mismatch).play().catch(() => {}); onMathSubmit('WRONG'); setTimeout(() => { setIsWrong(false); setMathInput(''); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={String(challenge?.answer).length} disabled={isWrong} /><div className={`flex gap-2 ${isWrong ? 'animate-shake' : ''}`}>{String(challenge?.answer).split('').map((char, i) => (<div key={i} className={`w-10 h-12 border-b-4 flex items-center justify-center text-2xl font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
-                                        {config.challengeType === 'writing' && <div className="relative w-full flex justify-center"><input type="text" value={mathInput} onChange={(e) => { const val = e.target.value.toUpperCase(); setMathInput(val); if (val === challenge?.answer) { onMathSubmit(val); setMathInput(''); } else if (val.length === challenge?.answer.length) { setIsWrong(true); new Audio(BASE_ASSETS.audio.mismatch).play().catch(() => {}); setTimeout(() => { setIsWrong(false); setMathInput(''); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={challenge?.answer.length} disabled={isWrong} /><div className={`flex gap-2 ${isWrong ? 'animate-shake' : ''}`}>{challenge?.answer.split('').map((char, i) => (<div key={i} className={`w-10 h-12 border-b-4 flex items-center justify-center text-2xl font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
+                                        {config.challengeType === 'writing' && <div className="relative w-full flex justify-center"><input type="text" value={mathInput} onChange={(e) => { const val = e.target.value.toUpperCase(); setMathInput(val); if (val === challenge?.answer) { onMathSubmit(val); setMathInput(''); } else if (val.length === challenge?.answer.length) { setIsWrong(true); new Audio(BASE_ASSETS.audio.mismatch).play().catch(() => {}); setTimeout(() => { setIsWrong(false); setMathInput(''); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={challenge?.answer.length} disabled={isWrong} /><div className={`flex gap-2 flex-wrap justify-center ${isWrong ? 'animate-shake' : ''}`}>{challenge?.answer.split('').map((char, i) => (<div key={i} className={`w-8 h-10 border-b-4 flex items-center justify-center text-xl font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
                                         {config.challengeType === 'reading' && <button onClick={onMicClick} className={`w-full text-center p-2 rounded border-2 transition-colors flex items-center justify-center gap-2 ${isListening ? 'border-red-500 bg-red-900/20' : 'border-gray-600 hover:bg-white/10'}`}>{isListening ? <Mic className="inline animate-pulse text-red-500" /> : <><Mic className="inline text-gray-500" /><span className="text-xs uppercase font-bold text-stone-400">Tap to Speak</span></>}</button>}
                                         {config.challengeType === 'cleaning' && <button onClick={() => onMathSubmit(challenge?.answer)} className="w-full bg-green-600 hover:bg-green-500 text-white text-3xl font-bold py-4 rounded shadow-[0_4px_0_#166534] active:shadow-none active:translate-y-[4px] transition-all">Complete!</button>}
                                         {config.challengeType !== 'cleaning' && config.challengeType !== 'writing' && config.challengeType !== 'math' && <button onClick={() => onMathSubmit(challenge?.answer)} className="mt-auto text-xs text-gray-500 underline hover:text-white self-center">Skip / Manual Success</button>}

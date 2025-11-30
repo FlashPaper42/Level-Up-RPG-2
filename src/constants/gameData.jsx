@@ -78,63 +78,62 @@ export const MINIBOSS_MOBS = {
 };
 
 // Difficulty content framework - 7 tiers of content per skill
-// This structure can hold different content for each difficulty level
-// Content will be populated in future updates
+// This structure holds different configurations for each difficulty level
 export const DIFFICULTY_CONTENT = {
     reading: {
-        1: { /* Tier 1 content placeholder */ },
-        2: { /* Tier 2 content placeholder */ },
-        3: { /* Tier 3 content placeholder */ },
-        4: { /* Tier 4 content placeholder */ },
-        5: { /* Tier 5 content placeholder */ },
-        6: { /* Tier 6 content placeholder */ },
-        7: { /* Tier 7 content placeholder */ }
+        1: { charLength: 3 },
+        2: { charLength: 4 },
+        3: { charLength: 5 },
+        4: { charLength: 6 },
+        5: { charLength: 7 },
+        6: { charLength: 8 },
+        7: { useFunnyWords: true }
     },
     math: {
-        1: { /* Tier 1 content placeholder */ },
-        2: { /* Tier 2 content placeholder */ },
-        3: { /* Tier 3 content placeholder */ },
-        4: { /* Tier 4 content placeholder */ },
-        5: { /* Tier 5 content placeholder */ },
-        6: { /* Tier 6 content placeholder */ },
-        7: { /* Tier 7 content placeholder */ }
+        1: { operations: ['+'], range: [1, 9], description: 'Single-digit addition' },
+        2: { operations: ['+'], range: [10, 99], description: 'Double-digit addition' },
+        3: { operations: ['+', '-'], range: [1, 99], description: 'Addition and subtraction' },
+        4: { operations: ['+', '-', '*'], range: [1, 20], multiplyRange: [1, 12], description: 'Add, subtract, multiply' },
+        5: { operations: ['+', '-', '*', '/'], range: [1, 50], divisionRange: [1, 12], description: 'All operations' },
+        6: { pemdas: true, description: 'Order of operations' },
+        7: { algebra: true, description: 'Algebra with variables' }
     },
     writing: {
-        1: { /* Tier 1 content placeholder */ },
-        2: { /* Tier 2 content placeholder */ },
-        3: { /* Tier 3 content placeholder */ },
-        4: { /* Tier 4 content placeholder */ },
-        5: { /* Tier 5 content placeholder */ },
-        6: { /* Tier 6 content placeholder */ },
-        7: { /* Tier 7 content placeholder */ }
+        1: { targetLength: 3 },
+        2: { targetLength: 4 },
+        3: { targetLength: 5 },
+        4: { targetLength: 6 },
+        5: { targetLength: 7 },
+        6: { targetLength: 8 },
+        7: { targetLength: 9 }
     },
     patterns: {
-        1: { /* Tier 1 content placeholder */ },
-        2: { /* Tier 2 content placeholder */ },
-        3: { /* Tier 3 content placeholder */ },
-        4: { /* Tier 4 content placeholder */ },
-        5: { /* Tier 5 content placeholder */ },
-        6: { /* Tier 6 content placeholder */ },
-        7: { /* Tier 7 content placeholder */ }
+        1: { axolotlCount: 2 },
+        2: { axolotlCount: 3 },
+        3: { axolotlCount: 4 },
+        4: { axolotlCount: 5 },
+        5: { axolotlCount: 6 },
+        6: { axolotlCount: 7 },
+        7: { axolotlCount: 8, resetSequence: true }
     },
     memory: {
-        1: { /* Tier 1 content placeholder */ },
-        2: { /* Tier 2 content placeholder */ },
-        3: { /* Tier 3 content placeholder */ },
-        4: { /* Tier 4 content placeholder */ },
-        5: { /* Tier 5 content placeholder */ },
-        6: { /* Tier 6 content placeholder */ },
-        7: { /* Tier 7 content placeholder */ }
+        1: { pairs: 3, gridCols: 3 },
+        2: { pairs: 4, gridCols: 4 },
+        3: { pairs: 5, gridCols: 5 },
+        4: { pairs: 6, gridCols: 4 },
+        5: { pairs: 7, gridCols: 7 },
+        6: { pairs: 8, gridCols: 4 },
+        7: { pairs: 10, gridCols: 5 }
     },
     cleaning: {
         // Cleaning is exempt from difficulty changes
-        1: { /* Exempt */ },
-        2: { /* Exempt */ },
-        3: { /* Exempt */ },
-        4: { /* Exempt */ },
-        5: { /* Exempt */ },
-        6: { /* Exempt */ },
-        7: { /* Exempt */ }
+        1: { exempt: true },
+        2: { exempt: true },
+        3: { exempt: true },
+        4: { exempt: true },
+        5: { exempt: true },
+        6: { exempt: true },
+        7: { exempt: true }
     }
 };
 
@@ -191,7 +190,78 @@ export const THEME_CONFIG = {
 export const THEMES_LIST = [ { id: 'minecraft', name: 'Minecraft', img: '/assets/themes/minecraft.png' }, { id: 'kpop', name: 'K-Pop Demon Hunters', img: '/assets/themes/kpop.png' }, { id: 'pokemon', name: 'Pokemon', img: '/assets/themes/pokemon.png' }, { id: 'spy', name: 'Spy', img: '/assets/themes/spy.png' } ];
 export const BADGE_TIERS = [ { level: 20, title: "Wood" }, { level: 40, title: "Stone" }, { level: 60, title: "Gold" }, { level: 80, title: "Iron" }, { level: 100, title: "Emerald" }, { level: 120, title: "Diamond" }, { level: 140, title: "Netherite" }, { level: 160, title: "Obsidian" } ];
 export const SIGHT_WORDS = ["THE", "AND", "YOU", "THAT", "WAS", "FOR", "ON", "ARE", "WITH", "HIS", "THEY", "CAT", "DOG", "BAT", "RUN", "JUMP", "BIG", "RED", "FOX", "SUN", "MOM", "DAD", "PLAY", "SEE", "LOOK", "IT", "IS", "GO", "TO", "MY", "NO", "YES"];
-export const SPELLING_ITEMS = [ { word: "TNT" }, { word: "BED" }, { word: "BOW" }, { word: "MAP" }, { word: "EGG" }, { word: "ICE" }, { word: "AXE" }, { word: "HOE" }, { word: "BOOK" }, { word: "CAKE" }, { word: "BOAT" }, { word: "DOOR" }, { word: "WOOL" }, { word: "SAND" }, { word: "DIRT" }, { word: "MILK" } ];
+
+// Reading words organized by character length for difficulty scaling
+export const READING_WORDS = {
+    3: ["CAT", "DOG", "SUN", "BAT", "HAT", "RUN", "BIG", "RED", "FOX", "MOM", "DAD", "CUP", "BUS", "PEN", "ANT", "BEE"],
+    4: ["BOOK", "TREE", "FISH", "BALL", "CAKE", "BIRD", "FROG", "PLAY", "JUMP", "MILK", "DOOR", "DUCK", "STAR", "MOON", "RAIN"],
+    5: ["APPLE", "HOUSE", "WATER", "HAPPY", "MUSIC", "TIGER", "BEACH", "PLANT", "CLOUD", "SMILE", "PIZZA", "GRAPE", "HORSE", "SHEEP"],
+    6: ["BANANA", "ORANGE", "PURPLE", "GARDEN", "FRIEND", "SCHOOL", "FLOWER", "RABBIT", "MONKEY", "BUTTON", "CASTLE", "DRAGON", "FOREST"],
+    7: ["DIAMOND", "EMERALD", "CHICKEN", "RAINBOW", "DOLPHIN", "PENGUIN", "GIRAFFE", "PUMPKIN", "VOLCANO", "TORNADO", "MONSTER", "TEACHER"],
+    8: ["SKELETON", "ELEPHANT", "TREASURE", "CROCODILE", "FIREWORK", "BIRTHDAY", "SANDWICH", "DINOSAUR", "COMPUTER", "MUSHROOM", "I LOVE MOM"]
+};
+
+// Humorously long words for difficulty 7 (adult assistance)
+export const FUNNY_LONG_WORDS = [
+    "ANTIDISESTABLISHMENTARIANISM",
+    "PNEUMONOULTRAMICROSCOPICSILICOVOLCANOCONIOSIS",
+    "HIPPOPOTOMONSTROSESQUIPPEDALIOPHOBIA",
+    "SUPERCALIFRAGILISTICEXPIALIDOCIOUS",
+    "FLOCCINAUCINIHILIPILIFICATION",
+    "PSEUDOPSEUDOHYPOPARATHYROIDISM",
+    "INCOMPREHENSIBILITIES",
+    "HONORIFICABILITUDINITY"
+];
+
+// Spelling items with length property for writing skill
+export const SPELLING_ITEMS = [
+    { word: "TNT", length: 3 },
+    { word: "BED", length: 3 },
+    { word: "BOW", length: 3 },
+    { word: "MAP", length: 3 },
+    { word: "EGG", length: 3 },
+    { word: "ICE", length: 3 },
+    { word: "AXE", length: 3 },
+    { word: "HOE", length: 3 },
+    { word: "BOOK", length: 4 },
+    { word: "CAKE", length: 4 },
+    { word: "BOAT", length: 4 },
+    { word: "DOOR", length: 4 },
+    { word: "WOOL", length: 4 },
+    { word: "SAND", length: 4 },
+    { word: "DIRT", length: 4 },
+    { word: "MILK", length: 4 },
+    { word: "APPLE", length: 5 },
+    { word: "SWORD", length: 5 },
+    { word: "TORCH", length: 5 },
+    { word: "ARROW", length: 5 },
+    { word: "CHEST", length: 5 },
+    { word: "STONE", length: 5 },
+    { word: "BUCKET", length: 6 },
+    { word: "POTION", length: 6 },
+    { word: "CARROT", length: 6 },
+    { word: "COOKIE", length: 6 },
+    { word: "HELMET", length: 6 },
+    { word: "SADDLE", length: 6 },
+    { word: "DIAMOND", length: 7 },
+    { word: "EMERALD", length: 7 },
+    { word: "REDSTONE", length: 8 },
+    { word: "OBSIDIAN", length: 8 },
+    { word: "SKELETON", length: 8 },
+    { word: "NETHERITE", length: 9 }
+];
+
+// Writing items organized by length for quick lookup
+export const WRITING_ITEMS_BY_LENGTH = {
+    3: SPELLING_ITEMS.filter(i => i.length === 3),
+    4: SPELLING_ITEMS.filter(i => i.length === 4),
+    5: SPELLING_ITEMS.filter(i => i.length === 5),
+    6: SPELLING_ITEMS.filter(i => i.length === 6),
+    7: SPELLING_ITEMS.filter(i => i.length === 7),
+    8: SPELLING_ITEMS.filter(i => i.length === 8),
+    9: SPELLING_ITEMS.filter(i => i.length >= 9)
+};
+
 export const HOMOPHONES = { "SEE": ["SEA", "C"], "TO": ["TWO", "TOO", "2"], "FOR": ["FOUR", "4"], "SUN": ["SON"], "RED": ["READ"], "NO": ["KNOW"], "ARE": ["R", "OUR"], "YOU": ["U", "EWE"], "EYE": ["I"], "BEE": ["BE"], "ONE": ["WON", "1"] };
 export const MOB_KEYS = Object.keys(HOSTILE_MOBS);
 
