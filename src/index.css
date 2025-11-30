@@ -33,3 +33,22 @@
     scrollbar-width: none;
   }
 }
+
+/* Phantom fly-by event animations */
+@keyframes phantomFlyLeft {
+  0% {
+    left: -120px;
+  }
+  100% {
+    left: 100vw;
+  }
+}
+
+@keyframes phantomFlyRight {
+  0% {
+    left: 100vw;
+  }
+  100% {
+    left: -120px;
+  }
+}

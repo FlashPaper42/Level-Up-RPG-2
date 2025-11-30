@@ -10,6 +10,7 @@ import ResetModal from './components/modals/ResetModal';
 import SettingsDrawer from './components/drawers/SettingsDrawer';
 import MenuDrawer from './components/drawers/MenuDrawer';
 import SkillCard from './components/skills/SkillCard';
+import PhantomEvent from './components/PhantomEvent';
 
 // Utils & Constants
 import { getRandomMob, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getItemsForLength, calculateDamage, calculateMobHealth, calculateXPReward } from './utils/gameUtils';
@@ -371,6 +372,36 @@ const App = () => {
         });
     };
 
+    // Award a free level from phantom click
+    const handlePhantomLevelAward = (skillId) => {
+        if (!skillId) return;
+        
+        // Play level up sound
+        new Audio(BASE_ASSETS.audio.levelup).play().catch(() => {});
+        
+        setSkills(prev => {
+            const current = prev[skillId];
+            return {
+                ...prev,
+                [skillId]: {
+                    ...current,
+                    level: current.level + 1
+                }
+            };
+        });
+        
+        // Show celebration notification
+        const skillConfig = SKILL_DATA.find(s => s.id === skillId);
+        if (skillConfig) {
+            setLootBox({ 
+                level: skills[skillId].level + 1, 
+                skillName: skillConfig.fantasyName, 
+                item: "Phantom Bonus!", 
+                img: '/assets/mobs/hostile/phantom.gif' 
+            });
+        }
+    };
+
     const startBattle = (id) => {
         const skill = SKILL_DATA.find(s => s.id === id); 
         setBattlingSkillId(id);
@@ -536,6 +567,12 @@ const App = () => {
                     </div>
                 </div>
             )}
+            
+            {/* Phantom Fly-By Bonus Event */}
+            <PhantomEvent 
+                battlingSkillId={battlingSkillId} 
+                onAwardLevel={handlePhantomLevelAward} 
+            />
         </div>
     );
 };
