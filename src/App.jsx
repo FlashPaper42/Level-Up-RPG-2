@@ -167,7 +167,7 @@ const App = () => {
                             // Boss defeated at this level - increment difficulty (max 7)
                             const newTier = Math.floor(lvl / 20);
                             if (newDifficulty < 7) {
-                                newDifficulty = Math.min(7, newDifficulty + 1);
+                                newDifficulty++;
                             }
                             // Award badge for this tier if not already earned
                             if (!newBadges.includes(newTier) && newTier <= 7) {
