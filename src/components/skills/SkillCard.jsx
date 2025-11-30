@@ -315,12 +315,16 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     if (isBattlingCenter) {
         return ReactDOM.createPortal(
-            <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div 
+                className="fixed inset-0 z-50 flex items-center justify-center"
+                onClick={onEndBattle}
+            >
                 <div 
                     style={{
                         transform: 'scale(1.5)',
                         transformOrigin: 'center center',
                     }}
+                    onClick={(e) => e.stopPropagation()}
                 >
                     {cardContent}
                 </div>
