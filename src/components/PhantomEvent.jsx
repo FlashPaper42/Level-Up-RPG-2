@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { HOSTILE_MOBS, BASE_ASSETS } from '../constants/gameData';
+import { HOSTILE_MOBS } from '../constants/gameData';
+import { playSuccessfulHit } from '../utils/soundManager';
 
 const PHANTOM_COOLDOWN_KEY = 'phantomEvent_lastSpawn_v1';
 const MIN_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
@@ -74,8 +75,8 @@ const PhantomEvent = ({ battlingSkillId, onAwardLevel }) => {
         
         setClicked(true);
         
-        // Play hit sound (errors logged for debugging)
-        new Audio(BASE_ASSETS.audio.hit[0]).play().catch(err => console.warn('Hit sound failed:', err));
+        // Play successful hit sound
+        playSuccessfulHit();
         
         // Award level if skill is active
         if (battlingSkillId) {

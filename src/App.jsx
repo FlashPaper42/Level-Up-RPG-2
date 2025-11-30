@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { 
     Menu, Sparkles, ChevronLeft, ChevronRight, Gift, Heart
 } from 'lucide-react';
@@ -18,6 +18,12 @@ import {
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
     HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS
 } from './constants/gameData';
+import { 
+    getBGMManager, setSfxVolume, 
+    playActionCardLeft, playActionCardRight, playClick, 
+    playDeath, playFail, playLevelUp, playNotification, playSuccessfulHit,
+    playMobHurt, playMobDeath
+} from './utils/soundManager';
 
 const App = () => {
     const [currentProfile, setCurrentProfile] = useState(() => localStorage.getItem('currentProfile_v1') ? parseInt(localStorage.getItem('currentProfile_v1')) : 1);
@@ -147,8 +153,8 @@ const App = () => {
     const [showLevelRestored, setShowLevelRestored] = useState(false);
     const recognitionRef = useRef(null);
     const [bgmVol, setBgmVol] = useState(0.3);
-    const [sfxVol, setSfxVol] = useState(0.5);
-    const bgmRef = useRef(new Audio(BASE_ASSETS.audio.bgm[0]));
+    const [sfxVol, setSfxVolState] = useState(0.5);
+    const bgmManager = useRef(getBGMManager());
 
     useEffect(() => { 
         const dataToSave = { skills: skills, theme: activeTheme };
@@ -157,11 +163,22 @@ const App = () => {
         localStorage.setItem('heroProfileNames_v1', JSON.stringify(profileNames));
     }, [skills, currentProfile, activeTheme, profileNames]);
 
-    useEffect(() => { bgmRef.current.volume = bgmVol; }, [bgmVol]);
-    const playSfx = (src) => {
-        if (!src) return;
-        new Audio(src).play().catch(() => {});
-    };
+    // Update BGM volume
+    useEffect(() => { 
+        bgmManager.current.setVolume(bgmVol); 
+    }, [bgmVol]);
+    
+    // Update SFX volume in sound manager
+    useEffect(() => {
+        setSfxVolume(sfxVol);
+    }, [sfxVol]);
+    
+    // Start BGM on first user interaction
+    const startBGM = useCallback(() => {
+        if (!bgmManager.current.isPlaying) {
+            bgmManager.current.play();
+        }
+    }, []);
 
     const generateChallenge = (type, diff) => {
         // Math: Use difficulty-based problem generation
@@ -202,8 +219,8 @@ const App = () => {
             setPlayerHealth(h => {
                 const newH = h - 1;
                 if (newH <= 0) {
-                    // Death sequence
-                    new Audio(BASE_ASSETS.audio.faint).play().catch(() => {});
+                    // Death sequence - play UI death sound
+                    playDeath();
                     setShowDeathOverlay(true);
                     
                     // Reduce player level by 1 for the active skill (minimum level 1)
@@ -232,7 +249,8 @@ const App = () => {
                     
                     return 10; // Heal to full health
                 }
-                new Audio(BASE_ASSETS.audio.damage).play().catch(() => {});
+                // Player takes damage but doesn't die - play fail sound
+                playFail();
                 return newH;
             });
             return;
@@ -243,6 +261,7 @@ const App = () => {
         const currentSkillState = skills[skillId];
         const skillDifficulty = currentSkillState.difficulty || 1;
         const playerLevel = currentSkillState.level;
+        const currentMobName = currentSkillState.currentMob;
         
         // Calculate damage using new RPG formulas
         const damage = calculateDamage(playerLevel, skillDifficulty);
@@ -255,12 +274,24 @@ const App = () => {
         const isInstantDefeat = skillConfig.id === 'cleaning' || skillConfig.id === 'memory' || isMiniboss;
         const actualDamage = isInstantDefeat ? currentSkillState.mobHealth : damage;
         
-        // Show damage numbers
+        // Determine if this hit will defeat the mob
+        const willDefeatMob = (currentSkillState.mobHealth - actualDamage) <= 0;
+        
+        // Show damage numbers and play sounds
         if (skillConfig.id !== 'memory') {
             const id = Date.now();
             setDamageNumbers(prev => [...prev, { id, skillId, val: actualDamage, x: Math.random() * 100 - 50, y: Math.random() * 50 - 25 }]);
             setTimeout(() => setDamageNumbers(prev => prev.filter(n => n.id !== id)), 800);
-            new Audio(BASE_ASSETS.audio.hit[0]).play().catch(() => {});
+            
+            // Play mob hurt or death sound based on if mob is defeated
+            if (willDefeatMob) {
+                playMobDeath(currentMobName);
+            } else {
+                playMobHurt(currentMobName);
+            }
+            
+            // Play successful hit UI sound
+            playSuccessfulHit();
         }
         
         setSkills(prev => {
@@ -299,7 +330,7 @@ const App = () => {
                     newRecoveryDifficulty = null;
                     setShowLevelRestored(true);
                     setTimeout(() => setShowLevelRestored(false), 2000);
-                    new Audio(BASE_ASSETS.audio.success).play().catch(() => {});
+                    playNotification();
                 }
                 
                 // Process level ups
@@ -309,7 +340,6 @@ const App = () => {
                     newLevel += levelsGained;
                     newXp = newXp % 100;
                     leveledUp = true;
-                    new Audio(BASE_ASSETS.audio.success).play().catch(() => {});
                     
                     // Check if we just defeated a boss (crossed a level divisible by 20)
                     // Cleaning is exempt from difficulty auto-increment
@@ -335,9 +365,10 @@ const App = () => {
                     }
                     
                     if (leveledUp) {
-                        new Audio(BASE_ASSETS.audio.levelup).play().catch(() => {});
+                        playLevelUp();
                         if (newLevel % 20 === 0) {
                             setLootBox({ level: newLevel, skillName: skillConfig.fantasyName, item: "New Rank!", img: BASE_ASSETS.badges.Wood });
+                            playNotification();
                         }
                     }
                 }
@@ -399,7 +430,7 @@ const App = () => {
         if (!skillId) return;
         
         // Play level up sound
-        new Audio(BASE_ASSETS.audio.levelup).play().catch(() => {});
+        playLevelUp();
         
         setSkills(prev => {
             const current = prev[skillId];
@@ -421,6 +452,7 @@ const App = () => {
                 item: "Phantom Bonus!", 
                 img: HOSTILE_MOBS['Phantom']
             });
+            playNotification();
         }
     };
 
@@ -430,7 +462,8 @@ const App = () => {
         // Use the skill's current difficulty setting
         const currentDiff = skills[id].difficulty || 1;
         setChallengeData(generateChallenge(skill.challengeType, currentDiff));
-        new Audio(BASE_ASSETS.audio.click).play().catch(()=>{});
+        playClick();
+        startBGM(); // Start BGM on first battle (user interaction)
         if (skill.challengeType === 'reading' && window.webkitSpeechRecognition) startVoiceListener(id);
     };
 
@@ -439,12 +472,12 @@ const App = () => {
         setChallengeData(null);
         if (recognitionRef.current) recognitionRef.current.stop();
         setIsListening(false);
-        playSfx('click');
+        playClick();
     };
 
     const handleSwitchProfile = (newId) => {
         if (newId === currentProfile) return;
-        playSfx(BASE_ASSETS.audio.click);
+        playClick();
         const newSkills = loadSkills(newId);
         const newTheme = loadTheme(newId);
         setSkills(newSkills);
@@ -495,10 +528,11 @@ const App = () => {
         if (Math.abs(diff) >= 100) {
             if (diff > 0) {
                 setSelectedIndex(p => p + 1);
+                playActionCardRight();
             } else {
                 setSelectedIndex(p => p - 1);
+                playActionCardLeft();
             }
-            new Audio(BASE_ASSETS.audio.click).play().catch(() => {});
             setIsDragging(false);
         }
     };
@@ -508,18 +542,22 @@ const App = () => {
     const handleCardClick = (offset) => {
         if (battlingSkillId || offset === 0) return;
         setSelectedIndex(p => p + offset);
-        new Audio(BASE_ASSETS.audio.click).play().catch(() => {});
+        if (offset > 0) {
+            playActionCardRight();
+        } else {
+            playActionCardLeft();
+        }
     };
 
     return (
         <div className="min-h-screen overflow-hidden relative flex flex-col bg-cover bg-center bg-no-repeat font-sans text-stone-100" style={containerStyle}>
             <GlobalStyles />
             <div className="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
-            <button onClick={() => setIsSettingsOpen(true)} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', left: '16px' }}><Sparkles size={32} className="text-yellow-400" /></button>
+            <button onClick={() => { setIsSettingsOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', left: '16px' }}><Sparkles size={32} className="text-yellow-400" /></button>
             <div className="absolute z-40 flex gap-2" style={{ top: '16px', left: '80px' }}>{Array(10).fill(0).map((_, i) => (<Heart key={i} size={32} className={`${i < playerHealth ? 'fill-red-600 text-red-600' : 'fill-gray-900 text-gray-700'} drop-shadow-md`} />))}</div>
-            <SettingsDrawer isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={handleReset} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVol} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} />
+            <SettingsDrawer isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={handleReset} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} />
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
-            <button onClick={() => setIsMenuOpen(true)} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
+            <button onClick={() => { setIsMenuOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
             <MenuDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} skills={skills} />
             {/* Backdrop overlay when battling - click to exit */}
             {battlingSkillId && (
@@ -532,8 +570,8 @@ const App = () => {
             <main className="flex-1 relative flex flex-col items-center justify-center w-full">
                 <div className="z-10 relative mb-[-30px] md:mb-[-50px] pointer-events-none opacity-90"><SafeImage src={currentThemeData.assets.logo} fallbackSrc="https://placehold.co/800x300/333/FFD700?text=LOGO+PLACEHOLDER&font=monsterrat" alt="Game Logo" className="w-[480px] md:w-[720px] lg:w-[960px] object-contain drop-shadow-2xl" /></div>
                 <h1 className="text-9xl text-yellow-400 tracking-widest uppercase mb-[80px] z-20 relative drop-shadow-[4px_4px_0_#000]" style={{ textShadow: '6px 6px 0 #000' }}>Level Up!</h1>
-                <button onClick={() => {setSelectedIndex(p => p - 1); new Audio(BASE_ASSETS.audio.click).play();}} className="flex absolute left-4 md:left-8 z-30 bg-stone-800/80 text-white p-3 md:p-4 border-4 border-stone-600 rounded-sm"><ChevronLeft size={32} className="md:w-10 md:h-10" /></button>
-                <button onClick={() => {setSelectedIndex(p => p + 1); new Audio(BASE_ASSETS.audio.click).play();}} className="flex absolute right-4 md:right-8 z-30 bg-stone-800/80 text-white p-3 md:p-4 border-4 border-stone-600 rounded-sm"><ChevronRight size={32} className="md:w-10 md:h-10" /></button>
+                <button onClick={() => {setSelectedIndex(p => p - 1); playActionCardLeft();}} className="flex absolute left-4 md:left-8 z-30 bg-stone-800/80 text-white p-3 md:p-4 border-4 border-stone-600 rounded-sm"><ChevronLeft size={32} className="md:w-10 md:h-10" /></button>
+                <button onClick={() => {setSelectedIndex(p => p + 1); playActionCardRight();}} className="flex absolute right-4 md:right-8 z-30 bg-stone-800/80 text-white p-3 md:p-4 border-4 border-stone-600 rounded-sm"><ChevronRight size={32} className="md:w-10 md:h-10" /></button>
                 <div 
                     className={`relative w-full flex items-center justify-center perspective-1000 h-[650px] mb-12 ${battlingSkillId ? 'z-50' : ''}`}
                     style={{ cursor: battlingSkillId ? 'default' : (isDragging ? 'grabbing' : 'grab') }}
