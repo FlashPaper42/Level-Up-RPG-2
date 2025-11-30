@@ -42,7 +42,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const skillThemeConfig = themeData.skills[config.id] || {};
     const skillName = skillThemeConfig.name || config.name;
     let mobSrc = themeData.assets.mobs[mobName] || themeData.assets.mobs['Zombie'] || BASE_ASSETS.axolotls.Pink;
-    if (config.id === 'memory') mobSrc = themeData.assets.mobs[mobName] || BASE_ASSETS.axolotls.Pink;
+    if (config.id === 'memory') mobSrc = NICE_MOBS[mobName] || themeData.assets.mobs[mobName] || BASE_ASSETS.axolotls.Pink;
 
     const difficultyMultiplier = 1 + (difficulty - 1) * 0.2;
     const displayHP = Math.round(100 * difficultyMultiplier);

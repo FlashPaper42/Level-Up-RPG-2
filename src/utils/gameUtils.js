@@ -1,4 +1,4 @@
-import { MOB_KEYS } from '../constants/gameData';
+import { MOB_KEYS, NICE_MOBS } from '../constants/gameData';
 
 export const getRandomMob = (exclude) => { 
     const pool = MOB_KEYS.filter(m => m !== exclude); 
@@ -13,7 +13,8 @@ export const getMobForSkill = (skillConfig, userSkill) => {
             return standardChests[(userSkill.level - 1) % standardChests.length];
     }
     if (skillConfig.id === 'memory') {
-        return 'Axolotl Mascot';
+        const niceMobKeys = Object.keys(NICE_MOBS);
+        return niceMobKeys[Math.floor(Math.random() * niceMobKeys.length)];
     }
     if (userSkill.level % 20 === 0) return skillConfig.boss;
     return userSkill.currentMob || 'Zombie';
