@@ -103,8 +103,9 @@ class BGMManager {
             .map((_, i) => i)
             .filter(i => i !== this.currentTrackIndex);
         
+        // If only one track or no other tracks available, return current
         if (availableIndices.length === 0) {
-            return 0;
+            return this.currentTrackIndex >= 0 ? this.currentTrackIndex : 0;
         }
         
         const randomIndex = Math.floor(Math.random() * availableIndices.length);
@@ -131,6 +132,7 @@ class BGMManager {
         this.currentTrackIndex = this.getRandomTrack();
         if (this.audio) {
             this.audio.src = this.tracks[this.currentTrackIndex];
+            this.audio.volume = this.volume; // Ensure volume is set for new track
             this.audio.play().catch(() => {});
         }
     }
@@ -226,10 +228,11 @@ export const playSuccessfulHit = () => playUISound('successful_hit');
 /**
  * Get the folder name for a mob
  * @param {string} mobName - Display name of the mob
- * @returns {string|null} - Folder name or null if not found
+ * @returns {string|null} - Folder name or null if not found/mapped
  */
 const getMobFolder = (mobName) => {
-    return MOB_FOLDER_MAP[mobName] || mobName?.toLowerCase().replace(/\s+/g, '');
+    // Only use explicit mappings to avoid loading non-existent files
+    return MOB_FOLDER_MAP[mobName] || null;
 };
 
 /**
