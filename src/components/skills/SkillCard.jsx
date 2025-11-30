@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, MINIBOSS_MOBS, DIFFICULTY_IMAGES, DIFFICULTY_CONTENT } from '../../constants/gameData';
+import { playClick, getSfxVolume } from '../../utils/soundManager';
 
 const PRESTIGE_LEVEL_THRESHOLD = 20;
 
@@ -104,6 +105,13 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     };
 
     const buttonStyle = getButtonStyle();
+    
+    // Helper function to play mismatch sound with proper volume
+    const playMismatch = () => {
+        const audio = new Audio(BASE_ASSETS.audio.mismatch);
+        audio.volume = getSfxVolume();
+        audio.play().catch(() => {});
+    };
 
     useEffect(() => { setMathInput(''); }, [challenge]);
     
@@ -153,7 +161,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         const playNext = () => {
             if (i < sequence.length) {
                 setLitAxolotl(sequence[i]);
-                new Audio(BASE_ASSETS.audio.click).play().catch(() => {});
+                playClick();
                 setTimeout(() => {
                     setLitAxolotl(null);
                     i++;
@@ -179,13 +187,15 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const handleAxolotlClick = (color) => {
         if (isShowingSequence || !simonGameActive) return;
         
-        new Audio(BASE_ASSETS.audio.click).play().catch(() => {});
+        playClick();
         
         if (color === simonSequence[playerIndex]) {
             // Correct click
             if (playerIndex === simonSequence.length - 1) {
                 // Completed the sequence
-                new Audio(BASE_ASSETS.audio.match).play().catch(() => {});
+                const matchAudio = new Audio(BASE_ASSETS.audio.match);
+                matchAudio.volume = getSfxVolume();
+                matchAudio.play().catch(() => {});
                 const newRounds = completedRounds + 1;
                 setCompletedRounds(newRounds);
                 
@@ -212,7 +222,9 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             }
         } else {
             // Wrong click - game over
-            new Audio(BASE_ASSETS.audio.mismatch).play().catch(() => {});
+            const mismatchAudio = new Audio(BASE_ASSETS.audio.mismatch);
+            mismatchAudio.volume = getSfxVolume();
+            mismatchAudio.play().catch(() => {});
             setSimonGameActive(false);
             // Deal damage based on completed rounds (submit WIN with rounds as damage multiplier)
             setTimeout(() => {
@@ -242,19 +254,23 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         if (isProcessingMatch || flippedIndices.includes(index) || matchedPairs.includes(memoryCards[index].color)) return;
         const newFlipped = [...flippedIndices, index];
         setFlippedIndices(newFlipped);
-        new Audio(BASE_ASSETS.audio.click).play().catch(e=>{});
+        playClick();
 
         if (newFlipped.length === 2) {
             setIsProcessingMatch(true);
             setTimeout(() => {
                 if (memoryCards[newFlipped[0]].color === memoryCards[newFlipped[1]].color) {
-                    new Audio(BASE_ASSETS.audio.match).play().catch(e=>{});
+                    const matchAudio = new Audio(BASE_ASSETS.audio.match);
+                    matchAudio.volume = getSfxVolume();
+                    matchAudio.play().catch(() => {});
                     const newMatched = [...matchedPairs, memoryCards[newFlipped[0]].color];
                     setMatchedPairs(newMatched); setFlippedIndices([]); setIsProcessingMatch(false);
                     // Win when all pairs are matched (use memoryPairs from difficulty config)
                     if (newMatched.length === memoryPairs) setTimeout(() => onMathSubmit("WIN"), 500);
                 } else {
-                    new Audio(BASE_ASSETS.audio.mismatch).play().catch(e=>{});
+                    const mismatchAudio = new Audio(BASE_ASSETS.audio.mismatch);
+                    mismatchAudio.volume = getSfxVolume();
+                    mismatchAudio.play().catch(() => {});
                     setMismatchShake(true);
                     setTimeout(() => { setMismatchShake(false); setFlippedIndices([]); setIsProcessingMatch(false); }, 500);
                 }
@@ -356,8 +372,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                             ) : <span className="text-4xl text-white font-bold tracking-wider">{challenge?.question.replace('Write: ', '')}</span>}
                                             {config.challengeType === 'reading' && <div className="absolute bottom-1 text-xs text-gray-400">{spokenText || (isListening ? "Listening..." : "Mic Off")}</div>}
                                         </div>
-                                        {config.challengeType === 'math' && <div className="relative w-full flex justify-center"><input type="text" inputMode="numeric" pattern="[0-9]*" value={mathInput} onChange={(e) => { const val = e.target.value.replace(/[^0-9-]/g, ''); setMathInput(val); if (val === String(challenge?.answer)) { onMathSubmit(val); setMathInput(''); } else if (val.length === String(challenge?.answer).length) { setIsWrong(true); new Audio(BASE_ASSETS.audio.mismatch).play().catch(() => {}); onMathSubmit('WRONG'); setTimeout(() => { setIsWrong(false); setMathInput(''); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={String(challenge?.answer).length} disabled={isWrong} /><div className={`flex gap-2 ${isWrong ? 'animate-shake' : ''}`}>{String(challenge?.answer).split('').map((char, i) => (<div key={i} className={`w-10 h-12 border-b-4 flex items-center justify-center text-2xl font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
-                                        {config.challengeType === 'writing' && <div className="relative w-full flex justify-center"><input type="text" value={mathInput} onChange={(e) => { const val = e.target.value.toUpperCase(); setMathInput(val); if (val === challenge?.answer) { onMathSubmit(val); setMathInput(''); } else if (val.length === challenge?.answer.length) { setIsWrong(true); new Audio(BASE_ASSETS.audio.mismatch).play().catch(() => {}); setTimeout(() => { setIsWrong(false); setMathInput(''); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={challenge?.answer.length} disabled={isWrong} /><div className={`flex gap-1 flex-wrap justify-center ${isWrong ? 'animate-shake' : ''}`}>{challenge?.answer.split('').map((char, i) => (<div key={i} className={`${challenge?.answer.length > 6 ? 'w-7 h-9 text-lg' : 'w-10 h-12 text-2xl'} border-b-4 flex items-center justify-center font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
+                                        {config.challengeType === 'math' && <div className="relative w-full flex justify-center"><input type="text" inputMode="numeric" pattern="[0-9]*" value={mathInput} onChange={(e) => { const val = e.target.value.replace(/[^0-9-]/g, ''); setMathInput(val); if (val === String(challenge?.answer)) { onMathSubmit(val); setMathInput(''); } else if (val.length === String(challenge?.answer).length) { setIsWrong(true); playMismatch(); onMathSubmit('WRONG'); setTimeout(() => { setIsWrong(false); setMathInput(''); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={String(challenge?.answer).length} disabled={isWrong} /><div className={`flex gap-2 ${isWrong ? 'animate-shake' : ''}`}>{String(challenge?.answer).split('').map((char, i) => (<div key={i} className={`w-10 h-12 border-b-4 flex items-center justify-center text-2xl font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
+                                        {config.challengeType === 'writing' && <div className="relative w-full flex justify-center"><input type="text" value={mathInput} onChange={(e) => { const val = e.target.value.toUpperCase(); setMathInput(val); if (val === challenge?.answer) { onMathSubmit(val); setMathInput(''); } else if (val.length === challenge?.answer.length) { setIsWrong(true); playMismatch(); setTimeout(() => { setIsWrong(false); setMathInput(''); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={challenge?.answer.length} disabled={isWrong} /><div className={`flex gap-1 flex-wrap justify-center ${isWrong ? 'animate-shake' : ''}`}>{challenge?.answer.split('').map((char, i) => (<div key={i} className={`${challenge?.answer.length > 6 ? 'w-7 h-9 text-lg' : 'w-10 h-12 text-2xl'} border-b-4 flex items-center justify-center font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
                                         {config.challengeType === 'reading' && <button onClick={onMicClick} className={`w-full text-center p-2 rounded border-2 transition-colors flex items-center justify-center gap-2 ${isListening ? 'border-red-500 bg-red-900/20' : 'border-gray-600 hover:bg-white/10'}`}>{isListening ? <Mic className="inline animate-pulse text-red-500" /> : <><Mic className="inline text-gray-500" /><span className="text-xs uppercase font-bold text-stone-400">Tap to Speak</span></>}</button>}
                                         {config.challengeType === 'cleaning' && <button onClick={() => onMathSubmit(challenge?.answer)} className="w-full bg-green-600 hover:bg-green-500 text-white text-3xl font-bold py-4 rounded shadow-[0_4px_0_#166534] active:shadow-none active:translate-y-[4px] transition-all">Complete!</button>}
                                         {config.challengeType !== 'cleaning' && config.challengeType !== 'writing' && config.challengeType !== 'math' && <button onClick={() => onMathSubmit(challenge?.answer)} className="mt-auto text-xs text-gray-500 underline hover:text-white self-center">Skip / Manual Success</button>}
