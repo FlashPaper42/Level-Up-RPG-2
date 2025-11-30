@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
-import { BASE_ASSETS, NICE_MOBS, SHAPE_COMPONENTS } from '../../constants/gameData';
+import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, SHAPE_COMPONENTS } from '../../constants/gameData';
 
 const PRESTIGE_LEVEL_THRESHOLD = 20;
 
@@ -41,8 +41,9 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     const skillThemeConfig = themeData.skills[config.id] || {};
     const skillName = skillThemeConfig.name || config.name;
-    let mobSrc = themeData.assets.mobs[mobName] || themeData.assets.mobs['Zombie'] || BASE_ASSETS.axolotls.Pink;
-    if (config.id === 'memory') mobSrc = NICE_MOBS[mobName] || themeData.assets.mobs[mobName] || BASE_ASSETS.axolotls.Pink;
+    let mobSrc = HOSTILE_MOBS[mobName] || BOSS_MOBS[mobName] || themeData.assets.mobs[mobName] || BASE_ASSETS.axolotls.Pink;
+    if (config.id === 'memory') mobSrc = FRIENDLY_MOBS[mobName] || themeData.assets.mobs[mobName] || BASE_ASSETS.axolotls.Pink;
+    if (config.id === 'cleaning') mobSrc = CHEST_BLOCKS[mobName] || themeData.assets.mobs[mobName] || BASE_ASSETS.axolotls.Pink;
 
     const difficultyMultiplier = 1 + (difficulty - 1) * 0.2;
     const displayHP = Math.round(100 * difficultyMultiplier);
@@ -83,12 +84,12 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     useEffect(() => {
         if (isBattling && config.id === 'memory') {
             // Get all mob keys and shuffle to pick 8 random ones
-            const allMobKeys = Object.keys(NICE_MOBS);
+            const allMobKeys = Object.keys(FRIENDLY_MOBS);
             const shuffledMobs = [...allMobKeys].sort(() => Math.random() - 0.5);
             const selectedMobs = shuffledMobs.slice(0, 8);
             // Create pairs from the 8 selected mobs
             let deck = [...selectedMobs, ...selectedMobs].sort(() => Math.random() - 0.5);
-            setMemoryCards(deck.map((mobKey, i) => ({ id: i, color: mobKey, img: NICE_MOBS[mobKey] })));
+            setMemoryCards(deck.map((mobKey, i) => ({ id: i, color: mobKey, img: FRIENDLY_MOBS[mobKey] })));
             setFlippedIndices([]); setMatchedPairs([]); setIsProcessingMatch(false); setMismatchShake(false);
         }
     }, [isBattling, config.id]);

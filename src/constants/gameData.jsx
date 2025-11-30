@@ -9,27 +9,56 @@ export const BASE_ASSETS = {
     items: { 'TNT': '/assets/items/tnt.png', 'BED': '/assets/items/bed.png', 'BOW': '/assets/items/bow.png', 'MAP': '/assets/items/map.png', 'EGG': '/assets/items/egg.png', 'ICE': '/assets/blocks/ice.png', 'AXE': '/assets/items/axe.gif', 'HOE': '/assets/items/hoe.gif', 'BOOK': '/assets/items/book.gif', 'CAKE': '/assets/items/cake.png', 'BOAT': '/assets/items/boat.png', 'DOOR': '/assets/blocks/door.png', 'WOOL': '/assets/blocks/wool.png', 'SAND': '/assets/blocks/sand.png', 'DIRT': '/assets/blocks/dirt.png', 'MILK': '/assets/items/milk.png' }
 };
 
-export const NICE_MOBS = {
-    'Allay': '/assets/mobs/nice/allay.gif',
-    'Armadillo': '/assets/mobs/nice/armadillo.png',
-    'Bunny': '/assets/mobs/nice/bunny.png',
-    'Camel': '/assets/mobs/nice/camel.gif',
-    'Cat': '/assets/mobs/nice/cat.png',
-    'Chicken': '/assets/mobs/nice/chicken.png',
-    'Copper Golem': '/assets/mobs/nice/coppergolem.png',
-    'Cow': '/assets/mobs/nice/cow.png',
-    'Glow Squid': '/assets/mobs/nice/glowsquid.gif',
-    'Goat': '/assets/mobs/nice/goat.png',
-    'Horse': '/assets/mobs/nice/horse.png',
-    'Mooshroom': '/assets/mobs/nice/mooshroom.png',
-    'Nautilus': '/assets/mobs/nice/nautilus.gif',
-    'Panda': '/assets/mobs/nice/panda.png',
-    'Pig': '/assets/mobs/nice/pig.png',
-    'Polar Bear': '/assets/mobs/nice/polarbear.png',
-    'Sheep': '/assets/mobs/nice/sheep.png',
-    'Squid': '/assets/mobs/nice/squid.gif',
-    'Turtle': '/assets/mobs/nice/turtle.png',
-    'Wolf': '/assets/mobs/nice/wolf.png'
+export const FRIENDLY_MOBS = {
+    'Allay': '/assets/mobs/friendly/allay.gif',
+    'Armadillo': '/assets/mobs/friendly/armadillo.png',
+    'Bunny': '/assets/mobs/friendly/bunny.png',
+    'Camel': '/assets/mobs/friendly/camel.gif',
+    'Cat': '/assets/mobs/friendly/cat.png',
+    'Chicken': '/assets/mobs/friendly/chicken.png',
+    'Copper Golem': '/assets/mobs/friendly/coppergolem.png',
+    'Cow': '/assets/mobs/friendly/cow.png',
+    'Glow Squid': '/assets/mobs/friendly/glowsquid.gif',
+    'Goat': '/assets/mobs/friendly/goat.png',
+    'Horse': '/assets/mobs/friendly/horse.png',
+    'Mooshroom': '/assets/mobs/friendly/mooshroom.png',
+    'Nautilus': '/assets/mobs/friendly/nautilus.gif',
+    'Panda': '/assets/mobs/friendly/panda.png',
+    'Pig': '/assets/mobs/friendly/pig.png',
+    'Polar Bear': '/assets/mobs/friendly/polarbear.png',
+    'Sheep': '/assets/mobs/friendly/sheep.png',
+    'Squid': '/assets/mobs/friendly/squid.gif',
+    'Turtle': '/assets/mobs/friendly/turtle.png',
+    'Wolf': '/assets/mobs/friendly/wolf.png'
+};
+
+export const HOSTILE_MOBS = {
+    'Zombie': '/assets/mobs/hostile/zombie.png',
+    'Creeper': '/assets/mobs/hostile/creeper.png',
+    'Skeleton': '/assets/mobs/hostile/skeleton.png',
+    'Spider': '/assets/mobs/hostile/spider.png',
+    'Enderman': '/assets/mobs/hostile/enderman.png',
+    'Blaze': '/assets/mobs/hostile/blaze.gif',
+    'Ghast': '/assets/mobs/hostile/ghast.gif',
+    'Slime': '/assets/mobs/hostile/slime.png',
+    'Witch': '/assets/mobs/hostile/witch.png',
+    'Phantom': '/assets/mobs/hostile/phantom.gif',
+    'Piglin': '/assets/mobs/hostile/piglin.png',
+    'Hoglin': '/assets/mobs/hostile/hoglin.png',
+    'Drowned': '/assets/mobs/hostile/drowned.png',
+    'Pillager': '/assets/mobs/hostile/pillager.png',
+    'Evoker': '/assets/mobs/hostile/evoker.png',
+    'Guardian': '/assets/mobs/hostile/guardian.gif',
+    'Magma Cube': '/assets/mobs/hostile/magmacube.png'
+};
+
+export const CHEST_BLOCKS = {
+    'Chest': '/assets/blocks/chest.gif',
+    'Trapped Chest': '/assets/blocks/trapped_chest.gif',
+    'Barrel': '/assets/blocks/barrel.png',
+    'Bundle': '/assets/items/bundle.png',
+    'Shulker Box': '/assets/blocks/shulker_box.png',
+    'Ender Chest': '/assets/blocks/ender_chest.gif'
 };
 
 export const BOSS_MOBS = {
@@ -44,7 +73,7 @@ export const THEME_CONFIG = {
         style: { backgroundImage: `url('/assets/themes/minecraft.png')`, backgroundSize: 'cover', backgroundPosition: 'center' },
         assets: {
             logo: '/assets/themes/minecraft_logo.png', cardBack: '/assets/themes/memorycard.jpg',
-            mobs: { 'Zombie': '/assets/mobs/zombie.png', 'Creeper': '/assets/mobs/creeper.png', 'Skeleton': '/assets/mobs/skeleton.png', 'Ender Dragon': '/assets/mobs/boss/enderdragon.gif', 'Chest': '/assets/blocks/chest.gif', 'Axolotl': '/assets/mobs/axolotl_pink.gif', 'Wither Skeleton': '/assets/mobs/witherskeleton.png', 'Spider': '/assets/mobs/spider.png', 'Phantom': '/assets/mobs/phantom.gif', 'Enderman': '/assets/mobs/enderman.png', 'Blaze': '/assets/mobs/blaze.gif', 'Ghast': '/assets/mobs/ghast.gif', 'Slime': '/assets/mobs/slime.png', 'Witch': '/assets/mobs/witch.png', 'Pillager': '/assets/mobs/pillager.png', 'Wither': '/assets/mobs/boss/wither.png', 'Warden': '/assets/mobs/boss/warden.gif', 'Barrel': '/assets/blocks/barrel.png', 'Bundle': '/assets/items/bundle.png', 'Ender Chest': '/assets/blocks/ender_chest.gif', 'Trapped Chest': '/assets/blocks/trapped_chest.gif', 'Shulker Box': '/assets/blocks/shulker_box.png' }
+            mobs: { 'Zombie': '/assets/mobs/hostile/zombie.png', 'Creeper': '/assets/mobs/hostile/creeper.png', 'Skeleton': '/assets/mobs/hostile/skeleton.png', 'Ender Dragon': '/assets/mobs/boss/enderdragon.gif', 'Axolotl': '/assets/mobs/axolotl/axolotl_pink.gif', 'Spider': '/assets/mobs/hostile/spider.png', 'Phantom': '/assets/mobs/hostile/phantom.gif', 'Enderman': '/assets/mobs/hostile/enderman.png', 'Blaze': '/assets/mobs/hostile/blaze.gif', 'Ghast': '/assets/mobs/hostile/ghast.gif', 'Slime': '/assets/mobs/hostile/slime.png', 'Witch': '/assets/mobs/hostile/witch.png', 'Pillager': '/assets/mobs/hostile/pillager.png', 'Wither': '/assets/mobs/boss/wither.png', 'Warden': '/assets/mobs/boss/warden.gif' }
         },
         skills: { reading: { name: 'Reading', boss: 'Ender Dragon', mobType: 'Standard' }, math: { name: 'Math', boss: 'Wither', mobType: 'Creeper' }, writing: { name: 'Writing', boss: 'Warden', mobType: 'Skeleton' }, cleaning: { name: 'Cleaning', boss: 'Ender Chest', mobType: 'Chest' }, memory: { name: 'Memory', boss: 'Axolotl', mobType: 'Mascot' }, patterns: { name: 'Pattern Recognition', boss: 'Iron Golem', mobType: 'Standard' } }
     },
@@ -82,7 +111,7 @@ export const BADGE_TIERS = [ { level: 20, title: "Wood" }, { level: 40, title: "
 export const SIGHT_WORDS = ["THE", "AND", "YOU", "THAT", "WAS", "FOR", "ON", "ARE", "WITH", "HIS", "THEY", "CAT", "DOG", "BAT", "RUN", "JUMP", "BIG", "RED", "FOX", "SUN", "MOM", "DAD", "PLAY", "SEE", "LOOK", "IT", "IS", "GO", "TO", "MY", "NO", "YES"];
 export const SPELLING_ITEMS = [ { word: "TNT" }, { word: "BED" }, { word: "BOW" }, { word: "MAP" }, { word: "EGG" }, { word: "ICE" }, { word: "AXE" }, { word: "HOE" }, { word: "BOOK" }, { word: "CAKE" }, { word: "BOAT" }, { word: "DOOR" }, { word: "WOOL" }, { word: "SAND" }, { word: "DIRT" }, { word: "MILK" } ];
 export const HOMOPHONES = { "SEE": ["SEA", "C"], "TO": ["TWO", "TOO", "2"], "FOR": ["FOUR", "4"], "SUN": ["SON"], "RED": ["READ"], "NO": ["KNOW"], "ARE": ["R", "OUR"], "YOU": ["U", "EWE"], "EYE": ["I"], "BEE": ["BE"], "ONE": ["WON", "1"] };
-export const MOB_KEYS = Object.keys(THEME_CONFIG.minecraft.assets.mobs).filter(k => !['Ender Dragon', 'Chest', 'Axolotl', 'Wither', 'Warden', 'Trapped Chest', 'Barrel', 'Bundle', 'Shulker Box', 'Ender Chest'].includes(k));
+export const MOB_KEYS = Object.keys(HOSTILE_MOBS);
 
 export const SKILL_DATA = [
     { id: 'reading', name: 'Reading', class: 'Reading', fantasyName: 'Enchanting Table', actionName: 'Enchant!', taskDescription: "Read words into the microphone!", img: BASE_ASSETS.skillIcons['Reading'], colorStyle: { background: 'linear-gradient(to bottom, #7e22ce, #3730a3)' }, accent: 'text-purple-400', boss: 'Ender Dragon', hasChallenge: true, challengeType: 'reading', mobOffset: 0 },

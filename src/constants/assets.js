@@ -1,9 +1,14 @@
+// Note: This file contains generic placeholder paths.
+// For actual game assets, use constants from gameData.jsx:
+// - HOSTILE_MOBS for hostile mob assets (/assets/mobs/hostile/)
+// - FRIENDLY_MOBS for friendly mob assets (/assets/mobs/friendly/)
+// - CHEST_BLOCKS for chest-related assets (/assets/blocks/)
+// - BOSS_MOBS for boss mob assets (/assets/mobs/boss/)
+// - BASE_ASSETS.axolotls for axolotl variants (/assets/mobs/axolotl/)
+
 const assets = {
   mobs: {
-    goblin: 'assets/mobs/goblin.png',
-    orc: 'assets/mobs/orc.png',
-    dragon: 'assets/mobs/dragon.png',
-    // Add more mob paths here
+    // Placeholder paths - use HOSTILE_MOBS, FRIENDLY_MOBS, BOSS_MOBS from gameData.jsx
   },
   items: {
     healthPotion: 'assets/items/health_potion.png',
