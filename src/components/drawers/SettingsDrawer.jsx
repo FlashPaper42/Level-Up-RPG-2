@@ -63,7 +63,7 @@ const SettingsDrawer = ({ isOpen, activeTheme, setActiveTheme, onReset, bgmVol, 
             
             <div className="pt-6 border-t-2 border-slate-700">
                 <button onClick={onReset} className="w-full bg-red-950/50 hover:bg-red-900/80 text-red-400 p-3 rounded-lg border border-red-900/50 hover:border-red-500 font-bold text-lg flex items-center justify-center gap-3 transition-all">
-                    <Trash2 size={20} /> DELETE CURRENT FILE
+                    <Trash2 size={20} /> DELETE PROFILE PROGRESS
                 </button>
             </div>
         </div>

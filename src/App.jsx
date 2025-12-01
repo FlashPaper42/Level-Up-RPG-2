@@ -615,6 +615,8 @@ const App = () => {
         if (currentProfile === 1) localStorage.removeItem('heroSkills_v23');
         // Clear parent status for current profile
         setParentStatus(prev => ({ ...prev, [currentProfile]: false }));
+        // Reset profile name to default
+        setProfileNames(prev => ({ ...prev, [currentProfile]: `Player ${currentProfile}` }));
         window.location.reload();
     };
 
