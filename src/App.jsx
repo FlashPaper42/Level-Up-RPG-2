@@ -585,6 +585,8 @@ const App = () => {
     const handleReset = () => {
         localStorage.removeItem(getStorageKey(currentProfile));
         if (currentProfile === 1) localStorage.removeItem('heroSkills_v23');
+        // Clear parent status for current profile
+        setParentStatus(prev => ({ ...prev, [currentProfile]: false }));
         window.location.reload();
     };
 

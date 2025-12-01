@@ -208,21 +208,21 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename, isParent,
                     </div>
                     
                     {/* Profile identifiers - horizontal layout */}
-                    <div className="w-1/3 flex flex-col justify-center items-center px-3 border-r-2 border-white/20">
+                    <div className="w-1/2 flex flex-col justify-center items-center px-3 border-r-2 border-white/20">
                         {isEditing ? (
                             <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-                                <input type="text" value={tempName} onChange={e => setTempName(e.target.value)} className="bg-black text-white w-full text-lg font-bold p-0.5 rounded border border-yellow-500 outline-none uppercase" autoFocus />
-                                <button onClick={(e) => { e.stopPropagation(); onRename(id, tempName); setIsEditing(false); }} className="text-green-400 hover:text-green-300"><Check size={16} /></button>
+                                <input type="text" value={tempName} onChange={e => setTempName(e.target.value)} className="bg-black text-white w-full text-2xl font-bold p-0.5 rounded border border-yellow-500 outline-none uppercase" autoFocus />
+                                <button onClick={(e) => { e.stopPropagation(); onRename(id, tempName); setIsEditing(false); }} className="text-green-400 hover:text-green-300"><Check size={24} /></button>
                             </div>
                         ) : (
-                            <div className="bg-black/50 rounded-lg px-3 py-2 border border-white/10 backdrop-blur-sm">
+                            <div className="bg-black/50 rounded-lg px-5 py-3 border border-white/10 backdrop-blur-sm">
                                 <div className="group/name flex items-center justify-center gap-2 flex-wrap">
-                                    <span className="text-slate-300 text-sm font-bold">P{id},</span>
-                                    <h3 className={`text-lg font-bold uppercase truncate leading-none ${isCurrent ? 'text-yellow-100 drop-shadow-md' : 'text-white'}`} style={{ fontFamily: 'sans-serif', textShadow: '2px 2px 0 #000' }}>{name},</h3>
-                                    <Heart className={`fill-red-600 text-red-800 ${isCurrent ? 'animate-pulse' : ''}`} size={16} />
-                                    <span className="text-sm text-slate-400 uppercase tracking-wider">, LV.</span>
-                                    <span className="text-lg font-bold text-white leading-none">{stats ? stats.totalLevel : 0}</span>
-                                    {isCurrent && <Pencil size={12} className="text-slate-400 group-hover/name:text-yellow-400 transition-colors ml-1" onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} />}
+                                    <span className="text-slate-300 text-lg font-bold">P{id},</span>
+                                    <h3 className={`text-2xl font-bold uppercase truncate leading-none ${isCurrent ? 'text-yellow-100 drop-shadow-md' : 'text-white'}`} style={{ fontFamily: 'sans-serif', textShadow: '2px 2px 0 #000' }}>{name},</h3>
+                                    <Heart className={`fill-red-600 text-red-800 ${isCurrent ? 'animate-pulse' : ''}`} size={24} />
+                                    <span className="text-lg text-slate-400 uppercase tracking-wider">LV.</span>
+                                    <span className="text-2xl font-bold text-white leading-none">{stats ? stats.totalLevel : 0}</span>
+                                    {isCurrent && <Pencil size={18} className="text-slate-400 group-hover/name:text-yellow-400 transition-colors ml-1" onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} />}
                                 </div>
                             </div>
                         )}
