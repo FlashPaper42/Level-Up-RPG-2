@@ -4,7 +4,7 @@ import ProfileCard from '../profile/ProfileCard';
 import SafeImage from '../ui/SafeImage';
 import { THEMES_LIST } from '../../constants/gameData';
 
-const SettingsDrawer = ({ isOpen, activeTheme, setActiveTheme, onReset, bgmVol, setBgmVol, sfxVol, setSfxVol, currentProfile, onSwitchProfile, profileNames, onRenameProfile, getProfileStats }) => (
+const SettingsDrawer = ({ isOpen, activeTheme, setActiveTheme, onReset, bgmVol, setBgmVol, sfxVol, setSfxVol, currentProfile, onSwitchProfile, profileNames, onRenameProfile, getProfileStats, parentStatus, onParentVerified }) => (
     <div 
         className={`fixed h-full w-[85%] md:w-[60%] bg-[#0f172a]/95 backdrop-blur-xl z-50 border-r-4 border-slate-700 shadow-2xl transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
         style={{ top: 0, left: 0 }}
@@ -17,7 +17,7 @@ const SettingsDrawer = ({ isOpen, activeTheme, setActiveTheme, onReset, bgmVol, 
             <div>
                 <h3 className="text-xl text-blue-300 mb-5 font-bold flex items-center gap-3 uppercase tracking-wider"><Users size={20} /> Select File</h3>
                 <div className="flex flex-col gap-4">
-                    {[1, 2, 3].map(id => (<ProfileCard key={id} id={id} name={profileNames[id]} stats={getProfileStats(id)} isCurrent={currentProfile === id} onSwitch={onSwitchProfile} onRename={onRenameProfile} />))}
+                    {[1, 2, 3].map(id => (<ProfileCard key={id} id={id} name={profileNames[id]} stats={getProfileStats(id)} isCurrent={currentProfile === id} onSwitch={onSwitchProfile} onRename={onRenameProfile} isParent={parentStatus && parentStatus[id]} onParentVerified={onParentVerified} />))}
                 </div>
             </div>
             

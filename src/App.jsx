@@ -28,6 +28,7 @@ import {
 const App = () => {
     const [currentProfile, setCurrentProfile] = useState(() => localStorage.getItem('currentProfile_v1') ? parseInt(localStorage.getItem('currentProfile_v1')) : 1);
     const [profileNames, setProfileNames] = useState(() => localStorage.getItem('heroProfileNames_v1') ? JSON.parse(localStorage.getItem('heroProfileNames_v1')) : { 1: "Player 1", 2: "Player 2", 3: "Player 3" });
+    const [parentStatus, setParentStatus] = useState(() => localStorage.getItem('heroParentStatus_v1') ? JSON.parse(localStorage.getItem('heroParentStatus_v1')) : { 1: false, 2: false, 3: false });
     const [playerHealth, setPlayerHealth] = useState(10);
     
     const getStorageKey = (profileId) => `heroSkills_v23_p${profileId}`;
@@ -163,7 +164,8 @@ const App = () => {
         localStorage.setItem(getStorageKey(currentProfile), JSON.stringify(dataToSave)); 
         localStorage.setItem('currentProfile_v1', currentProfile);
         localStorage.setItem('heroProfileNames_v1', JSON.stringify(profileNames));
-    }, [skills, currentProfile, activeTheme, profileNames]);
+        localStorage.setItem('heroParentStatus_v1', JSON.stringify(parentStatus));
+    }, [skills, currentProfile, activeTheme, profileNames, parentStatus]);
 
     // Update BGM volume
     useEffect(() => { 
@@ -501,6 +503,30 @@ const App = () => {
     const handleRenameProfile = (id, newName) => {
         setProfileNames(prev => ({ ...prev, [id]: newName }));
     };
+    const handleParentVerified = (profileId, verified) => {
+        setParentStatus(prev => ({ ...prev, [profileId]: verified }));
+        
+        if (verified && profileId === currentProfile) {
+            // When parent verification passes, set all skills to level 200 with all badges
+            setSkills(prev => {
+                const updated = {};
+                Object.keys(prev).forEach(skillId => {
+                    const current = prev[skillId];
+                    const parentLevel = 200;
+                    const parentDifficulty = 7; // Max difficulty unlocked
+                    updated[skillId] = {
+                        ...current,
+                        level: parentLevel,
+                        difficulty: parentDifficulty,
+                        earnedBadges: [1, 2, 3, 4, 5, 6, 7], // All badge tiers awarded
+                        mobHealth: calculateMobHealth(parentDifficulty, parentLevel),
+                        mobMaxHealth: calculateMobHealth(parentDifficulty, parentLevel)
+                    };
+                });
+                return updated;
+            });
+        }
+    };
     const handleReset = () => {
         localStorage.removeItem(getStorageKey(currentProfile));
         if (currentProfile === 1) localStorage.removeItem('heroSkills_v23');
@@ -590,7 +616,7 @@ const App = () => {
                     onClick={() => { setIsSettingsOpen(false); playClick(); }}
                 />
             )}
-            <SettingsDrawer isOpen={isSettingsOpen} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={handleReset} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} />
+            <SettingsDrawer isOpen={isSettingsOpen} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={handleReset} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} parentStatus={parentStatus} onParentVerified={handleParentVerified} />
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
             <button onClick={() => { setIsSettingsOpen(false); setIsMenuOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
             {/* Achievement drawer overlay - click to close */}
