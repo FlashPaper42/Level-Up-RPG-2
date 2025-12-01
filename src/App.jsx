@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-    Menu, Sparkles, ChevronLeft, ChevronRight, Gift, Heart
+    Menu, Sparkles, ChevronLeft, ChevronRight, Gift
 } from 'lucide-react';
 
 // Modules
 import GlobalStyles from './components/ui/GlobalStyles';
 import SafeImage from './components/ui/SafeImage';
+import PixelHeart from './components/ui/PixelHeart';
 import ResetModal from './components/modals/ResetModal';
 import SettingsDrawer from './components/drawers/SettingsDrawer';
 import MenuDrawer from './components/drawers/MenuDrawer';
@@ -705,7 +706,7 @@ const App = () => {
             <GlobalStyles />
             <div className="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
             <button onClick={() => { setIsMenuOpen(false); setIsSettingsOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', left: '16px' }}><Sparkles size={32} className="text-yellow-400" /></button>
-            <div className="absolute z-40 flex gap-2" style={{ top: '16px', left: '80px' }}>{Array(10).fill(0).map((_, i) => (<Heart key={i} size={32} className={`${i < playerHealth ? 'fill-red-600 text-red-600' : 'fill-gray-900 text-gray-700'} drop-shadow-md`} />))}</div>
+            <div className="absolute z-40 flex gap-2" style={{ top: '16px', left: '80px' }}>{Array(10).fill(0).map((_, i) => (<PixelHeart key={i} size={32} filled={i < playerHealth} />))}</div>
             {/* Settings drawer overlay - click to close */}
             {isSettingsOpen && (
                 <div
