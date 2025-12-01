@@ -13,7 +13,7 @@ import SkillCard from './components/skills/SkillCard';
 import PhantomEvent from './components/PhantomEvent';
 
 // Utils & Constants
-import { getRandomMob, getRandomFriendlyMob, getRandomAxolotl, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getItemsForLength, calculateDamage, calculateMobHealth, calculateXPReward } from './utils/gameUtils';
+import { getRandomMob, getRandomFriendlyMob, getRandomAxolotl, getRandomMiniboss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getItemsForLength, calculateDamage, calculateMobHealth, calculateXPReward } from './utils/gameUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
     HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS
@@ -48,7 +48,8 @@ const App = () => {
                 lostLevel: false, // True if player died and lost a level
                 recoveryDifficulty: null, // Difficulty to suggest for recovery
                 memoryMob: skill.id === 'memory' ? getRandomFriendlyMob() : null, // Stable mob for Memory card display
-                patternMob: skill.id === 'patterns' ? getRandomAxolotl() : null // Stable axolotl for Patterns card display
+                patternMob: skill.id === 'patterns' ? getRandomAxolotl() : null, // Stable axolotl for Patterns card display
+                currentMiniboss: getRandomMiniboss() // Stable miniboss for miniboss encounters
             }; 
         });
         let saved = localStorage.getItem(getStorageKey(profileId));
@@ -314,6 +315,7 @@ const App = () => {
             let newRecoveryDifficulty = current.recoveryDifficulty;
             let newMemoryMob = current.memoryMob;
             let newPatternMob = current.patternMob;
+            let newMiniboss = current.currentMiniboss;
             
             // Mob defeated!
             if (newMobHealth <= 0) {
@@ -327,6 +329,11 @@ const App = () => {
                 }
                 if (skillConfig.id === 'patterns') {
                     newPatternMob = getRandomAxolotl();
+                }
+                
+                // Update miniboss when defeating a miniboss encounter
+                if (getEncounterType(current.level) === 'miniboss') {
+                    newMiniboss = getRandomMiniboss();
                 }
                 
                 // Check for level restoration first
@@ -401,7 +408,8 @@ const App = () => {
                     lostLevel: newLostLevel,
                     recoveryDifficulty: newRecoveryDifficulty,
                     memoryMob: newMemoryMob,
-                    patternMob: newPatternMob
+                    patternMob: newPatternMob,
+                    currentMiniboss: newMiniboss
                 }
             };
         });
@@ -628,7 +636,7 @@ const App = () => {
                                 onMathSubmit={(val) => handleSuccessHit(item.id, val)} onMicClick={() => startVoiceListener(item.id)}
                                 difficulty={skills[item.id].difficulty || 1} 
                                 setDifficulty={(newDiff) => setSkillDifficulty(item.id, newDiff)} 
-                                unlockedDifficulty={Math.floor(skills[item.id].level / 20) + 1}
+                                unlockedDifficulty={Math.min(7, Math.floor(skills[item.id].level / 20) + 1)}
                             />
                         </div>
                         );

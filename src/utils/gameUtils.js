@@ -56,8 +56,8 @@ export const getMobForSkill = (skillConfig, userSkill) => {
     }
     
     if (encounterType === 'miniboss') {
-        // Return a random miniboss
-        return getRandomMiniboss();
+        // Return stored miniboss to prevent random changes on re-render
+        return userSkill.currentMiniboss || getRandomMiniboss();
     }
     
     // Normal hostile mob
