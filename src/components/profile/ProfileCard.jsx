@@ -148,10 +148,9 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename, isParent,
 
     const handleParentCheckboxChange = (e) => {
         e.stopPropagation();
+        // Only allow checking the box to become a parent (not unchecking)
         if (!isParent) {
             setShowParentalModal(true);
-        } else if (onParentVerified) {
-            onParentVerified(id, false);
         }
     };
 
@@ -188,17 +187,24 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename, isParent,
                 {themeBg && <div className="absolute inset-0"><SafeImage src={themeBg} className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black/60"></div></div>}
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] opacity-10 pointer-events-none"></div>
                 <div className="relative flex h-full p-2 gap-2 z-10">
-                    {/* Parent checkbox on the left */}
+                    {/* Parent indicator on the left - checkbox if not verified, crown if verified */}
                     <div className="flex flex-col justify-center items-center px-2 border-r-2 border-white/20">
-                        <label className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => e.stopPropagation()}>
-                            <input
-                                type="checkbox"
-                                checked={isParent}
-                                onChange={handleParentCheckboxChange}
-                                className="w-4 h-4 accent-yellow-400 cursor-pointer"
-                            />
-                            <span className="text-[10px] text-slate-400 font-bold uppercase">Parent?</span>
-                        </label>
+                        {isParent ? (
+                            <div className="flex flex-col items-center gap-1">
+                                <Crown className="fill-yellow-400 text-yellow-600" size={24} />
+                                <span className="text-[10px] text-yellow-400 font-bold uppercase">Parent</span>
+                            </div>
+                        ) : (
+                            <label className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                <input
+                                    type="checkbox"
+                                    checked={isParent}
+                                    onChange={handleParentCheckboxChange}
+                                    className="w-4 h-4 accent-yellow-400 cursor-pointer"
+                                />
+                                <span className="text-[10px] text-slate-400 font-bold uppercase">Parent?</span>
+                            </label>
+                        )}
                     </div>
                     
                     {/* Profile identifiers - horizontal layout */}
@@ -213,11 +219,7 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename, isParent,
                                 <div className="group/name flex items-center justify-center gap-2 flex-wrap">
                                     <span className="text-slate-300 text-sm font-bold">P{id},</span>
                                     <h3 className={`text-lg font-bold uppercase truncate leading-none ${isCurrent ? 'text-yellow-100 drop-shadow-md' : 'text-white'}`} style={{ fontFamily: 'sans-serif', textShadow: '2px 2px 0 #000' }}>{name},</h3>
-                                    {isParent ? (
-                                        <Crown className={`fill-yellow-400 text-yellow-600 ${isCurrent ? 'animate-pulse' : ''}`} size={16} />
-                                    ) : (
-                                        <Heart className={`fill-red-600 text-red-800 ${isCurrent ? 'animate-pulse' : ''}`} size={16} />
-                                    )}
+                                    <Heart className={`fill-red-600 text-red-800 ${isCurrent ? 'animate-pulse' : ''}`} size={16} />
                                     <span className="text-sm text-slate-400 uppercase tracking-wider">, LV.</span>
                                     <span className="text-lg font-bold text-white leading-none">{stats ? stats.totalLevel : 0}</span>
                                     {isCurrent && <Pencil size={12} className="text-slate-400 group-hover/name:text-yellow-400 transition-colors ml-1" onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} />}

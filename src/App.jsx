@@ -116,9 +116,23 @@ const App = () => {
         return 'minecraft';
     };
     
-    const getProfileStats = (id) => {
+    const getProfileStats = (id, liveSkills = null) => {
         const initial = {};
         SKILL_DATA.forEach(skill => { initial[skill.id] = { level: 1 }; });
+        
+        // Use live skills if provided (for current profile with pending state changes)
+        if (liveSkills) {
+            let totalLevel = 0;
+            let highestLevel = 0;
+            Object.values(liveSkills).forEach(s => {
+                if (s && typeof s.level === 'number') {
+                    totalLevel += s.level;
+                    if (s.level > highestLevel) highestLevel = s.level;
+                }
+            });
+            return { totalLevel, highestLevel, skills: liveSkills, theme: activeTheme };
+        }
+        
         const key = getStorageKey(id);
         let saved = localStorage.getItem(key);
         if (!saved && id === 1) saved = localStorage.getItem('heroSkills_v23');
@@ -619,7 +633,7 @@ const App = () => {
                     onClick={() => { setIsSettingsOpen(false); playClick(); }}
                 />
             )}
-            <SettingsDrawer isOpen={isSettingsOpen} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={handleReset} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} parentStatus={parentStatus} onParentVerified={handleParentVerified} />
+            <SettingsDrawer isOpen={isSettingsOpen} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={handleReset} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} parentStatus={parentStatus} onParentVerified={handleParentVerified} currentSkills={skills} />
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
             <button onClick={() => { setIsSettingsOpen(false); setIsMenuOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
             {/* Achievement drawer overlay - click to close */}
