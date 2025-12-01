@@ -102,6 +102,21 @@ const GlobalStyles = () => (
     .border-emerald { border-color: #50C878 !important; }
     .border-diamond { border-color: #00CED1 !important; }
     .border-netherite { border-color: #4A4A4A !important; }
+    
+    /* Rainbow ring animation for verified parents */
+    @keyframes rainbow-ring {
+        0% { box-shadow: 0 0 0 4px #ff0000, 0 0 15px #ff0000; }
+        14% { box-shadow: 0 0 0 4px #ff7f00, 0 0 15px #ff7f00; }
+        28% { box-shadow: 0 0 0 4px #ffff00, 0 0 15px #ffff00; }
+        42% { box-shadow: 0 0 0 4px #00ff00, 0 0 15px #00ff00; }
+        57% { box-shadow: 0 0 0 4px #0000ff, 0 0 15px #0000ff; }
+        71% { box-shadow: 0 0 0 4px #4b0082, 0 0 15px #4b0082; }
+        85% { box-shadow: 0 0 0 4px #8f00ff, 0 0 15px #8f00ff; }
+        100% { box-shadow: 0 0 0 4px #ff0000, 0 0 15px #ff0000; }
+    }
+    .ring-rainbow {
+        animation: rainbow-ring 3s linear infinite;
+    }
   `}</style>
 );
 

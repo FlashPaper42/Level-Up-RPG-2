@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { Pencil, Check, Heart, Save, X } from 'lucide-react';
+import { Pencil, Check, Heart, Crown, Save, X } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { THEMES_LIST, SKILL_DATA } from '../../constants/gameData';
 
@@ -124,10 +124,9 @@ const ParentalVerificationModal = ({ isOpen, onClose, onVerified }) => {
     );
 };
 
-const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename }) => {
+const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename, isParent, onParentVerified }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [tempName, setTempName] = useState(name);
-    const [isParent, setIsParent] = useState(false);
     const [showParentalModal, setShowParentalModal] = useState(false);
     
     useEffect(() => { if (!isCurrent) setIsEditing(false); }, [isCurrent]);
@@ -149,37 +148,63 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename }) => {
 
     const handleParentCheckboxChange = (e) => {
         e.stopPropagation();
+        // Only allow checking the box to become a parent (not unchecking)
         if (!isParent) {
             setShowParentalModal(true);
-        } else {
-            setIsParent(false);
         }
     };
 
     const handleParentalVerified = () => {
-        setIsParent(true);
+        if (onParentVerified) {
+            onParentVerified(id, true);
+        }
         setShowParentalModal(false);
     };
 
     const carouselItems = [].concat(...Array(10).fill(SKILL_DATA));
 
+    const getProfileCardClasses = () => {
+        const baseClasses = 'relative w-full h-[100px] rounded-xl overflow-hidden transition-all cursor-pointer group select-none';
+        if (isCurrent) {
+            const ringClass = isParent ? 'ring-rainbow' : 'ring-4 ring-yellow-400';
+            return `${baseClasses} ${ringClass} scale-[1.02] z-10`;
+        }
+        return `${baseClasses} hover:scale-[1.01] opacity-70 hover:opacity-100`;
+    };
+
+    const getProfileCardStyles = () => {
+        const baseStyle = { backgroundColor: '#0f172a' };
+        if (isCurrent) {
+            const glowColor = isParent ? '0 0 30px rgba(255, 215, 0, 0.5)' : '0 0 20px rgba(250, 204, 21, 0.3)';
+            return { ...baseStyle, boxShadow: glowColor };
+        }
+        return { ...baseStyle, boxShadow: '0 4px 6px rgba(0,0,0,0.5)' };
+    };
+
     return (
         <>
-            <div onClick={() => !isEditing && onSwitch(id)} className={`relative w-full h-[100px] rounded-xl overflow-hidden transition-all cursor-pointer group select-none ${isCurrent ? 'ring-4 ring-yellow-400 scale-[1.02] z-10' : 'hover:scale-[1.01] opacity-70 hover:opacity-100'}`} style={{ backgroundColor: '#0f172a', boxShadow: isCurrent ? '0 0 20px rgba(250, 204, 21, 0.3)' : '0 4px 6px rgba(0,0,0,0.5)' }}>
+            <div onClick={() => !isEditing && onSwitch(id)} className={getProfileCardClasses()} style={getProfileCardStyles()}>
                 {themeBg && <div className="absolute inset-0"><SafeImage src={themeBg} className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black/60"></div></div>}
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] opacity-10 pointer-events-none"></div>
                 <div className="relative flex h-full p-2 gap-2 z-10">
-                    {/* Parent checkbox on the left */}
+                    {/* Parent indicator on the left - checkbox if not verified, crown if verified */}
                     <div className="flex flex-col justify-center items-center px-2 border-r-2 border-white/20">
-                        <label className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => e.stopPropagation()}>
-                            <input
-                                type="checkbox"
-                                checked={isParent}
-                                onChange={handleParentCheckboxChange}
-                                className="w-4 h-4 accent-yellow-400 cursor-pointer"
-                            />
-                            <span className="text-[10px] text-slate-400 font-bold uppercase">Parent?</span>
-                        </label>
+                        {isParent ? (
+                            <div className="flex flex-col items-center gap-1">
+                                <Crown className="fill-yellow-400 text-yellow-600" size={24} />
+                                <span className="text-[10px] text-yellow-400 font-bold uppercase">Parent</span>
+                            </div>
+                        ) : (
+                            <label className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                <input
+                                    type="checkbox"
+                                    checked={isParent}
+                                    onChange={handleParentCheckboxChange}
+                                    className="w-4 h-4 accent-yellow-400 cursor-pointer"
+                                />
+                                <span className="text-[10px] text-slate-400 font-bold uppercase">Parent?</span>
+                            </label>
+                        )}
                     </div>
                     
                     {/* Profile identifiers - horizontal layout */}

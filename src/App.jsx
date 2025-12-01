@@ -25,9 +25,15 @@ import {
     playMobHurt, playMobDeath
 } from './utils/soundManager';
 
+// Parent verification privilege constants
+const PARENT_PRIVILEGE_LEVEL = 200;
+const PARENT_PRIVILEGE_DIFFICULTY = 7;
+const PARENT_PRIVILEGE_BADGES = [1, 2, 3, 4, 5, 6, 7];
+
 const App = () => {
     const [currentProfile, setCurrentProfile] = useState(() => localStorage.getItem('currentProfile_v1') ? parseInt(localStorage.getItem('currentProfile_v1')) : 1);
     const [profileNames, setProfileNames] = useState(() => localStorage.getItem('heroProfileNames_v1') ? JSON.parse(localStorage.getItem('heroProfileNames_v1')) : { 1: "Player 1", 2: "Player 2", 3: "Player 3" });
+    const [parentStatus, setParentStatus] = useState(() => localStorage.getItem('heroParentStatus_v1') ? JSON.parse(localStorage.getItem('heroParentStatus_v1')) : { 1: false, 2: false, 3: false });
     const [playerHealth, setPlayerHealth] = useState(10);
     
     const getStorageKey = (profileId) => `heroSkills_v23_p${profileId}`;
@@ -110,9 +116,23 @@ const App = () => {
         return 'minecraft';
     };
     
-    const getProfileStats = (id) => {
+    const getProfileStats = (id, liveSkills = null) => {
         const initial = {};
         SKILL_DATA.forEach(skill => { initial[skill.id] = { level: 1 }; });
+        
+        // Use live skills if provided (for current profile with pending state changes)
+        if (liveSkills) {
+            let totalLevel = 0;
+            let highestLevel = 0;
+            Object.values(liveSkills).forEach(s => {
+                if (s && typeof s.level === 'number') {
+                    totalLevel += s.level;
+                    if (s.level > highestLevel) highestLevel = s.level;
+                }
+            });
+            return { totalLevel, highestLevel, skills: liveSkills, theme: activeTheme };
+        }
+        
         const key = getStorageKey(id);
         let saved = localStorage.getItem(key);
         if (!saved && id === 1) saved = localStorage.getItem('heroSkills_v23');
@@ -163,7 +183,8 @@ const App = () => {
         localStorage.setItem(getStorageKey(currentProfile), JSON.stringify(dataToSave)); 
         localStorage.setItem('currentProfile_v1', currentProfile);
         localStorage.setItem('heroProfileNames_v1', JSON.stringify(profileNames));
-    }, [skills, currentProfile, activeTheme, profileNames]);
+        localStorage.setItem('heroParentStatus_v1', JSON.stringify(parentStatus));
+    }, [skills, currentProfile, activeTheme, profileNames, parentStatus]);
 
     // Update BGM volume
     useEffect(() => { 
@@ -515,6 +536,28 @@ const App = () => {
     const handleRenameProfile = (id, newName) => {
         setProfileNames(prev => ({ ...prev, [id]: newName }));
     };
+    const handleParentVerified = (profileId, verified) => {
+        setParentStatus(prev => ({ ...prev, [profileId]: verified }));
+        
+        if (verified && profileId === currentProfile) {
+            // When parent verification passes, apply parent privileges to all skills
+            setSkills(prev => {
+                const updated = {};
+                Object.keys(prev).forEach(skillId => {
+                    const current = prev[skillId];
+                    updated[skillId] = {
+                        ...current,
+                        level: PARENT_PRIVILEGE_LEVEL,
+                        difficulty: PARENT_PRIVILEGE_DIFFICULTY,
+                        earnedBadges: [...PARENT_PRIVILEGE_BADGES],
+                        mobHealth: calculateMobHealth(PARENT_PRIVILEGE_DIFFICULTY, PARENT_PRIVILEGE_LEVEL),
+                        mobMaxHealth: calculateMobHealth(PARENT_PRIVILEGE_DIFFICULTY, PARENT_PRIVILEGE_LEVEL)
+                    };
+                });
+                return updated;
+            });
+        }
+    };
     const handleReset = () => {
         localStorage.removeItem(getStorageKey(currentProfile));
         if (currentProfile === 1) localStorage.removeItem('heroSkills_v23');
@@ -604,7 +647,7 @@ const App = () => {
                     onClick={() => { setIsSettingsOpen(false); playClick(); }}
                 />
             )}
-            <SettingsDrawer isOpen={isSettingsOpen} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={handleReset} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} />
+            <SettingsDrawer isOpen={isSettingsOpen} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={handleReset} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} parentStatus={parentStatus} onParentVerified={handleParentVerified} currentSkills={skills} />
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
             <button onClick={() => { setIsSettingsOpen(false); setIsMenuOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
             {/* Achievement drawer overlay - click to close */}
