@@ -553,12 +553,26 @@ const App = () => {
         <div className="min-h-screen overflow-hidden relative flex flex-col bg-cover bg-center bg-no-repeat font-sans text-stone-100" style={containerStyle}>
             <GlobalStyles />
             <div className="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
-            <button onClick={() => { setIsSettingsOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', left: '16px' }}><Sparkles size={32} className="text-yellow-400" /></button>
+            <button onClick={() => { setIsMenuOpen(false); setIsSettingsOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', left: '16px' }}><Sparkles size={32} className="text-yellow-400" /></button>
             <div className="absolute z-40 flex gap-2" style={{ top: '16px', left: '80px' }}>{Array(10).fill(0).map((_, i) => (<Heart key={i} size={32} className={`${i < playerHealth ? 'fill-red-600 text-red-600' : 'fill-gray-900 text-gray-700'} drop-shadow-md`} />))}</div>
-            <SettingsDrawer isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={handleReset} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} />
+            {/* Settings drawer overlay - click to close */}
+            {isSettingsOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40"
+                    onClick={() => { setIsSettingsOpen(false); playClick(); }}
+                />
+            )}
+            <SettingsDrawer isOpen={isSettingsOpen} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={handleReset} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} />
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
-            <button onClick={() => { setIsMenuOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
-            <MenuDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} skills={skills} />
+            <button onClick={() => { setIsSettingsOpen(false); setIsMenuOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
+            {/* Achievement drawer overlay - click to close */}
+            {isMenuOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40"
+                    onClick={() => { setIsMenuOpen(false); playClick(); }}
+                />
+            )}
+            <MenuDrawer isOpen={isMenuOpen} skills={skills} />
             {/* Backdrop overlay when battling - click to exit */}
             {battlingSkillId && (
                 <div
