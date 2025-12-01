@@ -68,24 +68,42 @@ export const getMobForSkill = (skillConfig, userSkill) => {
 
 // ===== RPG Progression Utility Functions =====
 
-// Calculate damage per correct answer based on player level and difficulty
+// Base values for difficulty 1 (designed for 5 hits to kill, 1 kill = 1 level)
+const BASE_DAMAGE = 12;      // 5 hits to kill at any level
+const BASE_MOB_HEALTH = 60;  // 5 * BASE_DAMAGE
+const BASE_XP_REWARD = 100;  // 1 kill = 1 level
+const BASE_XP_TO_LEVEL = 100;
+
+// Get difficulty multiplier (3^(difficulty-1))
+// Difficulty 1 = 1×, Difficulty 2 = 3×, Difficulty 3 = 9×, etc.
+export const getDifficultyMultiplier = (difficulty) => {
+    return Math.pow(3, difficulty - 1);
+};
+
+// Calculate damage per correct answer based on difficulty
+// Player level no longer affects damage to ensure consistent 5-hit battles
 export const calculateDamage = (playerLevel, difficulty) => {
-    const baseDamage = 10 + (playerLevel * 2);
-    const difficultyMultiplier = 1 + (difficulty - 1) * 0.5;
-    return Math.round(baseDamage * difficultyMultiplier);
+    const multiplier = getDifficultyMultiplier(difficulty);
+    return BASE_DAMAGE * multiplier;
 };
 
-// Calculate mob max HP to require ~5 hits at appropriate player level
+// Calculate mob max HP - always 5x player damage for consistent 5-hit battles
 export const calculateMobHealth = (difficulty) => {
-    // Each difficulty tier roughly corresponds to levels: 1=1-20, 2=21-40, etc.
-    const levelForCalc = Math.max(1, (difficulty - 1) * 20 + 1);
-    const expectedDamage = calculateDamage(levelForCalc, difficulty);
-    return 5 * expectedDamage;
+    const multiplier = getDifficultyMultiplier(difficulty);
+    return BASE_MOB_HEALTH * multiplier;
 };
 
-// Calculate XP reward for defeating a mob
-export const calculateXPReward = (difficulty, playerLevel) => {
-    return Math.round(20 * difficulty * (1 + (playerLevel / 100)));
+// Calculate XP reward for defeating a mob - scales with difficulty
+// Note: second parameter kept for backward compatibility but not used
+export const calculateXPReward = (difficulty) => {
+    const multiplier = getDifficultyMultiplier(difficulty);
+    return BASE_XP_REWARD * multiplier;
+};
+
+// Calculate XP required to level up - scales with difficulty
+export const calculateXPToLevel = (difficulty) => {
+    const multiplier = getDifficultyMultiplier(difficulty);
+    return BASE_XP_TO_LEVEL * multiplier;
 };
 
 // ===== Reading Word Selection =====
