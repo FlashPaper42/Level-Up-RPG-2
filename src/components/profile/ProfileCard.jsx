@@ -164,9 +164,27 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename, isParent,
 
     const carouselItems = [].concat(...Array(10).fill(SKILL_DATA));
 
+    const getProfileCardClasses = () => {
+        const baseClasses = 'relative w-full h-[100px] rounded-xl overflow-hidden transition-all cursor-pointer group select-none';
+        if (isCurrent) {
+            const ringClass = isParent ? 'ring-rainbow' : 'ring-4 ring-yellow-400';
+            return `${baseClasses} ${ringClass} scale-[1.02] z-10`;
+        }
+        return `${baseClasses} hover:scale-[1.01] opacity-70 hover:opacity-100`;
+    };
+
+    const getProfileCardStyles = () => {
+        const baseStyle = { backgroundColor: '#0f172a' };
+        if (isCurrent) {
+            const glowColor = isParent ? '0 0 30px rgba(255, 215, 0, 0.5)' : '0 0 20px rgba(250, 204, 21, 0.3)';
+            return { ...baseStyle, boxShadow: glowColor };
+        }
+        return { ...baseStyle, boxShadow: '0 4px 6px rgba(0,0,0,0.5)' };
+    };
+
     return (
         <>
-            <div onClick={() => !isEditing && onSwitch(id)} className={`relative w-full h-[100px] rounded-xl overflow-hidden transition-all cursor-pointer group select-none ${isCurrent ? (isParent ? 'ring-rainbow scale-[1.02] z-10' : 'ring-4 ring-yellow-400 scale-[1.02] z-10') : 'hover:scale-[1.01] opacity-70 hover:opacity-100'}`} style={{ backgroundColor: '#0f172a', boxShadow: isCurrent ? (isParent ? '0 0 30px rgba(255, 215, 0, 0.5)' : '0 0 20px rgba(250, 204, 21, 0.3)') : '0 4px 6px rgba(0,0,0,0.5)' }}>
+            <div onClick={() => !isEditing && onSwitch(id)} className={getProfileCardClasses()} style={getProfileCardStyles()}>
                 {themeBg && <div className="absolute inset-0"><SafeImage src={themeBg} className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black/60"></div></div>}
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] opacity-10 pointer-events-none"></div>
                 <div className="relative flex h-full p-2 gap-2 z-10">

@@ -25,6 +25,11 @@ import {
     playMobHurt, playMobDeath
 } from './utils/soundManager';
 
+// Parent verification privilege constants
+const PARENT_PRIVILEGE_LEVEL = 200;
+const PARENT_PRIVILEGE_DIFFICULTY = 7;
+const PARENT_PRIVILEGE_BADGES = [1, 2, 3, 4, 5, 6, 7];
+
 const App = () => {
     const [currentProfile, setCurrentProfile] = useState(() => localStorage.getItem('currentProfile_v1') ? parseInt(localStorage.getItem('currentProfile_v1')) : 1);
     const [profileNames, setProfileNames] = useState(() => localStorage.getItem('heroProfileNames_v1') ? JSON.parse(localStorage.getItem('heroProfileNames_v1')) : { 1: "Player 1", 2: "Player 2", 3: "Player 3" });
@@ -507,20 +512,18 @@ const App = () => {
         setParentStatus(prev => ({ ...prev, [profileId]: verified }));
         
         if (verified && profileId === currentProfile) {
-            // When parent verification passes, set all skills to level 200 with all badges
+            // When parent verification passes, apply parent privileges to all skills
             setSkills(prev => {
                 const updated = {};
                 Object.keys(prev).forEach(skillId => {
                     const current = prev[skillId];
-                    const parentLevel = 200;
-                    const parentDifficulty = 7; // Max difficulty unlocked
                     updated[skillId] = {
                         ...current,
-                        level: parentLevel,
-                        difficulty: parentDifficulty,
-                        earnedBadges: [1, 2, 3, 4, 5, 6, 7], // All badge tiers awarded
-                        mobHealth: calculateMobHealth(parentDifficulty, parentLevel),
-                        mobMaxHealth: calculateMobHealth(parentDifficulty, parentLevel)
+                        level: PARENT_PRIVILEGE_LEVEL,
+                        difficulty: PARENT_PRIVILEGE_DIFFICULTY,
+                        earnedBadges: [...PARENT_PRIVILEGE_BADGES],
+                        mobHealth: calculateMobHealth(PARENT_PRIVILEGE_DIFFICULTY, PARENT_PRIVILEGE_LEVEL),
+                        mobMaxHealth: calculateMobHealth(PARENT_PRIVILEGE_DIFFICULTY, PARENT_PRIVILEGE_LEVEL)
                     };
                 });
                 return updated;
