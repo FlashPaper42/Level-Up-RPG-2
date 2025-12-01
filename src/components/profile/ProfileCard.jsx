@@ -32,7 +32,7 @@ const ParentalVerificationModal = ({ isOpen, onClose, onVerified }) => {
     };
 
     const handleInputChange = (e) => {
-        // Only allow letters, remove spaces from input
+        // Convert to uppercase and remove spaces from input
         const val = e.target.value.toUpperCase().replace(/\s/g, '');
         if (val.length <= correctAnswerNoSpaces.length) {
             setAnswer(val);
@@ -44,26 +44,26 @@ const ParentalVerificationModal = ({ isOpen, onClose, onVerified }) => {
         inputRef.current?.focus();
     };
 
-    // Map input position to display position (accounting for space)
-    const getDisplayChar = (displayIndex) => {
-        // Count non-space characters before this display index
+    // Get the input index for a given display index (accounting for spaces in correctAnswer)
+    const getInputIndexForDisplay = (displayIndex) => {
         let inputIndex = 0;
         for (let i = 0; i < displayIndex; i++) {
             if (correctAnswer[i] !== ' ') {
                 inputIndex++;
             }
         }
+        return inputIndex;
+    };
+
+    // Get the display character (asterisk if filled, empty otherwise)
+    const getDisplayChar = (displayIndex) => {
+        const inputIndex = getInputIndexForDisplay(displayIndex);
         return inputIndex < answer.length ? '*' : '';
     };
 
-    // Check if input has filled up to this display position
-    const isFilledUpTo = (displayIndex) => {
-        let inputIndex = 0;
-        for (let i = 0; i < displayIndex; i++) {
-            if (correctAnswer[i] !== ' ') {
-                inputIndex++;
-            }
-        }
+    // Check if the slot at displayIndex is filled
+    const isSlotFilled = (displayIndex) => {
+        const inputIndex = getInputIndexForDisplay(displayIndex);
         return inputIndex < answer.length;
     };
 
@@ -99,7 +99,7 @@ const ParentalVerificationModal = ({ isOpen, onClose, onVerified }) => {
                                             key={i}
                                             className={`w-7 h-9 border-b-4 flex items-center justify-center text-lg font-mono font-bold text-white bg-black/20 rounded-t ${
                                                 error ? 'border-red-500 bg-red-900/30' : (
-                                                    isFilledUpTo(i) ? 'border-green-500' : 'border-gray-600'
+                                                    isSlotFilled(i) ? 'border-green-500' : 'border-gray-600'
                                                 )
                                             }`}
                                         >
