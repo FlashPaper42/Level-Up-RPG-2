@@ -2,6 +2,7 @@ import React from 'react';
 import { Lock } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { BADGE_TIERS, BASE_ASSETS, SKILL_DATA } from '../../constants/gameData';
+import { calculateXPToLevel } from '../../utils/gameUtils';
 
 const MenuDrawer = ({ isOpen, skills }) => {
     const totalLevels = Object.values(skills).reduce((acc, s) => acc + s.level, 0);
@@ -18,7 +19,9 @@ const MenuDrawer = ({ isOpen, skills }) => {
                 <div className="flex-1 overflow-y-auto pr-4 scrollbar-hide">
                     {Object.keys(skills).map(key => {
                         const userSkill = skills[key];
-                        const xpPercent = userSkill.xp;
+                        const skillDifficulty = userSkill.difficulty || 1;
+                        const xpToLevel = calculateXPToLevel(skillDifficulty);
+                        const xpPercent = Math.min(100, (userSkill.xp / xpToLevel) * 100);
                         const skillConfig = SKILL_DATA.find(s => s.id === key);
                         return (
                             <div key={key} className="mb-10 bg-black/40 p-6 rounded-2xl border-4 border-stone-700">
@@ -26,7 +29,7 @@ const MenuDrawer = ({ isOpen, skills }) => {
                                     {skillConfig && <SafeImage src={skillConfig.img} alt={key} className="w-24 h-24 object-contain" />}
                                     <div className="flex-1">
                                         <div className="flex justify-between items-center mb-2"><h3 className="text-5xl font-bold text-white tracking-wide drop-shadow-sm">{key.toUpperCase()}</h3><span className="text-stone-400 text-4xl font-bold">Lvl {userSkill.level}</span></div>
-                                        <div className="w-full h-6 bg-stone-900 rounded-full border-2 border-stone-600 relative overflow-hidden"><div className="h-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-500" style={{ width: `${xpPercent}%` }}></div><div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white drop-shadow-md">{Math.round(xpPercent)}% XP</div></div>
+                                        <div className="w-full h-6 bg-stone-900 rounded-full border-2 border-stone-600 relative overflow-hidden"><div className="h-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-500" style={{ width: `${xpPercent}%` }}></div><div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white drop-shadow-md">{userSkill.xp} / {xpToLevel} XP</div></div>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-4 gap-y-8 gap-x-4 mb-8">

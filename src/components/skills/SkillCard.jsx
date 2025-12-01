@@ -4,6 +4,7 @@ import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, MINIBOSS_MOBS, DIFFICULTY_IMAGES, DIFFICULTY_CONTENT } from '../../constants/gameData';
 import { playClick, getSfxVolume } from '../../utils/soundManager';
+import { calculateXPToLevel } from '../../utils/gameUtils';
 
 const PRESTIGE_LEVEL_THRESHOLD = 20;
 
@@ -391,6 +392,25 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                 )}
                             </div>
                         )}
+                        {/* Current XP indicator - visible during battle */}
+                        {(() => {
+                            const xpToLevel = calculateXPToLevel(difficulty);
+                            const xpPercent = Math.min(100, (data.xp / xpToLevel) * 100);
+                            return (
+                                <div className="mt-2 bg-[#1a1a1a] p-2 rounded border border-[#333]">
+                                    <div className="flex justify-between text-gray-400 text-xs mb-1 uppercase">
+                                        <span>XP</span>
+                                        <span>{data.xp} / {xpToLevel}</span>
+                                    </div>
+                                    <div className="w-full h-4 bg-[#333] rounded-full overflow-hidden border border-[#555] relative">
+                                        <div 
+                                            className="h-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-300" 
+                                            style={{ width: `${xpPercent}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            );
+                        })()}
                     </div>
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center">
@@ -426,8 +446,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     return (
         <div className="relative">
-            {/* Difficulty adjuster positioned above the card - hidden for cleaning skill */}
-            {(!isBattling || config.id !== 'memory') && config.id !== 'cleaning' && (
+            {/* Difficulty adjuster positioned above the card - hidden for cleaning skill and until difficulty 2 is unlocked */}
+            {(!isBattling || config.id !== 'memory') && config.id !== 'cleaning' && unlockedDifficulty > 1 && (
                 <div className="absolute -top-10 left-0 flex items-center gap-2 z-20">
                     <button onClick={() => setDifficulty(Math.max(1, difficulty - 1))} className="bg-stone-700 text-white rounded p-1 border border-stone-500 hover:bg-stone-600"><Minus size={16} /></button>
                     <div className="relative">

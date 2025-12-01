@@ -13,7 +13,7 @@ import SkillCard from './components/skills/SkillCard';
 import PhantomEvent from './components/PhantomEvent';
 
 // Utils & Constants
-import { getRandomMob, getRandomFriendlyMob, getRandomAxolotl, getRandomMiniboss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getItemsForLength, calculateDamage, calculateMobHealth, calculateXPReward } from './utils/gameUtils';
+import { getRandomMob, getRandomFriendlyMob, getRandomAxolotl, getRandomMiniboss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getItemsForLength, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
     HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS
@@ -320,7 +320,7 @@ const App = () => {
             // Mob defeated!
             if (newMobHealth <= 0) {
                 // Calculate XP reward
-                const xpReward = calculateXPReward(skillDifficulty, playerLevel);
+                const xpReward = calculateXPReward(skillDifficulty);
                 newXp += xpReward;
                 
                 // Update stable mobs for memory and patterns skills on completion
@@ -346,12 +346,13 @@ const App = () => {
                     playNotification();
                 }
                 
-                // Process level ups
-                if (newXp >= 100) {
-                    const levelsGained = Math.floor(newXp / 100);
+                // Process level ups - use difficulty-scaled XP requirement
+                const xpToLevel = calculateXPToLevel(newDifficulty);
+                if (newXp >= xpToLevel) {
+                    const levelsGained = Math.floor(newXp / xpToLevel);
                     const oldLevel = newLevel;
                     newLevel += levelsGained;
-                    newXp = newXp % 100;
+                    newXp = newXp % xpToLevel;
                     leveledUp = true;
                     
                     // Check if we just defeated a boss (crossed a level divisible by 20)
@@ -387,7 +388,7 @@ const App = () => {
                 }
                 
                 // Spawn new mob with fresh health
-                newMobMaxHealth = calculateMobHealth(newDifficulty, newLevel);
+                newMobMaxHealth = calculateMobHealth(newDifficulty);
                 newMobHealth = newMobMaxHealth;
                 if (newLevel % 20 !== 0) {
                     newMob = getRandomMob(current.currentMob);
@@ -416,7 +417,12 @@ const App = () => {
         
         // Generate next challenge for continuous gameplay
         if (skillConfig.hasChallenge && skillConfig.id !== 'memory') {
-            setChallengeData(generateChallenge(skillConfig.challengeType, skillDifficulty));
+            // For miniboss encounters, use difficulty+1 for content
+            const nextEncounterType = getEncounterType(currentSkillState.level);
+            const challengeDiff = nextEncounterType === 'miniboss' 
+                ? Math.min(7, skillDifficulty + 1) 
+                : skillDifficulty;
+            setChallengeData(generateChallenge(skillConfig.challengeType, challengeDiff));
         } else if (skillConfig.id === 'memory') {
             setBattlingSkillId(null);
         }
@@ -426,7 +432,7 @@ const App = () => {
     const setSkillDifficulty = (skillId, newDiff) => {
         setSkills(prev => {
             const current = prev[skillId];
-            const newMobMaxHealth = calculateMobHealth(newDiff, current.level);
+            const newMobMaxHealth = calculateMobHealth(newDiff);
             return {
                 ...prev,
                 [skillId]: {
@@ -475,7 +481,15 @@ const App = () => {
         setBattlingSkillId(id);
         // Use the skill's current difficulty setting
         const currentDiff = skills[id].difficulty || 1;
-        setChallengeData(generateChallenge(skill.challengeType, currentDiff));
+        const playerLevel = skills[id].level;
+        
+        // For miniboss encounters, use difficulty+1 for content (capped at 7)
+        const encounterType = getEncounterType(playerLevel);
+        const challengeDiff = encounterType === 'miniboss' 
+            ? Math.min(7, currentDiff + 1) 
+            : currentDiff;
+        
+        setChallengeData(generateChallenge(skill.challengeType, challengeDiff));
         playClick();
         startBGM(); // Start BGM on first battle (user interaction)
         if (skill.challengeType === 'reading' && window.webkitSpeechRecognition) startVoiceListener(id);
