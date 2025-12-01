@@ -208,7 +208,7 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename, isParent,
                     </div>
                     
                     {/* Profile identifiers - horizontal layout */}
-                    <div className="w-1/2 flex flex-col justify-center items-center px-3 border-r-2 border-white/20">
+                    <div className="w-1/2 flex flex-col justify-center items-center px-4 border-r-2 border-white/20">
                         {isEditing ? (
                             <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
                                 <input type="text" value={tempName} onChange={e => setTempName(e.target.value)} className="bg-black text-white w-full text-2xl font-bold p-0.5 rounded border border-yellow-500 outline-none uppercase" autoFocus />
