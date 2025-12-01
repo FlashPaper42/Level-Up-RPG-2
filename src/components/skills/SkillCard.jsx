@@ -393,18 +393,24 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                             </div>
                         )}
                         {/* Current XP indicator - visible during battle */}
-                        <div className="mt-2 bg-[#1a1a1a] p-2 rounded border border-[#333]">
-                            <div className="flex justify-between text-gray-400 text-xs mb-1 uppercase">
-                                <span>XP</span>
-                                <span>{data.xp} / {calculateXPToLevel(difficulty)}</span>
-                            </div>
-                            <div className="w-full h-4 bg-[#333] rounded-full overflow-hidden border border-[#555] relative">
-                                <div 
-                                    className="h-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-300" 
-                                    style={{ width: `${Math.min(100, (data.xp / calculateXPToLevel(difficulty)) * 100)}%` }}
-                                ></div>
-                            </div>
-                        </div>
+                        {(() => {
+                            const xpToLevel = calculateXPToLevel(difficulty);
+                            const xpPercent = Math.min(100, (data.xp / xpToLevel) * 100);
+                            return (
+                                <div className="mt-2 bg-[#1a1a1a] p-2 rounded border border-[#333]">
+                                    <div className="flex justify-between text-gray-400 text-xs mb-1 uppercase">
+                                        <span>XP</span>
+                                        <span>{data.xp} / {xpToLevel}</span>
+                                    </div>
+                                    <div className="w-full h-4 bg-[#333] rounded-full overflow-hidden border border-[#555] relative">
+                                        <div 
+                                            className="h-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-300" 
+                                            style={{ width: `${xpPercent}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            );
+                        })()}
                     </div>
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center">

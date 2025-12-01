@@ -320,7 +320,7 @@ const App = () => {
             // Mob defeated!
             if (newMobHealth <= 0) {
                 // Calculate XP reward
-                const xpReward = calculateXPReward(skillDifficulty, playerLevel);
+                const xpReward = calculateXPReward(skillDifficulty);
                 newXp += xpReward;
                 
                 // Update stable mobs for memory and patterns skills on completion
