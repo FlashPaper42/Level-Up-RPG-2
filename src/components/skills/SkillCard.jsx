@@ -140,7 +140,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             const selectedMobs = shuffledMobs.slice(0, memoryPairs);
             // Create pairs from the selected mobs
             let deck = [...selectedMobs, ...selectedMobs].sort(() => Math.random() - 0.5);
-            setMemoryCards(deck.map((mobKey, i) => ({ id: i, color: mobKey, img: FRIENDLY_MOBS[mobKey] })));
+            setMemoryCards(deck.map((mobKey, i) => ({ id: i, color: mobKey, img: '/assets/skills/farm_icon.png' })));
             setFlippedIndices([]); setMatchedPairs([]); setIsProcessingMatch(false); setMismatchShake(false);
         } else if (!isBattling && config.id === 'memory') {
             // Reset memory game state and session ref when exiting battle
