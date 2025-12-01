@@ -28,7 +28,7 @@ const ParentalVerificationModal = ({ isOpen, onClose, onVerified }) => {
     };
 
     return ReactDOM.createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={handleClose}></div>
             <div className="relative bg-stone-900 border-4 border-blue-600 rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
                 <button onClick={handleClose} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
@@ -134,8 +134,7 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename }) => {
                                     <span className="text-slate-300 text-sm font-bold">P{id},</span>
                                     <h3 className={`text-lg font-bold uppercase truncate leading-none ${isCurrent ? 'text-yellow-100 drop-shadow-md' : 'text-white'}`} style={{ fontFamily: 'sans-serif', textShadow: '2px 2px 0 #000' }}>{name},</h3>
                                     <Heart className={`fill-red-600 text-red-800 ${isCurrent ? 'animate-pulse' : ''}`} size={16} />
-                                    <span className="text-slate-300 text-sm font-bold">,</span>
-                                    <span className="text-sm text-slate-400 uppercase tracking-wider">LV.</span>
+                                    <span className="text-sm text-slate-400 uppercase tracking-wider">, LV.</span>
                                     <span className="text-lg font-bold text-white leading-none">{stats ? stats.totalLevel : 0}</span>
                                     {isCurrent && <Pencil size={12} className="text-slate-400 group-hover/name:text-yellow-400 transition-colors ml-1" onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} />}
                                 </div>
