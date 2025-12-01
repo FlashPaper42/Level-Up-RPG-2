@@ -242,6 +242,31 @@ const App = () => {
         return { type: 'manual', question: "Task Complete?", answer: "yes" };
     };
 
+    // Regenerate challenge when difficulty or level changes during active battle
+    // This fixes the issue where challenges use stale difficulty after leveling up
+    useEffect(() => {
+        if (!battlingSkillId) return;
+        
+        const skillConfig = SKILL_DATA.find(s => s.id === battlingSkillId);
+        if (!skillConfig || !skillConfig.hasChallenge || skillConfig.id === 'memory' || skillConfig.id === 'patterns') return;
+        
+        const currentSkillState = skills[battlingSkillId];
+        const currentDiff = currentSkillState.difficulty || 1;
+        const playerLevel = currentSkillState.level;
+        
+        // Calculate what the challenge difficulty should be for the current encounter
+        const encounterType = getEncounterType(playerLevel);
+        const correctChallengeDiff = encounterType === 'miniboss'
+            ? Math.min(7, currentDiff + 1)
+            : currentDiff;
+        
+        // If the challenge difficulty needs to change, update it
+        if (battleDifficulty !== correctChallengeDiff) {
+            setBattleDifficulty(correctChallengeDiff);
+            setChallengeData(generateChallenge(skillConfig.challengeType, correctChallengeDiff));
+        }
+    }, [battlingSkillId, skills, battleDifficulty]);
+
     const handleSuccessHit = (skillId, isWrong) => {
         // Handle wrong answer - damage player
         if (isWrong === 'WRONG') {
