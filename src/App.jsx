@@ -321,7 +321,10 @@ const App = () => {
             // Calculate XP reward for this hit
             // Total XP is split evenly among all hits required to defeat the mob
             const totalXPReward = calculateXPReward(skillDifficulty);
-            const hitsToKill = Math.ceil(current.mobMaxHealth / damage);
+            // For instant-defeat mobs (miniboss, cleaning, memory), actualDamage = full health, so hitsToKill = 1
+            // For regular mobs, actualDamage = damage, so hitsToKill = mobMaxHealth / damage
+            const effectiveDamage = isInstantDefeat ? current.mobMaxHealth : damage;
+            const hitsToKill = Math.ceil(current.mobMaxHealth / effectiveDamage);
             const xpPerHit = Math.floor(totalXPReward / hitsToKill);
             
             // If this hit doesn't defeat the mob, award partial XP
@@ -335,7 +338,7 @@ const App = () => {
             // Mob defeated!
             if (newMobHealth <= 0) {
                 // Calculate remaining XP to award (total - already awarded)
-                const hitsDealt = Math.ceil((current.mobMaxHealth - current.mobHealth) / damage);
+                const hitsDealt = Math.ceil((current.mobMaxHealth - current.mobHealth) / effectiveDamage);
                 const xpAlreadyAwarded = hitsDealt * xpPerHit;
                 const remainingXP = totalXPReward - xpAlreadyAwarded;
                 newXp += remainingXP;
