@@ -1,9 +1,9 @@
 import React from 'react';
-import { X, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { BADGE_TIERS, BASE_ASSETS, SKILL_DATA } from '../../constants/gameData';
 
-const MenuDrawer = ({ isOpen, onClose, skills }) => {
+const MenuDrawer = ({ isOpen, skills }) => {
     const totalLevels = Object.values(skills).reduce((acc, s) => acc + s.level, 0);
     
     return (
@@ -14,7 +14,6 @@ const MenuDrawer = ({ isOpen, onClose, skills }) => {
             <div className="p-8 h-full flex flex-col">
                 <div className="flex justify-between items-start mb-8 border-b-4 border-stone-600 pb-4">
                     <div><h2 className="text-6xl text-yellow-400 font-bold uppercase tracking-widest mb-2 drop-shadow-md">Achievements</h2><p className="text-stone-400 text-4xl">Total Level: <span className="text-white font-bold">{totalLevels}</span></p></div>
-                    <button onClick={onClose} className="bg-red-600/80 hover:bg-red-600 text-white p-4 rounded-xl border-4 border-red-800 shadow-lg transform active:scale-95 transition-all"><X size={48} /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto pr-4 scrollbar-hide">
                     {Object.keys(skills).map(key => {
