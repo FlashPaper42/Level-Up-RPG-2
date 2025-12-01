@@ -611,12 +611,22 @@ const App = () => {
         }
     };
     const handleReset = () => {
+        // Remove skills data for current profile
         localStorage.removeItem(getStorageKey(currentProfile));
         if (currentProfile === 1) localStorage.removeItem('heroSkills_v23');
-        // Clear parent status for current profile
-        setParentStatus(prev => ({ ...prev, [currentProfile]: false }));
-        // Reset profile name to default
-        setProfileNames(prev => ({ ...prev, [currentProfile]: `Player ${currentProfile}` }));
+        
+        // Update parent status in localStorage directly
+        const currentParentStatus = localStorage.getItem('heroParentStatus_v1');
+        const parentStatusObj = currentParentStatus ? JSON.parse(currentParentStatus) : { 1: false, 2: false, 3: false };
+        parentStatusObj[currentProfile] = false;
+        localStorage.setItem('heroParentStatus_v1', JSON.stringify(parentStatusObj));
+        
+        // Update profile name in localStorage directly
+        const currentProfileNames = localStorage.getItem('heroProfileNames_v1');
+        const profileNamesObj = currentProfileNames ? JSON.parse(currentProfileNames) : { 1: "Player 1", 2: "Player 2", 3: "Player 3" };
+        profileNamesObj[currentProfile] = `Player ${currentProfile}`;
+        localStorage.setItem('heroProfileNames_v1', JSON.stringify(profileNamesObj));
+        
         window.location.reload();
     };
 
