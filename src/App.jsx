@@ -152,6 +152,7 @@ const App = () => {
     const [showDeathOverlay, setShowDeathOverlay] = useState(false);
     const [showLevelRestored, setShowLevelRestored] = useState(false);
     const recognitionRef = useRef(null);
+    const challengeDataRef = useRef(null);
     const [bgmVol, setBgmVol] = useState(0.3);
     const [sfxVol, setSfxVolState] = useState(0.5);
     const bgmManager = useRef(getBGMManager());
@@ -172,6 +173,11 @@ const App = () => {
     useEffect(() => {
         setSfxVolume(sfxVol);
     }, [sfxVol]);
+    
+    // Keep challengeDataRef in sync with challengeData state for voice listener
+    useEffect(() => {
+        challengeDataRef.current = challengeData;
+    }, [challengeData]);
     
     // Start BGM on first user interaction
     const startBGM = useCallback(() => {
@@ -495,9 +501,23 @@ const App = () => {
 
     const startVoiceListener = (targetId) => {
         if (!window.webkitSpeechRecognition) return;
-        recognitionRef.current = new window.webkitSpeechRecognition(); recognitionRef.current.lang = 'en-US'; recognitionRef.current.continuous = true;
-        recognitionRef.current.onstart = () => { setIsListening(true); setSpokenText("Listening..."); }; recognitionRef.current.onend = () => setIsListening(false);
-        recognitionRef.current.onresult = (e) => { const t = e.results[e.results.length-1][0].transcript.toUpperCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g,""); setSpokenText(t); if (challengeData && (t === challengeData.answer || HOMOPHONES[challengeData.answer]?.includes(t))) handleSuccessHit(targetId || battlingSkillId); };
+        recognitionRef.current = new window.webkitSpeechRecognition();
+        recognitionRef.current.lang = 'en-US';
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.onstart = () => { 
+            setIsListening(true); 
+            setSpokenText("Listening..."); 
+        };
+        recognitionRef.current.onend = () => setIsListening(false);
+        recognitionRef.current.onresult = (e) => { 
+            const t = e.results[e.results.length - 1][0].transcript.toUpperCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, ""); 
+            setSpokenText(t); 
+            // Use the ref to get the CURRENT challenge data
+            const currentChallenge = challengeDataRef.current;
+            if (currentChallenge && (t === currentChallenge.answer || HOMOPHONES[currentChallenge.answer]?.includes(t))) {
+                handleSuccessHit(targetId || battlingSkillId); 
+            }
+        };
         recognitionRef.current.start();
     };
 
