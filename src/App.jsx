@@ -251,6 +251,8 @@ const App = () => {
         if (!skillConfig || !skillConfig.hasChallenge || skillConfig.id === 'memory' || skillConfig.id === 'patterns') return;
         
         const currentSkillState = skills[battlingSkillId];
+        if (!currentSkillState) return;
+        
         const currentDiff = currentSkillState.difficulty || 1;
         const playerLevel = currentSkillState.level;
         
@@ -261,11 +263,12 @@ const App = () => {
             : currentDiff;
         
         // If the challenge difficulty needs to change, update it
+        // Note: We compare with battleDifficulty but don't include it in deps to avoid re-render loop
         if (battleDifficulty !== correctChallengeDiff) {
             setBattleDifficulty(correctChallengeDiff);
             setChallengeData(generateChallenge(skillConfig.challengeType, correctChallengeDiff));
         }
-    }, [battlingSkillId, skills, battleDifficulty]);
+    }, [battlingSkillId, skills]); // Intentionally exclude battleDifficulty to prevent infinite loop
 
     const handleSuccessHit = (skillId, isWrong) => {
         // Handle wrong answer - damage player
