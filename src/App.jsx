@@ -159,6 +159,7 @@ const App = () => {
     const [skills, setSkills] = useState(() => loadSkills(currentProfile));
     const [activeTheme, setActiveTheme] = useState(() => loadTheme(currentProfile));
     const [battlingSkillId, setBattlingSkillId] = useState(null);
+    const [battleDifficulty, setBattleDifficulty] = useState(null); // Track battle's starting difficulty for consistent challenge generation
     const [challengeData, setChallengeData] = useState(null);
     const [lootBox, setLootBox] = useState(null); 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -338,11 +339,30 @@ const App = () => {
             let newPatternMob = current.patternMob;
             let newMiniboss = current.currentMiniboss;
             
+            // Calculate XP reward for this hit
+            // Total XP is split evenly among all hits required to defeat the mob
+            const totalXPReward = calculateXPReward(skillDifficulty);
+            // For instant-defeat mobs (miniboss, cleaning, memory), actualDamage = full health, so hitsToKill = 1
+            // For regular mobs, actualDamage = damage, so hitsToKill = mobMaxHealth / damage
+            const effectiveDamage = isInstantDefeat ? current.mobMaxHealth : damage;
+            const hitsToKill = Math.ceil(current.mobMaxHealth / effectiveDamage);
+            const xpPerHit = Math.floor(totalXPReward / hitsToKill);
+            
+            // If this hit doesn't defeat the mob, award partial XP
+            // If this hit defeats the mob, award any remaining XP (to account for rounding)
+            const willDefeatMobInUpdate = newMobHealth <= 0;
+            if (!willDefeatMobInUpdate) {
+                // Award partial XP for non-killing hit
+                newXp += xpPerHit;
+            }
+            
             // Mob defeated!
             if (newMobHealth <= 0) {
-                // Calculate XP reward
-                const xpReward = calculateXPReward(skillDifficulty);
-                newXp += xpReward;
+                // Calculate remaining XP to award (total - already awarded)
+                const hitsDealt = Math.ceil((current.mobMaxHealth - current.mobHealth) / effectiveDamage);
+                const xpAlreadyAwarded = hitsDealt * xpPerHit;
+                const remainingXP = totalXPReward - xpAlreadyAwarded;
+                newXp += remainingXP;
                 
                 // Update stable mobs for memory and patterns skills on completion
                 if (skillConfig.id === 'memory') {
@@ -376,12 +396,14 @@ const App = () => {
                     newXp = newXp % xpToLevel;
                     leveledUp = true;
                     
-                    // Check if we just defeated a boss (crossed a level divisible by 20)
+                    // Check if we just defeated a boss (leaving a boss level)
+                    // Badge/difficulty increment happens when crossing FROM a boss level (e.g., 20->21)
+                    // not when arriving AT a boss level (e.g., 19->20)
                     // Cleaning is exempt from difficulty auto-increment
                     if (skillConfig.id !== 'cleaning') {
-                        for (let lvl = oldLevel + 1; lvl <= newLevel; lvl++) {
-                            if (lvl % 20 === 0) {
-                                // Boss defeated at this level - increment difficulty (max 7)
+                        for (let lvl = oldLevel; lvl < newLevel; lvl++) {
+                            if (lvl % 20 === 0 && lvl > 0) {
+                                // Boss at level lvl was just defeated - increment difficulty (max 7)
                                 const newTier = Math.floor(lvl / 20);
                                 if (newDifficulty < 7) {
                                     newDifficulty++;
@@ -389,6 +411,9 @@ const App = () => {
                                 // Award badge for this tier if not already earned
                                 if (!newBadges.includes(newTier) && newTier <= 7) {
                                     newBadges.push(newTier);
+                                    // Show badge notification for defeating the boss
+                                    setLootBox({ level: lvl, skillName: skillConfig.fantasyName, item: "New Rank!", img: BASE_ASSETS.badges.Wood });
+                                    playNotification();
                                 }
                             }
                         }
@@ -401,10 +426,6 @@ const App = () => {
                     
                     if (leveledUp) {
                         playLevelUp();
-                        if (newLevel % 20 === 0) {
-                            setLootBox({ level: newLevel, skillName: skillConfig.fantasyName, item: "New Rank!", img: BASE_ASSETS.badges.Wood });
-                            playNotification();
-                        }
                     }
                 }
                 
@@ -438,14 +459,13 @@ const App = () => {
         
         // Generate next challenge for continuous gameplay
         if (skillConfig.hasChallenge && skillConfig.id !== 'memory') {
-            // For miniboss encounters, use difficulty+1 for content
-            const nextEncounterType = getEncounterType(currentSkillState.level);
-            const challengeDiff = nextEncounterType === 'miniboss' 
-                ? Math.min(7, skillDifficulty + 1) 
-                : skillDifficulty;
+            // Use the stored battle difficulty for consistent challenge generation throughout the battle
+            // This ensures bosses don't change difficulty mid-fight and miniboss difficulty+1 is maintained
+            const challengeDiff = battleDifficulty || skillDifficulty;
             setChallengeData(generateChallenge(skillConfig.challengeType, challengeDiff));
         } else if (skillConfig.id === 'memory') {
             setBattlingSkillId(null);
+            setBattleDifficulty(null);
         }
     };
 
@@ -510,6 +530,9 @@ const App = () => {
             ? Math.min(7, currentDiff + 1) 
             : currentDiff;
         
+        // Store the battle's challenge difficulty so it remains consistent throughout the battle
+        setBattleDifficulty(challengeDiff);
+        
         setChallengeData(generateChallenge(skill.challengeType, challengeDiff));
         playClick();
         startBGM(); // Start BGM on first battle (user interaction)
@@ -518,6 +541,7 @@ const App = () => {
 
     const endBattle = () => {
         setBattlingSkillId(null);
+        setBattleDifficulty(null);
         setChallengeData(null);
         if (recognitionRef.current) recognitionRef.current.stop();
         setIsListening(false);
