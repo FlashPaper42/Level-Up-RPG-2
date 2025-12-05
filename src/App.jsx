@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
     Menu, Sparkles, ChevronLeft, ChevronRight, Gift, Maximize, Minimize, Palette
 } from 'lucide-react';
@@ -223,8 +223,8 @@ const App = () => {
         localStorage.setItem(`borderColor_p${currentProfile}`, borderColor);
     }, [selectedBorder, borderColor, currentProfile]);
     
-    // Calculate unlocked borders based on earned badges
-    const getUnlockedBorders = () => {
+    // Calculate unlocked borders based on earned badges (memoized)
+    const unlockedBorders = React.useMemo(() => {
         const unlockedTiers = new Set();
         Object.values(skills).forEach(skill => {
             if (skill.earnedBadges && Array.isArray(skill.earnedBadges)) {
@@ -232,7 +232,7 @@ const App = () => {
             }
         });
         return Array.from(unlockedTiers);
-    };
+    }, [skills]);
 
     // Update BGM volume
     useEffect(() => { 
@@ -862,7 +862,7 @@ const App = () => {
                 setSelectedBorder={setSelectedBorder}
                 borderColor={borderColor}
                 setBorderColor={setBorderColor}
-                unlockedBorders={getUnlockedBorders()}
+                unlockedBorders={unlockedBorders}
             />
             
             {/* Settings drawer overlay - click to close */}
