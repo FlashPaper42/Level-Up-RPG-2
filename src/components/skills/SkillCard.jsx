@@ -199,7 +199,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             // Check if spoken text changed
             if (spokenText !== prevSpokenTextRef.current) {
                 if (challenge?.answer) {
-                    const isCorrect = spokenText === challenge.answer || HOMOPHONES[challenge.answer]?.includes(spokenText);
+                    const homophones = HOMOPHONES[challenge.answer];
+                    const isCorrect = spokenText === challenge.answer || (homophones && homophones.includes(spokenText));
                     // Assume wrong if text is substantial and doesn't match (including homophones)
                     if (!isCorrect && spokenText.length >= 2) {
                         // Trigger wrong animation

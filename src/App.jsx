@@ -653,9 +653,8 @@ const App = () => {
         recognitionRef.current.onend = () => {
             setIsListening(false);
             // Auto-restart if still in Reading challenge
-            // Check battlingSkillId first (use closure to capture current state)
-            const currentBattlingSkillId = battlingSkillId;
-            if (currentBattlingSkillId === 'reading' || targetId === 'reading') {
+            // Check battlingSkillId (use live state check inside timeout)
+            if (battlingSkillId === 'reading' || targetId === 'reading') {
                 // Small delay before restarting to avoid rapid restarts
                 setTimeout(() => {
                     // Double-check that we're still in reading challenge
