@@ -68,7 +68,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             // Fallback to click sound if no mapping exists
             playClick();
         }
-    }, []);
+    }, [playClick]);
 
     // Calculate tempo delays based on completed rounds (accelerating)
     const getTempoDelays = (completedRounds) => {
