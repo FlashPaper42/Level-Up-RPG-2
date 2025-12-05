@@ -136,9 +136,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         // Patterns skill uses hostile mobs like other combat skills
         mobSrc = HOSTILE_MOBS[mobName] || BOSS_MOBS[mobName] || MINIBOSS_MOBS[mobName] || themeData.assets.mobs[mobName];
         if (!mobSrc) {
-            // Fallback to a random hostile mob if the provided name is invalid
-            const hostileMobKeys = Object.keys(HOSTILE_MOBS);
-            displayMobName = hostileMobKeys.length > 0 ? hostileMobKeys[Math.floor(Math.random() * hostileMobKeys.length)] : 'Zombie';
+            // Fallback to Zombie if the provided name is invalid (should not happen with proper state management)
+            displayMobName = 'Zombie';
             mobSrc = HOSTILE_MOBS[displayMobName] || BASE_ASSETS.axolotls.Pink;
         }
     } else {
@@ -403,7 +402,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             <div className={bottomSectionClass}>
                 {isBattling ? (
                     <div className="flex flex-col h-full animate-in slide-in-from-bottom-10 duration-300">
-                        <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>
+                        {config.id !== 'patterns' && <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>}
                         {config.id === 'memory' ? (
                             <div className={`flex-1 grid gap-2 bg-black/20 p-2 rounded items-center`} style={{ gridTemplateColumns: `repeat(${memoryGridCols}, 1fr)` }}>
                                 {memoryCards.map((card, index) => {
@@ -421,12 +420,11 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                         ) : (
                             <div className="flex-1 flex flex-col items-center justify-center">
                                 {config.id === 'patterns' ? (
-                                    <div className="w-full flex flex-col items-center gap-4">
+                                    <div className="w-full flex flex-col items-center gap-1">
                                         {/* Round counter */}
-                                        <div className="text-white text-lg font-bold">
+                                        <div className="text-white text-lg font-bold py-1">
                                             Round: {completedRounds} {isShowingSequence && <span className="text-yellow-400 animate-pulse">Watch!</span>}
                                             {!isShowingSequence && simonGameActive && <span className="text-green-400">Your turn!</span>}
-                                            {shouldResetSequence && <span className="text-purple-400 text-sm ml-2">(New sequence each round!)</span>}
                                         </div>
                                         {/* Dynamic axolotl formation based on difficulty */}
                                         <div className="relative w-[240px] h-[240px]">
