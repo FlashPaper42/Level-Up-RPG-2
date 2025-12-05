@@ -2,7 +2,7 @@
 // For actual game assets, use constants from gameData.jsx:
 // - HOSTILE_MOBS for hostile mob assets (/assets/mobs/hostile/)
 // - FRIENDLY_MOBS for friendly mob assets (/assets/mobs/friendly/)
-// - CHEST_BLOCKS for chest-related assets (/assets/blocks/)
+// - CHEST_BLOCKS for chest-related assets (/assets/items/)
 // - BOSS_MOBS for boss mob assets (/assets/mobs/boss/)
 // - BASE_ASSETS.axolotls for axolotl variants (/assets/mobs/axolotl/)
 

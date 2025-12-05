@@ -1,4 +1,4 @@
-import { HOSTILE_MOBS, FRIENDLY_MOBS, CHEST_BLOCKS, SPECIAL_CHESTS, MINIBOSS_MOBS, READING_WORDS, FUNNY_LONG_WORDS, SPELLING_ITEMS, DIFFICULTY_CONTENT, BASE_ASSETS } from '../constants/gameData';
+import { HOSTILE_MOBS, FRIENDLY_MOBS, CHEST_BLOCKS, SPECIAL_CHESTS, MINIBOSS_MOBS, READING_WORDS, FUNNY_LONG_WORDS, SPELLING_ITEMS, DIFFICULTY_CONTENT, BASE_ASSETS, WRITING_WORD_INDEX, WRITING_DIFFICULTY_POOLS } from '../constants/gameData';
 
 export const getRandomMob = (exclude) => { 
     const pool = Object.keys(HOSTILE_MOBS).filter(m => m !== exclude); 
@@ -229,17 +229,45 @@ export const generateMathProblem = (difficulty) => {
 
 // ===== Writing/Spelling Item Selection =====
 
-// Get items for a target character length
+// Get a word from the appropriate difficulty pool
+// Uses difficulty pools with overlapping character ranges to ensure variety
+export const getWordForDifficulty = (difficulty) => {
+    // Map difficulty (1-7) to pool (1-5), with difficulties 6-7 using pool 5
+    const poolNumber = Math.min(difficulty, 5);
+    const pool = WRITING_DIFFICULTY_POOLS[poolNumber];
+    
+    if (!pool || pool.length === 0) {
+        // Fallback to difficulty 1 pool if something goes wrong
+        const fallbackPool = WRITING_DIFFICULTY_POOLS[1];
+        const item = fallbackPool[Math.floor(Math.random() * fallbackPool.length)];
+        return {
+            word: item.word.toUpperCase(),
+            displayName: item.displayName,
+            image: item.imagePath
+        };
+    }
+    
+    // Select a random word from the pool
+    const item = pool[Math.floor(Math.random() * pool.length)];
+    return {
+        word: item.word.toUpperCase(),
+        displayName: item.displayName,
+        image: item.imagePath
+    };
+};
+
+// Legacy function: Get items for a target character length
+// This is kept for backward compatibility but now uses the comprehensive word index
 // Returns single item or combination of items
 export const getItemsForLength = (targetLength) => {
-    // First, try to find a single item matching the length
-    const singleItems = SPELLING_ITEMS.filter(item => item.length === targetLength);
-    if (singleItems.length > 0) {
-        const item = singleItems[Math.floor(Math.random() * singleItems.length)];
+    // First, try to find a single item matching the length from the comprehensive index
+    const matchingWords = WRITING_WORD_INDEX.filter(item => item.length === targetLength);
+    if (matchingWords.length > 0) {
+        const item = matchingWords[Math.floor(Math.random() * matchingWords.length)];
         return {
-            items: [item],
-            combinedAnswer: item.word,
-            images: [BASE_ASSETS.items[item.word] || BASE_ASSETS.items['TNT']]
+            items: [{ word: item.word.toUpperCase(), length: item.length }],
+            combinedAnswer: item.word.toUpperCase(),
+            images: [item.imagePath]
         };
     }
     
@@ -264,14 +292,14 @@ export const getItemsForLength = (targetLength) => {
         }
     }
     
-    // Fallback: return the closest single item
-    const sortedByLength = [...SPELLING_ITEMS].sort((a, b) => 
+    // Fallback: return the closest single item from comprehensive index
+    const sortedByLength = [...WRITING_WORD_INDEX].sort((a, b) => 
         Math.abs(a.length - targetLength) - Math.abs(b.length - targetLength)
     );
     const fallbackItem = sortedByLength[0];
     return {
-        items: [fallbackItem],
-        combinedAnswer: fallbackItem.word,
-        images: [BASE_ASSETS.items[fallbackItem.word] || BASE_ASSETS.items['TNT']]
+        items: [{ word: fallbackItem.word.toUpperCase(), length: fallbackItem.length }],
+        combinedAnswer: fallbackItem.word.toUpperCase(),
+        images: [fallbackItem.imagePath]
     };
 };

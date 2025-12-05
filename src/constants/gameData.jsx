@@ -3,7 +3,24 @@ export const BASE_ASSETS = {
     badges: { 'Wood': '/assets/badges/wood_badge.png', 'Stone': '/assets/badges/stone_badge.png', 'Gold': '/assets/badges/gold_badge.png', 'Iron': '/assets/badges/iron_badge.png', 'Emerald': '/assets/badges/emerald_badge.png', 'Diamond': '/assets/badges/diamond_badge.png', 'Netherite': '/assets/badges/netherite_badge.png', 'Obsidian': '/assets/badges/obsidian_badge.png', 'Legendary': '/assets/badges/star_badge.png' },
     audio: { 'bgm': ['/assets/sounds/bgm_1.wav'], 'click': '/assets/sounds/click.wav', 'hit': ['/assets/sounds/hit_1.wav'], 'levelup': '/assets/sounds/levelup.wav', 'success': '/assets/sounds/success.wav', 'fail': '/assets/sounds/fail.wav', 'match': '/assets/sounds/match_success.wav', 'mismatch': '/assets/sounds/mismatch.wav', 'damage': '/assets/sounds/damage.wav', 'faint': '/assets/sounds/faint.wav' },
     axolotls: { 'Pink': '/assets/mobs/axolotl/axolotl_pink.gif', 'Cyan': '/assets/mobs/axolotl/axolotl_cyan.gif', 'Gold': '/assets/mobs/axolotl/axolotl_gold.gif', 'Brown': '/assets/mobs/axolotl/axolotl_brown.gif', 'Blue': '/assets/mobs/axolotl/axolotl_blue.gif', 'Red': '/assets/mobs/axolotl/axolotl_red.gif', 'Green': '/assets/mobs/axolotl/axolotl_green.gif', 'Black': '/assets/mobs/axolotl/axolotl_black.gif' },
-    items: { 'TNT': '/assets/items/tnt.png', 'BED': '/assets/items/bed.png', 'BOW': '/assets/items/bow.png', 'MAP': '/assets/items/map.png', 'EGG': '/assets/items/egg.png', 'ICE': '/assets/blocks/ice.png', 'AXE': '/assets/items/axe.gif', 'HOE': '/assets/items/hoe.gif', 'BOOK': '/assets/items/book.gif', 'CAKE': '/assets/items/cake.png', 'BOAT': '/assets/items/boat.png', 'DOOR': '/assets/blocks/door.png', 'WOOL': '/assets/blocks/wool.png', 'SAND': '/assets/blocks/sand.png', 'DIRT': '/assets/blocks/dirt.png', 'MILK': '/assets/items/milk.png' }
+    items: {
+        'TNT': '/assets/items/tnt.png',
+        'BED': '/assets/items/bed.png',
+        'BOW': '/assets/items/bow.png',
+        'MAP': '/assets/items/map.png',
+        'EGG': '/assets/items/egg.png',
+        'ICE': '/assets/items/ice.png',
+        'AXE': '/assets/items/axe.gif',
+        'HOE': '/assets/items/hoe.gif',
+        'BOOK': '/assets/items/book.gif',
+        'CAKE': '/assets/items/cake.png',
+        'BOAT': '/assets/items/boat.png',
+        'DOOR': '/assets/items/door.png',
+        'WOOL': '/assets/items/wool.png',
+        'SAND': '/assets/items/sand.png',
+        'DIRT': '/assets/items/dirt.png',
+        'MILK': '/assets/items/milk.png'
+    }
 };
 
 export const FRIENDLY_MOBS = {
@@ -15,47 +32,56 @@ export const FRIENDLY_MOBS = {
     'Chicken': '/assets/mobs/friendly/chicken.png',
     'Copper Golem': '/assets/mobs/friendly/coppergolem.png',
     'Cow': '/assets/mobs/friendly/cow.png',
+    'Fish': '/assets/mobs/friendly/fish.png',
+    'Frog': '/assets/mobs/friendly/frog.gif',
     'Glow Squid': '/assets/mobs/friendly/glowsquid.gif',
     'Goat': '/assets/mobs/friendly/goat.png',
     'Horse': '/assets/mobs/friendly/horse.png',
+    'Iron Golem': '/assets/mobs/friendly/irongolem.png',
     'Mooshroom': '/assets/mobs/friendly/mooshroom.png',
     'Nautilus': '/assets/mobs/friendly/nautilus.gif',
     'Panda': '/assets/mobs/friendly/panda.png',
     'Pig': '/assets/mobs/friendly/pig.png',
     'Polar Bear': '/assets/mobs/friendly/polarbear.png',
     'Sheep': '/assets/mobs/friendly/sheep.png',
+    'Sniffer': '/assets/mobs/friendly/sniffer.gif',
+    'Snow Golem': '/assets/mobs/friendly/snowgolem.png',
     'Squid': '/assets/mobs/friendly/squid.gif',
+    'Strider': '/assets/mobs/friendly/strider.gif',
     'Turtle': '/assets/mobs/friendly/turtle.png',
     'Wolf': '/assets/mobs/friendly/wolf.png'
 };
 
 export const HOSTILE_MOBS = {
-    'Zombie': '/assets/mobs/hostile/zombie.png',
-    'Creeper': '/assets/mobs/hostile/creeper.png',
-    'Skeleton': '/assets/mobs/hostile/skeleton.png',
-    'Spider': '/assets/mobs/hostile/spider.png',
-    'Enderman': '/assets/mobs/hostile/enderman.png',
     'Blaze': '/assets/mobs/hostile/blaze.gif',
+    'Bogged': '/assets/mobs/hostile/bogged.png',
+    'Breeze': '/assets/mobs/hostile/breeze.webp',
+    'Creeper': '/assets/mobs/hostile/creeper.png',
+    'Drowned': '/assets/mobs/hostile/drowned.png',
+    'Enderman': '/assets/mobs/hostile/enderman.png',
+    'Evoker': '/assets/mobs/hostile/evoker.png',
     'Ghast': '/assets/mobs/hostile/ghast.gif',
-    'Slime': '/assets/mobs/hostile/slime.png',
-    'Witch': '/assets/mobs/hostile/witch.png',
+    'Guardian': '/assets/mobs/hostile/guardian.gif',
+    'Hoglin': '/assets/mobs/hostile/hoglin.png',
+    'Magma Cube': '/assets/mobs/hostile/magmacube.png',
+    'Parched': '/assets/mobs/hostile/parched.png',
     'Phantom': '/assets/mobs/hostile/phantom.gif',
     'Piglin': '/assets/mobs/hostile/piglin.png',
-    'Hoglin': '/assets/mobs/hostile/hoglin.png',
-    'Drowned': '/assets/mobs/hostile/drowned.png',
     'Pillager': '/assets/mobs/hostile/pillager.png',
-    'Evoker': '/assets/mobs/hostile/evoker.png',
-    'Guardian': '/assets/mobs/hostile/guardian.gif',
-    'Magma Cube': '/assets/mobs/hostile/magmacube.png'
+    'Skeleton': '/assets/mobs/hostile/skeleton.png',
+    'Slime': '/assets/mobs/hostile/slime.png',
+    'Spider': '/assets/mobs/hostile/spider.png',
+    'Witch': '/assets/mobs/hostile/witch.png',
+    'Zombie': '/assets/mobs/hostile/zombie.png'
 };
 
 export const CHEST_BLOCKS = {
-    'Chest': '/assets/blocks/chests/chest.gif',
-    'Trapped Chest': '/assets/blocks/chests/trapped_chest.gif',
-    'Barrel': '/assets/blocks/chests/barrel.png',
-    'Bundle': '/assets/blocks/chests/bundle.png',
-    'Shulker Box': '/assets/blocks/chests/shulker_box.png',
-    'Ender Chest': '/assets/blocks/chests/ender_chest.gif'
+    'Chest': '/assets/items/chests/chest.gif',
+    'Trapped Chest': '/assets/items/chests/trapped_chest.gif',
+    'Barrel': '/assets/items/chests/barrel.png',
+    'Bundle': '/assets/items/bundle.png',
+    'Shulker Box': '/assets/items/chests/shulker_box.png',
+    'Ender Chest': '/assets/items/chests/ender_chest.gif'
 };
 
 // Special chests that appear at milestone levels (used for cleaning skill)
@@ -63,8 +89,9 @@ export const SPECIAL_CHESTS = ['Ender Chest', 'Shulker Box'];
 
 export const BOSS_MOBS = {
     'Ender Dragon': '/assets/mobs/boss/enderdragon.gif',
-    'Wither': '/assets/mobs/boss/wither.png',
-    'Warden': '/assets/mobs/boss/warden.gif'
+    'Herobrine': '/assets/mobs/boss/Herobrine.png',
+    'Warden': '/assets/mobs/boss/warden.gif',
+    'Wither': '/assets/mobs/boss/wither.png'
 };
 
 export const MINIBOSS_MOBS = {
@@ -246,6 +273,125 @@ export const SPELLING_ITEMS = [
     { word: "SKELETON", length: 8 },
     { word: "NETHERITE", length: 9 }
 ];
+
+// Helper function to format multi-word display names
+// Converts "coppergolem" -> "Copper Golem", "witherskeleton" -> "Wither Skeleton"
+export const formatDisplayName = (word) => {
+    const multiWordMap = {
+        'coppergolem': 'Copper Golem',
+        'irongolem': 'Iron Golem',
+        'snowgolem': 'Snow Golem',
+        'glowsquid': 'Glow Squid',
+        'polarbear': 'Polar Bear',
+        'magmacube': 'Magma Cube',
+        'elderguardian': 'Elder Guardian',
+        'enderdragon': 'Ender Dragon',
+        'witherskeleton': 'Wither Skeleton',
+        'ender_chest': 'Ender Chest',
+        'shulker_box': 'Shulker Box',
+        'trapped_chest': 'Trapped Chest'
+    };
+    
+    return multiWordMap[word.toLowerCase()] || word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+};
+
+// Comprehensive writing word index from all mobs (excluding axolotls), blocks, and items
+export const WRITING_WORD_INDEX = [
+    // Mobs from friendly
+    { word: 'allay', displayName: 'Allay', length: 5, imagePath: '/assets/mobs/friendly/allay.gif' },
+    { word: 'armadillo', displayName: 'Armadillo', length: 9, imagePath: '/assets/mobs/friendly/armadillo.png' },
+    { word: 'bunny', displayName: 'Bunny', length: 5, imagePath: '/assets/mobs/friendly/bunny.png' },
+    { word: 'camel', displayName: 'Camel', length: 5, imagePath: '/assets/mobs/friendly/camel.gif' },
+    { word: 'cat', displayName: 'Cat', length: 3, imagePath: '/assets/mobs/friendly/cat.png' },
+    { word: 'chicken', displayName: 'Chicken', length: 7, imagePath: '/assets/mobs/friendly/chicken.png' },
+    { word: 'coppergolem', displayName: 'Copper Golem', length: 12, imagePath: '/assets/mobs/friendly/coppergolem.png' },
+    { word: 'cow', displayName: 'Cow', length: 3, imagePath: '/assets/mobs/friendly/cow.png' },
+    { word: 'fish', displayName: 'Fish', length: 4, imagePath: '/assets/mobs/friendly/fish.png' },
+    { word: 'frog', displayName: 'Frog', length: 4, imagePath: '/assets/mobs/friendly/frog.gif' },
+    { word: 'glowsquid', displayName: 'Glow Squid', length: 10, imagePath: '/assets/mobs/friendly/glowsquid.gif' },
+    { word: 'goat', displayName: 'Goat', length: 4, imagePath: '/assets/mobs/friendly/goat.png' },
+    { word: 'horse', displayName: 'Horse', length: 5, imagePath: '/assets/mobs/friendly/horse.png' },
+    { word: 'irongolem', displayName: 'Iron Golem', length: 10, imagePath: '/assets/mobs/friendly/irongolem.png' },
+    { word: 'mooshroom', displayName: 'Mooshroom', length: 9, imagePath: '/assets/mobs/friendly/mooshroom.png' },
+    { word: 'nautilus', displayName: 'Nautilus', length: 8, imagePath: '/assets/mobs/friendly/nautilus.gif' },
+    { word: 'panda', displayName: 'Panda', length: 5, imagePath: '/assets/mobs/friendly/panda.png' },
+    { word: 'pig', displayName: 'Pig', length: 3, imagePath: '/assets/mobs/friendly/pig.png' },
+    { word: 'polarbear', displayName: 'Polar Bear', length: 10, imagePath: '/assets/mobs/friendly/polarbear.png' },
+    { word: 'sheep', displayName: 'Sheep', length: 5, imagePath: '/assets/mobs/friendly/sheep.png' },
+    { word: 'sniffer', displayName: 'Sniffer', length: 7, imagePath: '/assets/mobs/friendly/sniffer.gif' },
+    { word: 'snowgolem', displayName: 'Snow Golem', length: 10, imagePath: '/assets/mobs/friendly/snowgolem.png' },
+    { word: 'squid', displayName: 'Squid', length: 5, imagePath: '/assets/mobs/friendly/squid.gif' },
+    { word: 'strider', displayName: 'Strider', length: 7, imagePath: '/assets/mobs/friendly/strider.gif' },
+    { word: 'turtle', displayName: 'Turtle', length: 6, imagePath: '/assets/mobs/friendly/turtle.png' },
+    { word: 'wolf', displayName: 'Wolf', length: 4, imagePath: '/assets/mobs/friendly/wolf.png' },
+    
+    // Mobs from hostile
+    { word: 'blaze', displayName: 'Blaze', length: 5, imagePath: '/assets/mobs/hostile/blaze.gif' },
+    { word: 'bogged', displayName: 'Bogged', length: 6, imagePath: '/assets/mobs/hostile/bogged.png' },
+    { word: 'breeze', displayName: 'Breeze', length: 6, imagePath: '/assets/mobs/hostile/breeze.webp' },
+    { word: 'creeper', displayName: 'Creeper', length: 7, imagePath: '/assets/mobs/hostile/creeper.png' },
+    { word: 'drowned', displayName: 'Drowned', length: 7, imagePath: '/assets/mobs/hostile/drowned.png' },
+    { word: 'enderman', displayName: 'Enderman', length: 8, imagePath: '/assets/mobs/hostile/enderman.png' },
+    { word: 'evoker', displayName: 'Evoker', length: 6, imagePath: '/assets/mobs/hostile/evoker.png' },
+    { word: 'ghast', displayName: 'Ghast', length: 5, imagePath: '/assets/mobs/hostile/ghast.gif' },
+    { word: 'guardian', displayName: 'Guardian', length: 8, imagePath: '/assets/mobs/hostile/guardian.gif' },
+    { word: 'hoglin', displayName: 'Hoglin', length: 6, imagePath: '/assets/mobs/hostile/hoglin.png' },
+    { word: 'magmacube', displayName: 'Magma Cube', length: 10, imagePath: '/assets/mobs/hostile/magmacube.png' },
+    { word: 'parched', displayName: 'Parched', length: 7, imagePath: '/assets/mobs/hostile/parched.png' },
+    { word: 'phantom', displayName: 'Phantom', length: 7, imagePath: '/assets/mobs/hostile/phantom.gif' },
+    { word: 'piglin', displayName: 'Piglin', length: 6, imagePath: '/assets/mobs/hostile/piglin.png' },
+    { word: 'pillager', displayName: 'Pillager', length: 8, imagePath: '/assets/mobs/hostile/pillager.png' },
+    { word: 'skeleton', displayName: 'Skeleton', length: 8, imagePath: '/assets/mobs/hostile/skeleton.png' },
+    { word: 'slime', displayName: 'Slime', length: 5, imagePath: '/assets/mobs/hostile/slime.png' },
+    { word: 'spider', displayName: 'Spider', length: 6, imagePath: '/assets/mobs/hostile/spider.png' },
+    { word: 'witch', displayName: 'Witch', length: 5, imagePath: '/assets/mobs/hostile/witch.png' },
+    { word: 'zombie', displayName: 'Zombie', length: 6, imagePath: '/assets/mobs/hostile/zombie.png' },
+    
+    // Mobs from miniboss
+    { word: 'creaking', displayName: 'Creaking', length: 8, imagePath: '/assets/mobs/miniboss/creaking.png' },
+    { word: 'elderguardian', displayName: 'Elder Guardian', length: 14, imagePath: '/assets/mobs/miniboss/elderguardian.gif' },
+    { word: 'ravager', displayName: 'Ravager', length: 7, imagePath: '/assets/mobs/miniboss/ravager.png' },
+    { word: 'witherskeleton', displayName: 'Wither Skeleton', length: 15, imagePath: '/assets/mobs/miniboss/witherskeleton.png' },
+    
+    // Mobs from boss
+    { word: 'enderdragon', displayName: 'Ender Dragon', length: 12, imagePath: '/assets/mobs/boss/enderdragon.gif' },
+    { word: 'herobrine', displayName: 'Herobrine', length: 9, imagePath: '/assets/mobs/boss/Herobrine.png' },
+    { word: 'warden', displayName: 'Warden', length: 6, imagePath: '/assets/mobs/boss/warden.gif' },
+    { word: 'wither', displayName: 'Wither', length: 6, imagePath: '/assets/mobs/boss/wither.png' },
+    
+    // Items (including former blocks)
+    { word: 'axe', displayName: 'Axe', length: 3, imagePath: '/assets/items/axe.gif' },
+    { word: 'bed', displayName: 'Bed', length: 3, imagePath: '/assets/items/bed.png' },
+    { word: 'boat', displayName: 'Boat', length: 4, imagePath: '/assets/items/boat.png' },
+    { word: 'book', displayName: 'Book', length: 4, imagePath: '/assets/items/book.gif' },
+    { word: 'bow', displayName: 'Bow', length: 3, imagePath: '/assets/items/bow.png' },
+    { word: 'bundle', displayName: 'Bundle', length: 6, imagePath: '/assets/items/bundle.png' },
+    { word: 'cake', displayName: 'Cake', length: 4, imagePath: '/assets/items/cake.png' },
+    { word: 'egg', displayName: 'Egg', length: 3, imagePath: '/assets/items/egg.png' },
+    { word: 'hoe', displayName: 'Hoe', length: 3, imagePath: '/assets/items/hoe.gif' },
+    { word: 'map', displayName: 'Map', length: 3, imagePath: '/assets/items/map.png' },
+    { word: 'milk', displayName: 'Milk', length: 4, imagePath: '/assets/items/milk.png' },
+    { word: 'tnt', displayName: 'TNT', length: 3, imagePath: '/assets/items/tnt.png' },
+    { word: 'barrel', displayName: 'Barrel', length: 6, imagePath: '/assets/items/chests/barrel.png' },
+    { word: 'chest', displayName: 'Chest', length: 5, imagePath: '/assets/items/chests/chest.gif' },
+    { word: 'ender_chest', displayName: 'Ender Chest', length: 11, imagePath: '/assets/items/chests/ender_chest.gif' },
+    { word: 'shulker_box', displayName: 'Shulker Box', length: 11, imagePath: '/assets/items/chests/shulker_box.png' },
+    { word: 'trapped_chest', displayName: 'Trapped Chest', length: 13, imagePath: '/assets/items/chests/trapped_chest.gif' },
+    { word: 'dirt', displayName: 'Dirt', length: 4, imagePath: '/assets/items/dirt.png' },
+    { word: 'door', displayName: 'Door', length: 4, imagePath: '/assets/items/door.png' },
+    { word: 'ice', displayName: 'Ice', length: 3, imagePath: '/assets/items/ice.png' },
+    { word: 'sand', displayName: 'Sand', length: 4, imagePath: '/assets/items/sand.png' },
+    { word: 'wool', displayName: 'Wool', length: 4, imagePath: '/assets/items/wool.png' }
+];
+
+// Difficulty pools with overlapping character ranges
+export const WRITING_DIFFICULTY_POOLS = {
+    1: WRITING_WORD_INDEX.filter(w => w.length >= 3 && w.length <= 5),  // Easy: 3-5 chars
+    2: WRITING_WORD_INDEX.filter(w => w.length >= 5 && w.length <= 7),  // Normal: 5-7 chars
+    3: WRITING_WORD_INDEX.filter(w => w.length >= 6 && w.length <= 8),  // Medium: 6-8 chars
+    4: WRITING_WORD_INDEX.filter(w => w.length >= 7 && w.length <= 10), // Hard: 7-10 chars
+    5: WRITING_WORD_INDEX.filter(w => w.length >= 9 && w.length <= 15)  // Expert: 9-15 chars
+};
 
 // Writing items organized by length for quick lookup
 export const WRITING_ITEMS_BY_LENGTH = {

@@ -14,7 +14,7 @@ import SkillCard from './components/skills/SkillCard';
 import PhantomEvent from './components/PhantomEvent';
 
 // Utils & Constants
-import { getRandomMob, getRandomFriendlyMob, getRandomAxolotl, getRandomMiniboss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getItemsForLength, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
+import { getRandomMob, getRandomFriendlyMob, getRandomAxolotl, getRandomMiniboss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getWordForDifficulty, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
     HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS
@@ -227,17 +227,15 @@ const App = () => {
             const word = getReadingWord(diff);
             return { type, question: word, answer: word };
         }
-        // Writing: Use difficulty-based item selection
+        // Writing: Use difficulty-based word selection from comprehensive index
         if (type === 'writing') {
-            const targetLength = DIFFICULTY_CONTENT.writing[diff]?.targetLength || 3;
-            const itemData = getItemsForLength(targetLength);
+            const wordData = getWordForDifficulty(diff);
             return { 
                 type, 
                 question: "Spell it!", 
-                answer: itemData.combinedAnswer, 
-                images: itemData.images,
-                items: itemData.items,
-                isMultiItem: itemData.items.length > 1
+                answer: wordData.word, 
+                images: [wordData.image],
+                displayName: wordData.displayName
             };
         }
         // Memory: No specific challenge data, handled in SkillCard
