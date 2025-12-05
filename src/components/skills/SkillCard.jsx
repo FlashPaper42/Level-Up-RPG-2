@@ -15,7 +15,9 @@ const AXOLOTL_NOTE_MAP = {
     'Gold': 'e4',
     'Brown': 'f4',
     'Blue': 'g4',
-    // Additional notes available if more axolotl colors are added: a4, b4, g5
+    'Red': 'a4',
+    'Green': 'b4',
+    'Black': 'g5'
 };
 
 // Dynamic font sizing for reading challenge based on word length
@@ -68,7 +70,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             // Fallback to click sound if no mapping exists
             playClick();
         }
-    }, [playClick]);
+    }, []);
 
     // Calculate tempo delays based on completed rounds (accelerating)
     const getTempoDelays = (completedRounds) => {
