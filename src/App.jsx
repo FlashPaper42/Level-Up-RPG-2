@@ -616,6 +616,11 @@ const App = () => {
                 });
                 return updated;
             });
+            
+            // Force a re-render to ensure UI immediately reflects the new levels
+            setTimeout(() => {
+                setSkills(current => ({ ...current }));
+            }, 0);
         }
     };
     const handleReset = () => {
