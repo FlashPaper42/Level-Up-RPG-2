@@ -14,7 +14,7 @@ import SkillCard from './components/skills/SkillCard';
 import PhantomEvent from './components/PhantomEvent';
 
 // Utils & Constants
-import { getRandomMob, getRandomFriendlyMob, getRandomAxolotl, getRandomMiniboss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getWordForDifficulty, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
+import { getRandomMob, getRandomFriendlyMob, getRandomMiniboss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getWordForDifficulty, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
     HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS
@@ -63,6 +63,8 @@ const App = () => {
                 readingMob: skill.id === 'reading' ? getRandomMob(null) : null, // Stable mob for Reading card display
                 mathMob: skill.id === 'math' ? getRandomMob(null) : null, // Stable mob for Math card display
                 writingMob: skill.id === 'writing' ? getRandomMob(null) : null // Stable mob for Writing card display
+                patternMob: skill.id === 'patterns' ? getRandomMob(null) : null, // Stable hostile mob for Patterns card display
+                currentMiniboss: getRandomMiniboss() // Stable miniboss for miniboss encounters
             }; 
         });
         let saved = localStorage.getItem(getStorageKey(profileId));
@@ -100,7 +102,7 @@ const App = () => {
                     }
                     // Ensure patternMob exists for patterns skill (backward compatibility)
                     if (key === 'patterns' && !initial[key].patternMob) {
-                        initial[key].patternMob = getRandomAxolotl();
+                        initial[key].patternMob = getRandomMob(null);
                     }
                     // Ensure combat skill mobs exist (backward compatibility)
                     if (key === 'reading' && !initial[key].readingMob) {
@@ -415,7 +417,7 @@ const App = () => {
                     newMemoryMob = getRandomFriendlyMob();
                 }
                 if (skillConfig.id === 'patterns') {
-                    newPatternMob = getRandomAxolotl();
+                    newPatternMob = getRandomMob(current.currentMob);
                 }
                 
                 // Update stable mobs for combat skills on completion
@@ -771,7 +773,7 @@ const App = () => {
             <GlobalStyles />
             <div className="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
             <button onClick={() => { setIsMenuOpen(false); setIsSettingsOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', left: '16px' }}><Sparkles size={32} className="text-yellow-400" /></button>
-            <div className="absolute z-40 flex gap-2" style={{ top: '20px', left: '96px' }}>{Array(10).fill(0).map((_, i) => (<PixelHeart key={i} size={48} filled={i < playerHealth} />))}</div>
+            <div className="absolute z-40 flex gap-1" style={{ bottom: '20px', left: '16px' }}>{Array(10).fill(0).map((_, i) => (<PixelHeart key={i} size={30} filled={i < playerHealth} />))}</div>
             {/* Settings drawer overlay - click to close */}
             {isSettingsOpen && (
                 <div
