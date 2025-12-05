@@ -60,7 +60,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const playAxolotlNote = useCallback((color) => {
         const noteName = AXOLOTL_NOTE_MAP[color];
         if (noteName) {
-            const audio = new Audio(`/assets/sounds/axolotl/${noteName}.mp3`);
+            const audio = new Audio(`/assets/sounds/axolotl/${noteName}.wav`);
             audio.volume = getSfxVolume();
             audio.play().catch(() => {
                 // Fallback to click sound if note file fails to load
