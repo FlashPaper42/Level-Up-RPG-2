@@ -10,6 +10,9 @@ const PRESTIGE_LEVEL_THRESHOLD = 20;
 
 // Voice recognition constants
 const MIN_SPOKEN_TEXT_LENGTH = 2;
+// Tempo constants for pattern recognition
+const MAX_TEMPO_DELAY = 800; // Slowest tempo (difficulty 1, round 1)
+const MIN_TEMPO_DELAY = 200; // Fastest tempo (difficulty 7, always)
 
 // Map axolotl colors to specific note files for consistent sound feedback
 const AXOLOTL_NOTE_MAP = {
@@ -21,6 +24,48 @@ const AXOLOTL_NOTE_MAP = {
     'Red': 'a4',
     'Green': 'b4',
     'Black': 'g5'
+};
+
+// Dynamic font sizing for reading challenge based on word length
+const getReadingFontSize = (wordLength) => {
+    if (wordLength <= 8) return 'text-4xl';
+    if (wordLength <= 12) return 'text-3xl';
+    if (wordLength <= 18) return 'text-2xl';
+    if (wordLength <= 24) return 'text-xl';
+    return 'text-lg';
+};
+
+// Helper: clamp a value between min and max
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+// Helper: linearly interpolate between two values
+const lerp = (start, end, t) => start + (end - start) * clamp(t, 0, 1);
+
+// Calculate tempo delays based on completed rounds and difficulty
+// Difficulty scales both the starting delay and the acceleration runway
+const getTempoDelays = (completedRounds, currentDifficulty) => {
+    // Use 1-based round number
+    const round = completedRounds + 1;
+    
+    // Calculate starting delay based on difficulty
+    // Difficulty 1: 800ms, Difficulty 7: 200ms
+    const startingDelay = lerp(MAX_TEMPO_DELAY, MIN_TEMPO_DELAY, (currentDifficulty - 1) / 6);
+    
+    // Calculate acceleration runway based on difficulty
+    // Difficulty 1: ~10 rounds, Difficulty 7: 1 round (essentially no acceleration)
+    const maxRunwayRounds = lerp(10, 1, (currentDifficulty - 1) / 6);
+    
+    // Calculate current tempo with acceleration
+    // Progress through the runway: 0 at round 1, 1 at maxRunwayRounds
+    // Handle edge case where maxRunwayRounds is 1 (no acceleration)
+    const runwayProgress = maxRunwayRounds > 1 ? (round - 1) / (maxRunwayRounds - 1) : 1;
+    const rawOnDelay = lerp(startingDelay, MIN_TEMPO_DELAY, runwayProgress);
+    const onDelay = clamp(rawOnDelay, MIN_TEMPO_DELAY, MAX_TEMPO_DELAY);
+    
+    // offDelay scaled to ~35% of onDelay with a 100ms floor
+    const offDelay = Math.max(100, Math.round(onDelay * 0.35));
+    
+    return { onDelay, offDelay };
 };
 
 const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, challenge, isListening, spokenText, damageNumbers, onStartBattle, onEndBattle, onMathSubmit, onMicClick, difficulty, setDifficulty, unlockedDifficulty }) => {
@@ -68,22 +113,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             playClick();
         }
     }, []);
-
-    // Calculate tempo delays based on completed rounds (accelerating)
-    const getTempoDelays = (completedRounds) => {
-        // Use 1-based round number
-        const round = completedRounds + 1;
-        
-        // Linearly interpolate from 800ms (round 1) to 200ms (round 10+)
-        // Formula: 800 - ((round - 1) * (800 - 200) / (10 - 1))
-        const rawOnDelay = 800 - ((round - 1) * 600 / 9);
-        const onDelay = Math.max(200, rawOnDelay);
-        
-        // offDelay scaled to ~35% of onDelay with a 100ms floor
-        const offDelay = Math.max(100, Math.round(onDelay * 0.35));
-        
-        return { onDelay, offDelay };
-    };
 
     // Calculate HP percentage based on mobHealth/mobMaxHealth for HP bar display
     const mobHealth = data.mobHealth || 100;
@@ -230,7 +259,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         setIsShowingSequence(true);
         setPlayerIndex(0);
         let i = 0;
-        const { onDelay, offDelay } = getTempoDelays(completedRounds);
+        const { onDelay, offDelay } = getTempoDelays(completedRounds, difficulty);
         
         const playNext = () => {
             if (i < sequence.length) {
@@ -246,7 +275,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             }
         };
         setTimeout(playNext, 500);
-    }, [completedRounds, playAxolotlNote]);
+    }, [completedRounds, difficulty, playAxolotlNote]);
 
     const startSimonGame = useCallback(() => {
         const firstColor = axolotlColors[Math.floor(Math.random() * axolotlColors.length)];

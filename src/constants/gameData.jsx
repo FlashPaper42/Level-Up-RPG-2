@@ -93,7 +93,7 @@ export const DIFFICULTY_CONTENT = {
         4: { operations: ['+', '-', '*'], range: [1, 20], multiplyRange: [1, 12], description: 'Add, subtract, multiply' },
         5: { operations: ['+', '-', '*', '/'], range: [1, 50], divisionRange: [1, 12], description: 'All operations' },
         6: { pemdas: true, description: 'Order of operations' },
-        7: { algebra: true, description: 'Algebra with variables' }
+        7: { nightmare: true, description: 'Nightmare complexity' }
     },
     writing: {
         1: { targetLength: 3 },
