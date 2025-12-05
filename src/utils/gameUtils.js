@@ -60,6 +60,18 @@ export const getMobForSkill = (skillConfig, userSkill) => {
         return userSkill.currentMiniboss || getRandomMiniboss();
     }
     
+    // Combat skills (reading, math, writing): Return stored mob to prevent random changes on re-render
+    if (skillConfig.id === 'reading') {
+        return userSkill.readingMob || getRandomMob(null);
+    }
+    if (skillConfig.id === 'math') {
+        return userSkill.mathMob || getRandomMob(null);
+    }
+    if (skillConfig.id === 'writing') {
+        return userSkill.writingMob || getRandomMob(null);
+    }
+    
+    // Fallback for any other skills
     // Normal hostile mob
     const hostileMobKeys = Object.keys(HOSTILE_MOBS);
     const currentMobIsValid = userSkill.currentMob && hostileMobKeys.includes(userSkill.currentMob);

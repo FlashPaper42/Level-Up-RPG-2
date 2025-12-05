@@ -59,7 +59,10 @@ const App = () => {
                 recoveryDifficulty: null, // Difficulty to suggest for recovery
                 memoryMob: skill.id === 'memory' ? getRandomFriendlyMob() : null, // Stable mob for Memory card display
                 patternMob: skill.id === 'patterns' ? getRandomAxolotl() : null, // Stable axolotl for Patterns card display
-                currentMiniboss: getRandomMiniboss() // Stable miniboss for miniboss encounters
+                currentMiniboss: getRandomMiniboss(), // Stable miniboss for miniboss encounters
+                readingMob: skill.id === 'reading' ? getRandomMob(null) : null, // Stable mob for Reading card display
+                mathMob: skill.id === 'math' ? getRandomMob(null) : null, // Stable mob for Math card display
+                writingMob: skill.id === 'writing' ? getRandomMob(null) : null // Stable mob for Writing card display
             }; 
         });
         let saved = localStorage.getItem(getStorageKey(profileId));
@@ -98,6 +101,16 @@ const App = () => {
                     // Ensure patternMob exists for patterns skill (backward compatibility)
                     if (key === 'patterns' && !initial[key].patternMob) {
                         initial[key].patternMob = getRandomAxolotl();
+                    }
+                    // Ensure combat skill mobs exist (backward compatibility)
+                    if (key === 'reading' && !initial[key].readingMob) {
+                        initial[key].readingMob = getRandomMob(null);
+                    }
+                    if (key === 'math' && !initial[key].mathMob) {
+                        initial[key].mathMob = getRandomMob(null);
+                    }
+                    if (key === 'writing' && !initial[key].writingMob) {
+                        initial[key].writingMob = getRandomMob(null);
                     }
                 }); 
                 return initial; 
@@ -368,6 +381,9 @@ const App = () => {
             let newMemoryMob = current.memoryMob;
             let newPatternMob = current.patternMob;
             let newMiniboss = current.currentMiniboss;
+            let newReadingMob = current.readingMob;
+            let newMathMob = current.mathMob;
+            let newWritingMob = current.writingMob;
             
             // Calculate XP reward for this hit
             // Total XP is split evenly among all hits required to defeat the mob
@@ -400,6 +416,17 @@ const App = () => {
                 }
                 if (skillConfig.id === 'patterns') {
                     newPatternMob = getRandomAxolotl();
+                }
+                
+                // Update stable mobs for combat skills on completion
+                if (skillConfig.id === 'reading') {
+                    newReadingMob = getRandomMob(current.readingMob);
+                }
+                if (skillConfig.id === 'math') {
+                    newMathMob = getRandomMob(current.mathMob);
+                }
+                if (skillConfig.id === 'writing') {
+                    newWritingMob = getRandomMob(current.writingMob);
                 }
                 
                 // Update miniboss when defeating a miniboss encounter
@@ -482,7 +509,10 @@ const App = () => {
                     recoveryDifficulty: newRecoveryDifficulty,
                     memoryMob: newMemoryMob,
                     patternMob: newPatternMob,
-                    currentMiniboss: newMiniboss
+                    currentMiniboss: newMiniboss,
+                    readingMob: newReadingMob,
+                    mathMob: newMathMob,
+                    writingMob: newWritingMob
                 }
             };
         });

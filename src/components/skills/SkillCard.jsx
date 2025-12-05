@@ -149,9 +149,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         // Check hostile mobs, boss mobs, and miniboss mobs
         mobSrc = HOSTILE_MOBS[mobName] || BOSS_MOBS[mobName] || MINIBOSS_MOBS[mobName] || themeData.assets.mobs[mobName];
         if (!mobSrc) {
-            // Fallback to a random hostile mob if the provided name is invalid
-            const hostileMobKeys = Object.keys(HOSTILE_MOBS);
-            displayMobName = hostileMobKeys.length > 0 ? hostileMobKeys[Math.floor(Math.random() * hostileMobKeys.length)] : 'Zombie';
+            // Fallback to Zombie if the provided name is invalid (should not happen with proper state management)
+            displayMobName = 'Zombie';
             mobSrc = HOSTILE_MOBS[displayMobName] || BASE_ASSETS.axolotls.Pink;
         }
     }
