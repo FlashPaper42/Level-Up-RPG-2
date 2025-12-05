@@ -230,9 +230,13 @@ const App = () => {
     // Toggle fullscreen mode
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
+            document.documentElement.requestFullscreen().catch(err => {
+                console.warn('Failed to enter fullscreen:', err);
+            });
         } else {
-            document.exitFullscreen();
+            document.exitFullscreen().catch(err => {
+                console.warn('Failed to exit fullscreen:', err);
+            });
         }
         playClick();
     };
@@ -775,7 +779,7 @@ const App = () => {
             )}
             <SettingsDrawer isOpen={isSettingsOpen} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={() => setIsResetOpen(true)} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} parentStatus={parentStatus} onParentVerified={handleParentVerified} currentSkills={skills} />
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
-            <button onClick={toggleFullscreen} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '76px' }}>{isFullscreen ? <Minimize size={32} /> : <Maximize size={32} />}</button>
+            <button onClick={toggleFullscreen} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '76px' }} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'} title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}>{isFullscreen ? <Minimize size={32} /> : <Maximize size={32} />}</button>
             <button onClick={() => { setIsSettingsOpen(false); setIsMenuOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
             {/* Achievement drawer overlay - click to close */}
             {isMenuOpen && (
