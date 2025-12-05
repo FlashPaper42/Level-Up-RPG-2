@@ -3,7 +3,24 @@ export const BASE_ASSETS = {
     badges: { 'Wood': '/assets/badges/wood_badge.png', 'Stone': '/assets/badges/stone_badge.png', 'Gold': '/assets/badges/gold_badge.png', 'Iron': '/assets/badges/iron_badge.png', 'Emerald': '/assets/badges/emerald_badge.png', 'Diamond': '/assets/badges/diamond_badge.png', 'Netherite': '/assets/badges/netherite_badge.png', 'Obsidian': '/assets/badges/obsidian_badge.png', 'Legendary': '/assets/badges/star_badge.png' },
     audio: { 'bgm': ['/assets/sounds/bgm_1.wav'], 'click': '/assets/sounds/click.wav', 'hit': ['/assets/sounds/hit_1.wav'], 'levelup': '/assets/sounds/levelup.wav', 'success': '/assets/sounds/success.wav', 'fail': '/assets/sounds/fail.wav', 'match': '/assets/sounds/match_success.wav', 'mismatch': '/assets/sounds/mismatch.wav', 'damage': '/assets/sounds/damage.wav', 'faint': '/assets/sounds/faint.wav' },
     axolotls: { 'Pink': '/assets/mobs/axolotl/axolotl_pink.gif', 'Cyan': '/assets/mobs/axolotl/axolotl_cyan.gif', 'Gold': '/assets/mobs/axolotl/axolotl_gold.gif', 'Brown': '/assets/mobs/axolotl/axolotl_brown.gif', 'Blue': '/assets/mobs/axolotl/axolotl_blue.gif', 'Red': '/assets/mobs/axolotl/axolotl_red.gif', 'Green': '/assets/mobs/axolotl/axolotl_green.gif', 'Black': '/assets/mobs/axolotl/axolotl_black.gif' },
-    items: { 'TNT': '/assets/items/tnt.png', 'BED': '/assets/items/bed.png', 'BOW': '/assets/items/bow.png', 'MAP': '/assets/items/map.png', 'EGG': '/assets/items/egg.png', 'ICE': '/assets/items/ice.png', 'AXE': '/assets/items/axe.gif', 'HOE': '/assets/items/hoe.gif', 'BOOK': '/assets/items/book.gif', 'CAKE': '/assets/items/cake.png', 'BOAT': '/assets/items/boat.png', 'DOOR': '/assets/items/door.png', 'WOOL': '/assets/items/wool.png', 'SAND': '/assets/items/sand.png', 'DIRT': '/assets/items/dirt.png', 'MILK': '/assets/items/milk.png' }
+    items: {
+        'TNT': '/assets/items/tnt.png',
+        'BED': '/assets/items/bed.png',
+        'BOW': '/assets/items/bow.png',
+        'MAP': '/assets/items/map.png',
+        'EGG': '/assets/items/egg.png',
+        'ICE': '/assets/items/ice.png',
+        'AXE': '/assets/items/axe.gif',
+        'HOE': '/assets/items/hoe.gif',
+        'BOOK': '/assets/items/book.gif',
+        'CAKE': '/assets/items/cake.png',
+        'BOAT': '/assets/items/boat.png',
+        'DOOR': '/assets/items/door.png',
+        'WOOL': '/assets/items/wool.png',
+        'SAND': '/assets/items/sand.png',
+        'DIRT': '/assets/items/dirt.png',
+        'MILK': '/assets/items/milk.png'
+    }
 };
 
 export const FRIENDLY_MOBS = {
@@ -62,7 +79,7 @@ export const CHEST_BLOCKS = {
     'Chest': '/assets/items/chests/chest.gif',
     'Trapped Chest': '/assets/items/chests/trapped_chest.gif',
     'Barrel': '/assets/items/chests/barrel.png',
-    'Bundle': '/assets/items/chests/bundle.png',
+    'Bundle': '/assets/items/bundle.png',
     'Shulker Box': '/assets/items/chests/shulker_box.png',
     'Ender Chest': '/assets/items/chests/ender_chest.gif'
 };
