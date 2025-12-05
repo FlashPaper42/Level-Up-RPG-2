@@ -829,6 +829,7 @@ const App = () => {
             <div className="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
             
             {/* Top Left Buttons */}
+            {/* Button dimensions: p-3 (12px) + icon(32px) + p-3 (12px) + border-2*2 (4px) = 60px + 3px gap = 63px spacing */}
             <button 
                 onClick={() => { setIsMenuOpen(false); setIsSettingsOpen(false); setIsCosmeticsOpen(true); playClick(); }} 
                 className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
@@ -839,7 +840,7 @@ const App = () => {
             <button 
                 onClick={() => { setIsMenuOpen(false); setIsCosmeticsOpen(false); setIsSettingsOpen(true); playClick(); }} 
                 className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
-                style={{ top: '16px', left: '73px' }}
+                style={{ top: '16px', left: 'calc(16px + 60px + 3px)' }}
             >
                 <Sparkles size={32} className="text-yellow-400" />
             </button>
@@ -891,10 +892,11 @@ const App = () => {
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
             
             {/* Top Right Buttons */}
+            {/* Button dimensions: p-3 (12px) + icon(32px) + p-3 (12px) + border-2*2 (4px) = 60px + 3px gap = 63px spacing */}
             <button 
                 onClick={toggleFullscreen} 
                 className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
-                style={{ top: '16px', right: '79px' }} 
+                style={{ top: '16px', right: 'calc(16px + 60px + 3px)' }} 
                 aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'} 
                 title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
             >

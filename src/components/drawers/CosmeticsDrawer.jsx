@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Sparkles } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { THEMES_LIST } from '../../constants/gameData';
@@ -24,8 +24,6 @@ const CosmeticsDrawer = ({
     setBorderColor, 
     unlockedBorders 
 }) => {
-    const [showColorPicker, setShowColorPicker] = useState(false);
-
     const isBorderUnlocked = (tier) => {
         return unlockedBorders.includes(tier);
     };
@@ -104,11 +102,14 @@ const CosmeticsDrawer = ({
                                                 : 'bg-slate-800/70 border-slate-600 hover:border-yellow-400/50 hover:scale-105'
                                     }`}
                                 >
-                                    <div className={`w-full h-16 mb-2 rounded border-4 ${
-                                        unlocked 
-                                            ? `border-effect-${border.id}` 
-                                            : 'border-gray-600'
-                                    }`}>
+                                    <div 
+                                        className={`w-full h-16 mb-2 rounded border-4 ${
+                                            unlocked 
+                                                ? `border-effect-${border.id}` 
+                                                : 'border-gray-600'
+                                        }`}
+                                        style={unlocked && (border.id === 'pulsing' || border.id === 'sparkle') ? { '--border-color': borderColor } : {}}
+                                    >
                                         {/* Preview area */}
                                     </div>
                                     <div className="text-center">
