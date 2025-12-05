@@ -534,7 +534,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                             const answerLength = answerNoSpaces.length;
                                             return challenge?.answer.split('').map((char, i) => {
                                                 if (char === ' ') {
-                                                    return <div key={i} className="w-4"></div>;
+                                                    return <div key={i} className={`${answerLength > 6 ? 'w-7' : 'w-10'}`}></div>;
                                                 }
                                                 // Calculate input index by counting non-space characters before this position
                                                 let inputIndex = 0;
