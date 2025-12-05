@@ -11,12 +11,6 @@ export const getRandomFriendlyMob = () => {
     return friendlyMobKeys.length > 0 ? friendlyMobKeys[Math.floor(Math.random() * friendlyMobKeys.length)] : 'Allay';
 };
 
-// Get a random axolotl key for the Patterns skill
-export const getRandomAxolotl = () => {
-    const axolotlKeys = Object.keys(BASE_ASSETS.axolotls);
-    return axolotlKeys.length > 0 ? axolotlKeys[Math.floor(Math.random() * axolotlKeys.length)] : 'Pink';
-};
-
 export const getRandomMiniboss = () => {
     const minibossKeys = Object.keys(MINIBOSS_MOBS);
     return minibossKeys.length > 0 ? minibossKeys[Math.floor(Math.random() * minibossKeys.length)] : 'Wither Skeleton';
