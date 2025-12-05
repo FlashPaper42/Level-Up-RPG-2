@@ -43,9 +43,9 @@ export const getMobForSkill = (skillConfig, userSkill) => {
     if (skillConfig.id === 'memory') {
         return userSkill.memoryMob || getRandomFriendlyMob();
     }
-    // Patterns skill: Return stored patternMob to prevent random changes on re-render
+    // Patterns skill: Return stored patternMob (hostile mob) to prevent random changes on re-render
     if (skillConfig.id === 'patterns') {
-        return userSkill.patternMob || getRandomAxolotl();
+        return userSkill.patternMob || getRandomMob(null);
     }
     
     // Determine encounter type based on level cycle
