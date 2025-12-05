@@ -59,7 +59,7 @@ const getTempoDelays = (completedRounds, currentDifficulty) => {
     return { onDelay, offDelay };
 };
 
-const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, challenge, isListening, spokenText, damageNumbers, onStartBattle, onEndBattle, onMathSubmit, onMicClick, difficulty, setDifficulty, unlockedDifficulty }) => {
+const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, challenge, isListening, spokenText, damageNumbers, onStartBattle, onEndBattle, onMathSubmit, onMicClick, difficulty, setDifficulty, unlockedDifficulty, selectedBorder, borderColor }) => {
     const [mathInput, setMathInput] = useState('');
     const [isHit, setIsHit] = useState(false);
     const [isWrong, setIsWrong] = useState(false);
@@ -120,6 +120,24 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     if (data.level >= 120) { levelTextColor = 'text-cyan-300'; borderClass = 'border-diamond'; }
     if (data.level >= 140) { levelTextColor = 'text-gray-500'; borderClass = 'border-netherite'; }
     if (data.level >= 160) { levelTextColor = 'text-rainbow'; borderClass = 'border-netherite'; }
+    
+    // Apply selected border effect if this is the center card
+    let appliedBorderEffect = '';
+    let borderStyle = {};
+    if (isCenter && selectedBorder) {
+        if (selectedBorder === 'solid') {
+            appliedBorderEffect = '';
+            borderStyle = { 
+                borderColor: borderColor || '#FFD700',
+                boxShadow: `0 0 20px ${borderColor || '#FFD700'}, 0 0 40px ${borderColor || '#FFD700'}`
+            };
+        } else {
+            appliedBorderEffect = `border-effect-${selectedBorder}`;
+            if (selectedBorder === 'pulsing' || selectedBorder === 'sparkle') {
+                borderStyle = { '--border-color': borderColor || '#FFD700' };
+            }
+        }
+    }
 
     const skillThemeConfig = themeData.skills[config.id] || {};
     const skillName = skillThemeConfig.name || config.name;
@@ -388,7 +406,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     const cardContent = (
         <div
-            className={`bg-[#2b2b2b] border-4 rounded-lg overflow-visible flex flex-col transition-all duration-500 ${isCenter ? `selected-card-glow ${borderClass}` : 'border-stone-700'} w-[300px] h-[600px] ${!isBattlingCenter ? 'relative' : ''}`}
+            className={`bg-[#2b2b2b] border-4 rounded-lg overflow-visible flex flex-col transition-all duration-500 ${isCenter ? `${appliedBorderEffect} ${!appliedBorderEffect ? borderClass : ''}` : 'border-stone-700'} w-[300px] h-[600px] ${!isBattlingCenter ? 'relative' : ''}`}
+            style={isCenter ? borderStyle : {}}
         >
                 {isCenter && data.level >= PRESTIGE_LEVEL_THRESHOLD && <div className="gem-socket"><div className="gem-stone" style={gemStyle}></div></div>}
                 <div className={topSectionBaseClass} style={config.colorStyle}>

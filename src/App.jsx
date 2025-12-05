@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-    Menu, Sparkles, ChevronLeft, ChevronRight, Gift, Maximize, Minimize
+    Menu, Sparkles, ChevronLeft, ChevronRight, Gift, Maximize, Minimize, Palette
 } from 'lucide-react';
 
 // Modules
@@ -9,6 +9,7 @@ import SafeImage from './components/ui/SafeImage';
 import PixelHeart from './components/ui/PixelHeart';
 import ResetModal from './components/modals/ResetModal';
 import SettingsDrawer from './components/drawers/SettingsDrawer';
+import CosmeticsDrawer from './components/drawers/CosmeticsDrawer';
 import MenuDrawer from './components/drawers/MenuDrawer';
 import SkillCard from './components/skills/SkillCard';
 import PhantomEvent from './components/PhantomEvent';
@@ -181,6 +182,7 @@ const App = () => {
     const [lootBox, setLootBox] = useState(null); 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isCosmeticsOpen, setIsCosmeticsOpen] = useState(false);
     const [isResetOpen, setIsResetOpen] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const [spokenText, setSpokenText] = useState("");
@@ -196,6 +198,16 @@ const App = () => {
     const [bgmVol, setBgmVol] = useState(0.3);
     const [sfxVol, setSfxVolState] = useState(0.5);
     const bgmManager = useRef(getBGMManager());
+    
+    // Cosmetics state
+    const [selectedBorder, setSelectedBorder] = useState(() => {
+        const saved = localStorage.getItem(`borderEffect_p${currentProfile}`);
+        return saved || 'solid';
+    });
+    const [borderColor, setBorderColor] = useState(() => {
+        const saved = localStorage.getItem(`borderColor_p${currentProfile}`);
+        return saved || '#FFD700';
+    });
 
     useEffect(() => { 
         const dataToSave = { skills: skills, theme: activeTheme };
@@ -204,6 +216,23 @@ const App = () => {
         localStorage.setItem('heroProfileNames_v1', JSON.stringify(profileNames));
         localStorage.setItem('heroParentStatus_v1', JSON.stringify(parentStatus));
     }, [skills, currentProfile, activeTheme, profileNames, parentStatus]);
+    
+    // Save cosmetics preferences
+    useEffect(() => {
+        localStorage.setItem(`borderEffect_p${currentProfile}`, selectedBorder);
+        localStorage.setItem(`borderColor_p${currentProfile}`, borderColor);
+    }, [selectedBorder, borderColor, currentProfile]);
+    
+    // Calculate unlocked borders based on earned badges (memoized)
+    const unlockedBorders = React.useMemo(() => {
+        const unlockedTiers = new Set();
+        Object.values(skills).forEach(skill => {
+            if (skill.earnedBadges && Array.isArray(skill.earnedBadges)) {
+                skill.earnedBadges.forEach(tier => unlockedTiers.add(tier));
+            }
+        });
+        return Array.from(unlockedTiers);
+    }, [skills]);
 
     // Update BGM volume
     useEffect(() => { 
@@ -806,8 +835,45 @@ const App = () => {
         <div className="min-h-screen overflow-hidden relative flex flex-col bg-cover bg-center bg-no-repeat font-sans text-stone-100" style={containerStyle}>
             <GlobalStyles />
             <div className="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
-            <button onClick={() => { setIsMenuOpen(false); setIsSettingsOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', left: '16px' }}><Sparkles size={32} className="text-yellow-400" /></button>
+            
+            {/* Top Left Buttons */}
+            {/* Button dimensions: p-3 (12px) + icon(32px) + p-3 (12px) + border-2*2 (4px) = 60px + 3px gap = 63px spacing */}
+            <button 
+                onClick={() => { setIsMenuOpen(false); setIsSettingsOpen(false); setIsCosmeticsOpen(true); playClick(); }} 
+                className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
+                style={{ top: '16px', left: '16px' }}
+            >
+                <Palette size={32} className="text-purple-400" />
+            </button>
+            <button 
+                onClick={() => { setIsMenuOpen(false); setIsCosmeticsOpen(false); setIsSettingsOpen(true); playClick(); }} 
+                className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
+                style={{ top: '16px', left: 'calc(16px + 60px + 3px)' }}
+            >
+                <Sparkles size={32} className="text-yellow-400" />
+            </button>
+            
+            {/* Player Health Display */}
             <div className="absolute z-40 flex gap-1.5" style={{ bottom: '20px', left: '16px' }}>{Array(10).fill(0).map((_, i) => (<PixelHeart key={i} size={48} filled={i < playerHealth} />))}</div>
+            
+            {/* Cosmetics drawer overlay - click to close */}
+            {isCosmeticsOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40"
+                    onClick={() => { setIsCosmeticsOpen(false); playClick(); }}
+                />
+            )}
+            <CosmeticsDrawer 
+                isOpen={isCosmeticsOpen} 
+                activeTheme={activeTheme} 
+                setActiveTheme={setActiveTheme}
+                selectedBorder={selectedBorder}
+                setSelectedBorder={setSelectedBorder}
+                borderColor={borderColor}
+                setBorderColor={setBorderColor}
+                unlockedBorders={unlockedBorders}
+            />
+            
             {/* Settings drawer overlay - click to close */}
             {isSettingsOpen && (
                 <div
@@ -815,10 +881,43 @@ const App = () => {
                     onClick={() => { setIsSettingsOpen(false); playClick(); }}
                 />
             )}
-            <SettingsDrawer isOpen={isSettingsOpen} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={() => setIsResetOpen(true)} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} parentStatus={parentStatus} onParentVerified={handleParentVerified} currentSkills={skills} />
+            <SettingsDrawer 
+                isOpen={isSettingsOpen} 
+                onReset={() => setIsResetOpen(true)} 
+                bgmVol={bgmVol} 
+                setBgmVol={setBgmVol} 
+                sfxVol={sfxVol} 
+                setSfxVol={setSfxVolState} 
+                currentProfile={currentProfile} 
+                onSwitchProfile={handleSwitchProfile} 
+                profileNames={profileNames} 
+                onRenameProfile={handleRenameProfile} 
+                getProfileStats={getProfileStats} 
+                parentStatus={parentStatus} 
+                onParentVerified={handleParentVerified} 
+                currentSkills={skills} 
+            />
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
-            <button onClick={toggleFullscreen} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '76px' }} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'} title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}>{isFullscreen ? <Minimize size={32} /> : <Maximize size={32} />}</button>
-            <button onClick={() => { setIsSettingsOpen(false); setIsMenuOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
+            
+            {/* Top Right Buttons */}
+            {/* Button dimensions: p-3 (12px) + icon(32px) + p-3 (12px) + border-2*2 (4px) = 60px + 3px gap = 63px spacing */}
+            <button 
+                onClick={toggleFullscreen} 
+                className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
+                style={{ top: '16px', right: 'calc(16px + 60px + 3px)' }} 
+                aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'} 
+                title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+            >
+                {isFullscreen ? <Minimize size={32} /> : <Maximize size={32} />}
+            </button>
+            <button 
+                onClick={() => { setIsSettingsOpen(false); setIsCosmeticsOpen(false); setIsMenuOpen(true); playClick(); }} 
+                className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
+                style={{ top: '16px', right: '16px' }}
+            >
+                <Menu size={32} />
+            </button>
+            
             {/* Achievement drawer overlay - click to close */}
             {isMenuOpen && (
                 <div
@@ -838,8 +937,38 @@ const App = () => {
             <main className="flex-1 relative flex flex-col items-center justify-center w-full">
                 <div className="z-10 relative mb-[-30px] md:mb-[-50px] pointer-events-none opacity-90"><SafeImage src={currentThemeData.assets.logo} fallbackSrc="https://placehold.co/800x300/333/FFD700?text=LOGO+PLACEHOLDER&font=monsterrat" alt="Game Logo" className="w-[480px] md:w-[720px] lg:w-[960px] object-contain drop-shadow-2xl" /></div>
                 <h1 className="text-9xl text-yellow-400 tracking-widest uppercase mb-[80px] z-20 relative drop-shadow-[4px_4px_0_#000]" style={{ textShadow: '6px 6px 0 #000' }}>Level Up!</h1>
-                <button onClick={() => {setSelectedIndex(p => p - 1); playActionCardLeft();}} className="flex absolute left-4 md:left-8 z-30 bg-stone-800/80 text-white p-3 md:p-4 border-4 border-stone-600 rounded-sm"><ChevronLeft size={32} className="md:w-10 md:h-10" /></button>
-                <button onClick={() => {setSelectedIndex(p => p + 1); playActionCardRight();}} className="flex absolute right-4 md:right-8 z-30 bg-stone-800/80 text-white p-3 md:p-4 border-4 border-stone-600 rounded-sm"><ChevronRight size={32} className="md:w-10 md:h-10" /></button>
+                
+                {/* Enhanced Left Chevron */}
+                <button 
+                    onClick={() => {setSelectedIndex(p => p - 1); playActionCardLeft();}} 
+                    className="flex absolute left-4 md:left-8 z-30 text-white items-center justify-center"
+                    style={{ 
+                        background: 'radial-gradient(ellipse 120px 200px at left, rgba(0,0,0,0.7), transparent)',
+                        padding: '16px 24px',
+                        borderRadius: '0 8px 8px 0'
+                    }}
+                >
+                    <div className="flex items-center gap-1 animate-chevron-left">
+                        <ChevronLeft size={32} className="md:w-10 md:h-10" />
+                        <ChevronLeft size={32} className="md:w-10 md:h-10 -ml-5" />
+                    </div>
+                </button>
+                
+                {/* Enhanced Right Chevron */}
+                <button 
+                    onClick={() => {setSelectedIndex(p => p + 1); playActionCardRight();}} 
+                    className="flex absolute right-4 md:right-8 z-30 text-white items-center justify-center"
+                    style={{ 
+                        background: 'radial-gradient(ellipse 120px 200px at right, rgba(0,0,0,0.7), transparent)',
+                        padding: '16px 24px',
+                        borderRadius: '8px 0 0 8px'
+                    }}
+                >
+                    <div className="flex items-center gap-1 animate-chevron-right">
+                        <ChevronRight size={32} className="md:w-10 md:h-10 -mr-5" />
+                        <ChevronRight size={32} className="md:w-10 md:h-10" />
+                    </div>
+                </button>
                 <div 
                     className={`relative w-full flex items-center justify-center perspective-1000 h-[650px] mb-12 ${battlingSkillId ? 'z-50' : ''}`}
                     style={{ cursor: battlingSkillId ? 'default' : (isDragging ? 'grabbing' : 'grab') }}
@@ -863,6 +992,8 @@ const App = () => {
                                 difficulty={skills[item.id].difficulty || 1} 
                                 setDifficulty={(newDiff) => setSkillDifficulty(item.id, newDiff)} 
                                 unlockedDifficulty={Math.min(7, Math.floor(skills[item.id].level / 20) + 1)}
+                                selectedBorder={selectedBorder}
+                                borderColor={borderColor}
                             />
                         </div>
                         );
