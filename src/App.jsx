@@ -419,14 +419,14 @@ const App = () => {
                 }
                 
                 // Update stable mobs for combat skills on completion
-                if (skillConfig.id === 'reading') {
-                    newReadingMob = getRandomMob(current.readingMob);
-                }
-                if (skillConfig.id === 'math') {
-                    newMathMob = getRandomMob(current.mathMob);
-                }
-                if (skillConfig.id === 'writing') {
-                    newWritingMob = getRandomMob(current.writingMob);
+                const combatSkillMobUpdates = {
+                    'reading': () => { newReadingMob = getRandomMob(current.readingMob); },
+                    'math': () => { newMathMob = getRandomMob(current.mathMob); },
+                    'writing': () => { newWritingMob = getRandomMob(current.writingMob); }
+                };
+                
+                if (combatSkillMobUpdates[skillConfig.id]) {
+                    combatSkillMobUpdates[skillConfig.id]();
                 }
                 
                 // Update miniboss when defeating a miniboss encounter

@@ -61,14 +61,14 @@ export const getMobForSkill = (skillConfig, userSkill) => {
     }
     
     // Combat skills (reading, math, writing): Return stored mob to prevent random changes on re-render
-    if (skillConfig.id === 'reading') {
-        return userSkill.readingMob || getRandomMob(null);
-    }
-    if (skillConfig.id === 'math') {
-        return userSkill.mathMob || getRandomMob(null);
-    }
-    if (skillConfig.id === 'writing') {
-        return userSkill.writingMob || getRandomMob(null);
+    const combatSkillMobs = {
+        'reading': userSkill.readingMob,
+        'math': userSkill.mathMob,
+        'writing': userSkill.writingMob
+    };
+    
+    if (combatSkillMobs[skillConfig.id]) {
+        return combatSkillMobs[skillConfig.id] || getRandomMob(null);
     }
     
     // Fallback for any other skills
