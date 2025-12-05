@@ -99,6 +99,7 @@ const CosmeticsDrawer = ({
                             const showPicker = border.id === 'solid-picker' && isSelected && showColorPicker;
                             
                             // Get badge image if badge is specified
+                            // Note: 'Star' badge is stored as 'Legendary' in BASE_ASSETS.badges
                             const badgeImg = border.badge ? BASE_ASSETS.badges[border.badge === 'Star' ? 'Legendary' : border.badge] : null;
                             
                             return (
@@ -137,7 +138,7 @@ const CosmeticsDrawer = ({
                                             {/* Effect Preview Square */}
                                             <div 
                                                 className={`w-16 h-16 rounded border-4 ${
-                                                    `border-effect-${border.id === 'solid-picker' ? 'solid' : border.id}`
+                                                    !isSolid ? `border-effect-${border.id}` : ''
                                                 }`}
                                                 style={
                                                     isSolid 
