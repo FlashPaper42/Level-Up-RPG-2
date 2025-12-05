@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const SafeImage = ({ src, alt, className, onClick }) => {
+const SafeImage = ({ src, alt, className, fallbackSrc, onClick }) => {
     const [error, setError] = useState(false);
     useEffect(() => { setError(false); }, [src]);
     
