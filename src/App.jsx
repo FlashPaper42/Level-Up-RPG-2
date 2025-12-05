@@ -310,6 +310,10 @@ const App = () => {
         if (battleDifficulty !== correctChallengeDiff) {
             setBattleDifficulty(correctChallengeDiff);
             setChallengeData(generateChallenge(skillConfig.challengeType, correctChallengeDiff));
+            // Clear spokenText for reading challenges to prevent stale text from triggering false damage
+            if (skillConfig.challengeType === 'reading') {
+                setSpokenText('');
+            }
         }
     }, [battlingSkillId, skills]); // Intentionally exclude battleDifficulty to prevent infinite loop
 
@@ -551,6 +555,10 @@ const App = () => {
             // This ensures bosses don't change difficulty mid-fight and miniboss difficulty+1 is maintained
             const challengeDiff = battleDifficulty || skillDifficulty;
             setChallengeData(generateChallenge(skillConfig.challengeType, challengeDiff));
+            // Clear spokenText for reading challenges to prevent stale text from triggering false damage
+            if (skillConfig.challengeType === 'reading') {
+                setSpokenText('');
+            }
         } else if (skillConfig.id === 'memory') {
             setBattlingSkillId(null);
             setBattleDifficulty(null);
