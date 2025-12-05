@@ -26,15 +26,6 @@ const AXOLOTL_NOTE_MAP = {
     'Black': 'g5'
 };
 
-// Dynamic font sizing for reading challenge based on word length
-const getReadingFontSize = (wordLength) => {
-    if (wordLength <= 8) return 'text-4xl';
-    if (wordLength <= 12) return 'text-3xl';
-    if (wordLength <= 18) return 'text-2xl';
-    if (wordLength <= 24) return 'text-xl';
-    return 'text-lg';
-};
-
 // Helper: clamp a value between min and max
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
