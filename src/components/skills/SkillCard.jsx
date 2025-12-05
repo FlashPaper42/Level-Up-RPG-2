@@ -74,13 +74,16 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     // Calculate tempo delays based on completed rounds (accelerating)
     const getTempoDelays = (completedRounds) => {
-        // Start with base delays: 600ms on, 200ms off
-        const baseOnDelay = 600;
-        const baseOffDelay = 200;
+        // Use 1-based round number
+        const round = completedRounds + 1;
         
-        // Reduce delays by 30ms per round for on-time, 10ms for off-time
-        const onDelay = Math.max(250, baseOnDelay - (completedRounds * 30));
-        const offDelay = Math.max(100, baseOffDelay - (completedRounds * 10));
+        // Linearly interpolate from 800ms (round 1) to 200ms (round 10+)
+        // Formula: 800 - ((round - 1) * (800 - 200) / (10 - 1))
+        const rawOnDelay = 800 - ((round - 1) * 600 / 9);
+        const onDelay = Math.max(200, rawOnDelay);
+        
+        // offDelay scaled to ~35% of onDelay with a 100ms floor
+        const offDelay = Math.max(100, Math.round(onDelay * 0.35));
         
         return { onDelay, offDelay };
     };
