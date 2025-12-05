@@ -8,6 +8,9 @@ import { calculateXPToLevel } from '../../utils/gameUtils';
 
 const PRESTIGE_LEVEL_THRESHOLD = 20;
 
+// Voice recognition constants
+const MIN_SPOKEN_TEXT_LENGTH = 2;
+
 // Map axolotl colors to specific note files for consistent sound feedback
 const AXOLOTL_NOTE_MAP = {
     'Pink': 'c4',
@@ -202,7 +205,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                     const homophones = HOMOPHONES[challenge.answer];
                     const isCorrect = spokenText === challenge.answer || (homophones && homophones.includes(spokenText));
                     // Assume wrong if text is substantial and doesn't match (including homophones)
-                    if (!isCorrect && spokenText.length >= 2) {
+                    if (!isCorrect && spokenText.length >= MIN_SPOKEN_TEXT_LENGTH) {
                         // Trigger wrong animation
                         setIsReadingWrong(true);
                         setTimeout(() => setIsReadingWrong(false), 500);
