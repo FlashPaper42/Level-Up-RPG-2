@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
+import ParentalVerificationModal from '../ui/ParentalVerificationModal';
 import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, MINIBOSS_MOBS, DIFFICULTY_IMAGES, DIFFICULTY_CONTENT, HOMOPHONES } from '../../constants/gameData';
 import { playClick, getSfxVolume } from '../../utils/soundManager';
 import { calculateXPToLevel } from '../../utils/gameUtils';
@@ -82,6 +83,9 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const [simonSequence, setSimonSequence] = useState([]);
     const [playerIndex, setPlayerIndex] = useState(0);
     const [isShowingSequence, setIsShowingSequence] = useState(false);
+    
+    // Parental verification modal state for Cleaning skill
+    const [showParentalModal, setShowParentalModal] = useState(false);
     const [completedRounds, setCompletedRounds] = useState(0);
     const [litAxolotl, setLitAxolotl] = useState(null);
     const [simonGameActive, setSimonGameActive] = useState(false);
@@ -104,6 +108,12 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             playClick();
         }
     }, []);
+
+    // Handler for when parental verification succeeds for Cleaning skill
+    const handleParentalVerified = useCallback(() => {
+        setShowParentalModal(false);
+        onMathSubmit(challenge?.answer);
+    }, [onMathSubmit, challenge]);
 
     // Calculate HP percentage based on mobHealth/mobMaxHealth for HP bar display
     const mobHealth = data.mobHealth || 100;
@@ -421,9 +431,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             <div className={bottomSectionClass}>
                 {isBattling ? (
                     <div className="flex flex-col h-full animate-in slide-in-from-bottom-10 duration-300">
-                        {config.id !== 'patterns' && config.id !== 'reading' && config.challengeType !== 'writing' && <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>}
-                        {config.id !== 'patterns' && config.id !== 'math' && <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>}
-                        {config.id !== 'patterns' && config.id !== 'reading' && <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>}
                         {config.id === 'memory' ? (
                             <div className={`flex-1 grid gap-2 bg-black/20 p-2 rounded items-center`} style={{ gridTemplateColumns: `repeat(${memoryGridCols}, 1fr)` }}>
                                 {memoryCards.map((card, index) => {
@@ -544,7 +551,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                             });
                                         })()}</div></div>}
                                         {config.challengeType === 'reading' && <button onClick={onMicClick} className={`w-full text-center p-2 rounded border-2 transition-colors flex items-center justify-center gap-2 ${isListening ? 'border-red-500 bg-red-900/20' : 'border-gray-600 hover:bg-white/10'}`}>{isListening ? <Mic className="inline animate-pulse text-red-500" /> : <><Mic className="inline text-gray-500" /><span className="text-xs uppercase font-bold text-stone-400">Tap to Speak</span></>}</button>}
-                                        {config.challengeType === 'cleaning' && <button onClick={() => onMathSubmit(challenge?.answer)} className="w-full bg-green-600 hover:bg-green-500 text-white text-3xl font-bold py-4 rounded shadow-[0_4px_0_#166534] active:shadow-none active:translate-y-[4px] transition-all">Complete!</button>}
+                                        {config.challengeType === 'cleaning' && <button onClick={() => setShowParentalModal(true)} className="w-full bg-green-600 hover:bg-green-500 text-white text-3xl font-bold py-4 rounded shadow-[0_4px_0_#166534] active:shadow-none active:translate-y-[4px] transition-all">Complete!</button>}
                                         {config.challengeType !== 'cleaning' && config.challengeType !== 'writing' && config.challengeType !== 'math' && <button onClick={() => onMathSubmit(challenge?.answer)} className="mt-auto text-xs text-gray-500 underline hover:text-white self-center">Skip / Manual Success</button>}
                                     </>
                                 )}
@@ -623,6 +630,11 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                 </div>
             )}
             {cardContent}
+            <ParentalVerificationModal
+                isOpen={showParentalModal}
+                onClose={() => setShowParentalModal(false)}
+                onVerified={handleParentalVerified}
+            />
         </div>
     );
 };
