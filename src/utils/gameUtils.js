@@ -125,22 +125,37 @@ export const getReadingWord = (difficulty) => {
 export const generateMathProblem = (difficulty) => {
     const config = DIFFICULTY_CONTENT.math[difficulty] || DIFFICULTY_CONTENT.math[1];
     
-    // Difficulty 7: Algebra with variables
-    if (config.algebra) {
-        const algebraProblems = [
-            { question: 'x + 5 = 12', answer: '7', hint: 'x = ?' },
-            { question: '2x = 8', answer: '4', hint: 'x = ?' },
-            { question: 'x - 3 = 7', answer: '10', hint: 'x = ?' },
-            { question: '3x = 15', answer: '5', hint: 'x = ?' },
-            { question: 'x + 8 = 15', answer: '7', hint: 'x = ?' },
-            { question: '4x = 20', answer: '5', hint: 'x = ?' },
-            { question: 'x - 6 = 4', answer: '10', hint: 'x = ?' },
-            { question: '2x + 1 = 7', answer: '3', hint: 'x = ?' },
-            { question: 'x / 2 = 5', answer: '10', hint: 'x = ?' },
-            { question: '5x = 25', answer: '5', hint: 'x = ?' }
+    // Difficulty 7: Nightmare - Extremely complex multi-step PEMDAS expressions
+    if (config.nightmare) {
+        const nightmareProblems = [
+            { question: '((25 - 10) × 4 + 18) ÷ 2 - 7', answer: '32' },
+            { question: '(50 ÷ 5 + 3) × 6 - 28', answer: '50' },
+            { question: '100 - (8 × 7 - 12) ÷ 2', answer: '78' },
+            { question: '((15 + 9) × 3 - 20) ÷ 4', answer: '13' },
+            { question: '(80 - 32) ÷ 6 + 15 × 2', answer: '38' },
+            { question: '((40 ÷ 8 + 7) × 6 - 18) ÷ 3', answer: '18' },
+            { question: '120 ÷ (12 - 2) + 8 × 5', answer: '52' },
+            { question: '(18 + 22) × 2 - 35 ÷ 7', answer: '75' },
+            { question: '((64 - 16) ÷ 4 + 9) × 3', answer: '63' },
+            { question: '(100 - 45) ÷ 5 + 17 × 2', answer: '45' },
+            { question: '((36 ÷ 6 + 8) × 4 - 20) ÷ 2', answer: '18' },
+            { question: '(72 ÷ 9 - 3) × 7 + 15', answer: '50' },
+            { question: '150 - ((20 + 10) × 3 - 15)', answer: '75' },
+            { question: '((48 - 12) ÷ 9 + 11) × 5', answer: '75' },
+            { question: '(90 ÷ 6 + 25) × 2 - 18', answer: '62' },
+            { question: '((56 + 24) ÷ 8 - 3) × 6', answer: '42' },
+            { question: '200 - (15 × 6 + 20) ÷ 2', answer: '145' },
+            { question: '((32 + 8) × 3 - 40) ÷ 10', answer: '8' },
+            { question: '(144 ÷ 12 + 16) × 2 - 25', answer: '31' },
+            { question: '((75 - 30) ÷ 5 + 8) × 4', answer: '68' },
+            { question: '(180 ÷ 9 - 10) × 6 + 24', answer: '84' },
+            { question: '((100 + 50) ÷ 6 - 5) × 3', answer: '60' },
+            { question: '(96 - 36) ÷ 12 + 9 × 7', answer: '68' },
+            { question: '((84 ÷ 7 + 18) × 2 - 16) ÷ 4', answer: '11' },
+            { question: '250 - ((18 + 12) × 4 - 25)', answer: '155' }
         ];
-        const problem = algebraProblems[Math.floor(Math.random() * algebraProblems.length)];
-        return { type: 'math', question: problem.question, answer: problem.answer, isAlgebra: true };
+        const problem = nightmareProblems[Math.floor(Math.random() * nightmareProblems.length)];
+        return { type: 'math', question: `${problem.question} = ?`, answer: problem.answer, isNightmare: true };
     }
     
     // Difficulty 6: PEMDAS/Order of Operations
