@@ -14,7 +14,7 @@ import SkillCard from './components/skills/SkillCard';
 import PhantomEvent from './components/PhantomEvent';
 
 // Utils & Constants
-import { getRandomMob, getRandomFriendlyMob, getRandomAxolotl, getRandomMiniboss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getWordForDifficulty, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
+import { getRandomMob, getRandomFriendlyMob, getRandomMiniboss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getWordForDifficulty, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
     HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS
@@ -58,7 +58,7 @@ const App = () => {
                 lostLevel: false, // True if player died and lost a level
                 recoveryDifficulty: null, // Difficulty to suggest for recovery
                 memoryMob: skill.id === 'memory' ? getRandomFriendlyMob() : null, // Stable mob for Memory card display
-                patternMob: skill.id === 'patterns' ? getRandomAxolotl() : null, // Stable axolotl for Patterns card display
+                patternMob: skill.id === 'patterns' ? getRandomMob(null) : null, // Stable hostile mob for Patterns card display
                 currentMiniboss: getRandomMiniboss() // Stable miniboss for miniboss encounters
             }; 
         });
@@ -97,7 +97,7 @@ const App = () => {
                     }
                     // Ensure patternMob exists for patterns skill (backward compatibility)
                     if (key === 'patterns' && !initial[key].patternMob) {
-                        initial[key].patternMob = getRandomAxolotl();
+                        initial[key].patternMob = getRandomMob(null);
                     }
                 }); 
                 return initial; 
@@ -399,7 +399,7 @@ const App = () => {
                     newMemoryMob = getRandomFriendlyMob();
                 }
                 if (skillConfig.id === 'patterns') {
-                    newPatternMob = getRandomAxolotl();
+                    newPatternMob = getRandomMob(current.currentMob);
                 }
                 
                 // Update miniboss when defeating a miniboss encounter
