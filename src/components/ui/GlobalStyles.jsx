@@ -304,6 +304,28 @@ const GlobalStyles = () => (
         border-color: #4b0082;
     }
     
+    /* Placeholder - Emerald theme (to be replaced with cool design) */
+    @keyframes border-placeholder {
+        0%, 100% { 
+            box-shadow: 
+                0 0 20px #50C878,
+                0 0 40px #3cb371,
+                inset 0 0 10px rgba(80, 200, 120, 0.3);
+            filter: brightness(1);
+        }
+        50% { 
+            box-shadow: 
+                0 0 30px #3cb371,
+                0 0 50px #50C878,
+                inset 0 0 20px rgba(80, 200, 120, 0.5);
+            filter: brightness(1.2);
+        }
+    }
+    .border-effect-placeholder {
+        animation: border-placeholder 2s ease-in-out infinite;
+        border-color: #50C878;
+    }
+    
     /* Chevron Ebb and Flow Animation */
     @keyframes chevron-float {
         0%, 100% { transform: translateX(0); opacity: 0.8; }

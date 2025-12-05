@@ -225,13 +225,25 @@ const App = () => {
     
     // Calculate unlocked borders based on earned badges (memoized)
     const unlockedBorders = React.useMemo(() => {
-        const unlockedTiers = new Set();
+        const unlockedBadges = new Set();
+        // Tier to badge name mapping
+        const tierToBadge = ['Wood', 'Stone', 'Gold', 'Iron', 'Emerald', 'Diamond', 'Netherite', 'Obsidian'];
+        
         Object.values(skills).forEach(skill => {
             if (skill.earnedBadges && Array.isArray(skill.earnedBadges)) {
-                skill.earnedBadges.forEach(tier => unlockedTiers.add(tier));
+                skill.earnedBadges.forEach(tier => {
+                    // Convert tier number to badge name (tier 1 = Wood = index 0)
+                    if (tier >= 1 && tier <= 8) {
+                        unlockedBadges.add(tierToBadge[tier - 1]);
+                    }
+                });
+            }
+            // Check for Star badge (level 180+) - this is awarded separately
+            if (skill.level >= 180) {
+                unlockedBadges.add('Star');
             }
         });
-        return Array.from(unlockedTiers);
+        return Array.from(unlockedBadges);
     }, [skills]);
 
     // Update BGM volume
