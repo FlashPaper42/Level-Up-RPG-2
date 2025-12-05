@@ -126,35 +126,42 @@ const CosmeticsDrawer = ({
                                 >
                                     <div className="flex flex-col items-center">
                                         {/* Badge Icon and Effect Preview Container */}
-                                        <div className="flex items-center gap-2 mb-2">
-                                            {/* Badge Icon */}
+                                        <div className="flex items-start justify-center gap-4 mb-3">
+                                            {/* Badge Icon with Label */}
                                             {badgeImg && (
-                                                <SafeImage 
-                                                    src={badgeImg} 
-                                                    alt={`${border.badge} Badge`}
-                                                    className={`w-8 h-8 ${!unlocked ? 'opacity-30 grayscale' : ''}`}
-                                                />
+                                                <div className="flex flex-col items-center gap-1">
+                                                    <SafeImage 
+                                                        src={badgeImg} 
+                                                        alt={`${border.badge} Badge`}
+                                                        className={`w-16 h-16 ${!unlocked ? 'opacity-30 grayscale' : ''}`}
+                                                    />
+                                                    <div className={`text-xs font-bold uppercase tracking-wide ${!unlocked ? 'text-slate-500' : 'text-slate-300'}`}>
+                                                        {border.badge}
+                                                    </div>
+                                                </div>
                                             )}
-                                            {/* Effect Preview Square */}
-                                            <div 
-                                                className={`w-16 h-16 rounded border-4 ${
-                                                    !isSolid ? `border-effect-${border.id}` : ''
-                                                }`}
-                                                style={
-                                                    isSolid 
-                                                        ? { borderColor: border.id === 'solid' ? '#FFD700' : borderColor, boxShadow: `0 0 20px ${border.id === 'solid' ? '#FFD700' : borderColor}` }
-                                                        : (border.id === 'gradient' || border.id === 'sparkle') 
-                                                            ? { '--border-color': borderColor } 
-                                                            : {}
-                                                }
-                                            >
-                                                {/* Preview area */}
+                                            {/* Effect Preview Square with Label */}
+                                            <div className="flex flex-col items-center gap-1">
+                                                <div 
+                                                    className={`w-16 h-16 rounded border-4 ${
+                                                        !isSolid ? `border-effect-${border.id}` : ''
+                                                    }`}
+                                                    style={
+                                                        isSolid 
+                                                            ? { borderColor: border.id === 'solid' ? '#FFD700' : borderColor, boxShadow: `0 0 20px ${border.id === 'solid' ? '#FFD700' : borderColor}` }
+                                                            : (border.id === 'gradient' || border.id === 'sparkle') 
+                                                                ? { '--border-color': borderColor } 
+                                                                : {}
+                                                    }
+                                                >
+                                                    {/* Preview area */}
+                                                </div>
+                                                <div className={`font-bold text-xs uppercase tracking-wide ${isSelected ? 'text-yellow-400' : 'text-white'}`}>
+                                                    {border.name}
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="text-center">
-                                            <div className={`font-bold text-sm mb-1 ${isSelected ? 'text-yellow-400' : 'text-white'}`}>
-                                                {border.name}
-                                            </div>
                                             <div className="text-xs text-slate-400">
                                                 {border.description}
                                             </div>
