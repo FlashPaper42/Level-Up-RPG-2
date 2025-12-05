@@ -114,12 +114,12 @@ export const DIFFICULTY_CONTENT = {
         7: { useFunnyWords: true }
     },
     math: {
-        1: { operations: ['+'], range: [1, 9], description: 'Single-digit addition' },
-        2: { operations: ['+'], range: [1, 20], description: 'Addition (1-20)' },
-        3: { operations: ['+', '-'], range: [1, 20], description: 'Addition and subtraction (0-20)' },
-        4: { operations: ['+', '-', '*'], range: [1, 20], multiplyRange: [1, 10], description: 'Add, subtract, multiply (0-20)' },
-        5: { operations: ['+', '-', '*', '/'], range: [1, 20], divisionRange: [1, 10], description: 'All operations (0-20)' },
-        6: { pemdas: true, range: [1, 20], description: 'Order of operations (0-20)' },
+        1: { operations: ['+'], range: [0, 9], description: 'Single-digit addition' },
+        2: { operations: ['+'], range: [0, 20], description: 'Addition (0-20)' },
+        3: { operations: ['+', '-'], range: [0, 20], description: 'Addition and subtraction (0-20)' },
+        4: { operations: ['+', '-', '*'], range: [0, 20], multiplyRange: [1, 10], description: 'Add, subtract, multiply (0-20)' },
+        5: { operations: ['+', '-', '*', '/'], range: [0, 20], divisionRange: [1, 10], description: 'All operations (0-20)' },
+        6: { pemdas: true, range: [0, 20], description: 'Order of operations (0-20)' },
         7: { nightmare: true, description: 'Nightmare complexity' }
     },
     writing: {
