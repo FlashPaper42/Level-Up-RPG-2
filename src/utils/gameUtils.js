@@ -67,7 +67,7 @@ export const getMobForSkill = (skillConfig, userSkill) => {
         'writing': userSkill.writingMob
     };
     
-    if (combatSkillMobs[skillConfig.id]) {
+    if (skillConfig.id in combatSkillMobs) {
         return combatSkillMobs[skillConfig.id] || getRandomMob(null);
     }
     
