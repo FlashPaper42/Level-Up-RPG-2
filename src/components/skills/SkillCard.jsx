@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
@@ -7,6 +7,16 @@ import { playClick, getSfxVolume } from '../../utils/soundManager';
 import { calculateXPToLevel } from '../../utils/gameUtils';
 
 const PRESTIGE_LEVEL_THRESHOLD = 20;
+
+// Map axolotl colors to specific note files for consistent sound feedback
+const AXOLOTL_NOTE_MAP = {
+    'Pink': 'c4',
+    'Cyan': 'd4',
+    'Gold': 'e4',
+    'Brown': 'f4',
+    'Blue': 'g4',
+    // Additional notes available if more axolotl colors are added: a4, b4, g5
+};
 
 // Dynamic font sizing for reading challenge based on word length
 const getReadingFontSize = (wordLength) => {
@@ -43,6 +53,35 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     
     // Ref to track if patterns game session was initialized for the current battle
     const simonSessionStartedRef = useRef(false);
+
+    // Helper function to play axolotl-specific note with fallback to click
+    const playAxolotlNote = useCallback((color) => {
+        const noteName = AXOLOTL_NOTE_MAP[color];
+        if (noteName) {
+            const audio = new Audio(`/assets/sounds/axolotl/${noteName}.mp3`);
+            audio.volume = getSfxVolume();
+            audio.play().catch(() => {
+                // Fallback to click sound if note file fails to load
+                playClick();
+            });
+        } else {
+            // Fallback to click sound if no mapping exists
+            playClick();
+        }
+    }, []);
+
+    // Calculate tempo delays based on completed rounds (accelerating)
+    const getTempoDelays = (completedRounds) => {
+        // Start with base delays: 600ms on, 200ms off
+        const baseOnDelay = 600;
+        const baseOffDelay = 200;
+        
+        // Reduce delays by 30ms per round for on-time, 10ms for off-time
+        const onDelay = Math.max(250, baseOnDelay - (completedRounds * 30));
+        const offDelay = Math.max(100, baseOffDelay - (completedRounds * 10));
+        
+        return { onDelay, offDelay };
+    };
 
     // Calculate HP percentage based on mobHealth/mobMaxHealth for HP bar display
     const mobHealth = data.mobHealth || 100;
@@ -165,27 +204,29 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const allAxolotlColors = Object.keys(BASE_ASSETS.axolotls);
     const axolotlColors = allAxolotlColors.slice(0, Math.min(axolotlCount, allAxolotlColors.length));
     
-    const playSequence = (sequence) => {
+    const playSequence = useCallback((sequence) => {
         setIsShowingSequence(true);
         setPlayerIndex(0);
         let i = 0;
+        const { onDelay, offDelay } = getTempoDelays(completedRounds);
+        
         const playNext = () => {
             if (i < sequence.length) {
                 setLitAxolotl(sequence[i]);
-                playClick();
+                playAxolotlNote(sequence[i]);
                 setTimeout(() => {
                     setLitAxolotl(null);
                     i++;
-                    setTimeout(playNext, 200);
-                }, 600);
+                    setTimeout(playNext, offDelay);
+                }, onDelay);
             } else {
                 setIsShowingSequence(false);
             }
         };
         setTimeout(playNext, 500);
-    };
+    }, [completedRounds, playAxolotlNote]);
 
-    const startSimonGame = () => {
+    const startSimonGame = useCallback(() => {
         const firstColor = axolotlColors[Math.floor(Math.random() * axolotlColors.length)];
         const newSequence = [firstColor];
         setSimonSequence(newSequence);
@@ -193,12 +234,12 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         setCompletedRounds(0);
         setSimonGameActive(true);
         playSequence(newSequence);
-    };
+    }, [axolotlColors, playSequence]);
 
     const handleAxolotlClick = (color) => {
         if (isShowingSequence || !simonGameActive) return;
         
-        playClick();
+        playAxolotlNote(color);
         
         if (color === simonSequence[playerIndex]) {
             // Correct click
@@ -209,6 +250,13 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                 matchAudio.play().catch(() => {});
                 const newRounds = completedRounds + 1;
                 setCompletedRounds(newRounds);
+                
+                // Apply progressive damage based on round number (increases with each round)
+                // Using a gentle exponential formula: damage = round * 1.5 (rounded)
+                const damage = Math.round(newRounds * 1.5);
+                setTimeout(() => {
+                    onMathSubmit("WIN", damage);
+                }, 300);
                 
                 // For difficulty 7, reset sequence each round instead of building
                 let newSequence;
@@ -237,10 +285,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             mismatchAudio.volume = getSfxVolume();
             mismatchAudio.play().catch(() => {});
             setSimonGameActive(false);
-            // Deal damage based on completed rounds (submit WIN with rounds as damage multiplier)
-            setTimeout(() => {
-                onMathSubmit("WIN", completedRounds);
-            }, 500);
+            // No damage on failure since damage was already applied during successful rounds
         }
     };
 
@@ -259,7 +304,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             setLitAxolotl(null);
             setSimonGameActive(false);
         }
-    }, [isBattling, config.id]);
+    }, [isBattling, config.id, startSimonGame]);
 
     const handleCardClick = (index) => {
         if (isProcessingMatch || flippedIndices.includes(index) || matchedPairs.includes(memoryCards[index].color)) return;
@@ -364,7 +409,15 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                             })}
                                         </div>
                                         {!simonGameActive && completedRounds > 0 && (
-                                            <div className="text-red-400 text-lg font-bold animate-pulse">Game Over! Rounds: {completedRounds}</div>
+                                            <div className="flex flex-col items-center gap-3">
+                                                <div className="text-red-400 text-lg font-bold animate-pulse">Game Over! Rounds: {completedRounds}</div>
+                                                <button 
+                                                    onClick={startSimonGame}
+                                                    className="bg-blue-600 hover:bg-blue-500 text-white text-xl font-bold py-3 px-6 rounded shadow-[0_4px_0_#1e40af] active:shadow-none active:translate-y-[4px] transition-all"
+                                                >
+                                                    Retry
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
                                 ) : (
