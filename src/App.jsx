@@ -315,7 +315,7 @@ const App = () => {
             return { 
                 type, 
                 question: "Spell it!", 
-                answer: wordData.word, 
+                answer: wordData.displayName.toUpperCase(), 
                 images: [wordData.image],
                 displayName: wordData.displayName
             };
