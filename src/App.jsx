@@ -653,10 +653,13 @@ const App = () => {
         recognitionRef.current.onend = () => {
             setIsListening(false);
             // Auto-restart if still in Reading challenge
-            if (battlingSkillId === 'reading' || targetId === 'reading') {
+            // Check battlingSkillId first (use closure to capture current state)
+            const currentBattlingSkillId = battlingSkillId;
+            if (currentBattlingSkillId === 'reading' || targetId === 'reading') {
                 // Small delay before restarting to avoid rapid restarts
                 setTimeout(() => {
-                    if (battlingSkillId === 'reading' || targetId === 'reading') {
+                    // Double-check that we're still in reading challenge
+                    if (battlingSkillId === 'reading') {
                         recognitionRef.current = null; // Clear ref to allow restart
                         startVoiceListener(targetId);
                     }

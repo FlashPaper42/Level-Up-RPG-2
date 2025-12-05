@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
-import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, MINIBOSS_MOBS, DIFFICULTY_IMAGES, DIFFICULTY_CONTENT } from '../../constants/gameData';
+import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, MINIBOSS_MOBS, DIFFICULTY_IMAGES, DIFFICULTY_CONTENT, HOMOPHONES } from '../../constants/gameData';
 import { playClick, getSfxVolume } from '../../utils/soundManager';
 import { calculateXPToLevel } from '../../utils/gameUtils';
 
@@ -199,8 +199,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             // Check if spoken text changed
             if (spokenText !== prevSpokenTextRef.current) {
                 if (challenge?.answer) {
-                    const isCorrect = spokenText === challenge.answer;
-                    // Assume wrong if text is substantial and doesn't match
+                    const isCorrect = spokenText === challenge.answer || HOMOPHONES[challenge.answer]?.includes(spokenText);
+                    // Assume wrong if text is substantial and doesn't match (including homophones)
                     if (!isCorrect && spokenText.length >= 2) {
                         // Trigger wrong animation
                         setIsReadingWrong(true);
