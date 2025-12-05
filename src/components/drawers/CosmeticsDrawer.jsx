@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { THEMES_LIST } from '../../constants/gameData';
@@ -6,7 +6,7 @@ import { THEMES_LIST } from '../../constants/gameData';
 const BORDER_EFFECTS = [
     { id: 'solid', name: 'Solid Color', tier: 1, description: 'Classic solid glow' },
     { id: 'rainbow', name: 'Rainbow', tier: 2, description: 'Animated rainbow outline' },
-    { id: 'pulsing', name: 'Pulsing Glow', tier: 3, description: 'Rhythmic pulsing effect' },
+    { id: 'gradient', name: 'Gradient Sweep', tier: 3, description: 'Animated gradient rotation' },
     { id: 'sparkle', name: 'Particle Sparkle', tier: 4, description: 'Sparkling particles' },
     { id: 'electric', name: 'Electric', tier: 5, description: 'Crackling lightning' },
     { id: 'fire', name: 'Fire', tier: 6, description: 'Dancing flames' },
@@ -24,6 +24,8 @@ const CosmeticsDrawer = ({
     setBorderColor, 
     unlockedBorders 
 }) => {
+    const [showColorPicker, setShowColorPicker] = useState(false);
+    
     const isBorderUnlocked = (tier) => {
         return unlockedBorders.includes(tier);
     };
@@ -88,11 +90,22 @@ const CosmeticsDrawer = ({
                         {BORDER_EFFECTS.map(border => {
                             const unlocked = isBorderUnlocked(border.tier);
                             const isSelected = selectedBorder === border.id;
+                            const isSolid = border.id === 'solid';
+                            const showPicker = isSolid && isSelected && showColorPicker;
                             
                             return (
                                 <button
                                     key={border.id}
-                                    onClick={() => unlocked && setSelectedBorder(border.id)}
+                                    onClick={() => {
+                                        if (unlocked) {
+                                            if (isSolid && isSelected) {
+                                                setShowColorPicker(!showColorPicker);
+                                            } else {
+                                                setSelectedBorder(border.id);
+                                                setShowColorPicker(false);
+                                            }
+                                        }
+                                    }}
                                     disabled={!unlocked}
                                     className={`relative p-4 rounded-lg border-2 transition-all duration-300 ${
                                         !unlocked 
@@ -102,57 +115,65 @@ const CosmeticsDrawer = ({
                                                 : 'bg-slate-800/70 border-slate-600 hover:border-yellow-400/50 hover:scale-105'
                                     }`}
                                 >
-                                    <div 
-                                        className={`w-full h-16 mb-2 rounded border-4 ${
-                                            unlocked 
-                                                ? `border-effect-${border.id}` 
-                                                : 'border-gray-600'
-                                        }`}
-                                        style={unlocked && (border.id === 'pulsing' || border.id === 'sparkle') ? { '--border-color': borderColor } : {}}
-                                    >
-                                        {/* Preview area */}
-                                    </div>
-                                    <div className="text-center">
-                                        <div className={`font-bold text-sm mb-1 ${isSelected ? 'text-yellow-400' : 'text-white'}`}>
-                                            {border.name}
+                                    <div className="flex flex-col items-center">
+                                        <div 
+                                            className={`w-16 h-16 mb-2 rounded border-4 ${
+                                                unlocked 
+                                                    ? `border-effect-${border.id}` 
+                                                    : 'border-gray-600'
+                                            }`}
+                                            style={
+                                                unlocked && isSolid 
+                                                    ? { borderColor: borderColor, boxShadow: `0 0 20px ${borderColor}` }
+                                                    : unlocked && (border.id === 'gradient' || border.id === 'sparkle') 
+                                                        ? { '--border-color': borderColor } 
+                                                        : {}
+                                            }
+                                        >
+                                            {/* Preview area */}
                                         </div>
-                                        <div className="text-xs text-slate-400">
-                                            {border.description}
+                                        <div className="text-center">
+                                            <div className={`font-bold text-sm mb-1 ${isSelected ? 'text-yellow-400' : 'text-white'}`}>
+                                                {border.name}
+                                            </div>
+                                            <div className="text-xs text-slate-400">
+                                                {border.description}
+                                            </div>
+                                            {!unlocked && (
+                                                <div className="text-xs text-red-400 mt-1">
+                                                    Requires Tier {border.tier} Badge
+                                                </div>
+                                            )}
                                         </div>
-                                        {!unlocked && (
-                                            <div className="text-xs text-red-400 mt-1">
-                                                Requires Tier {border.tier} Badge
+                                        {isSelected && (
+                                            <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded">
+                                                ACTIVE
+                                            </div>
+                                        )}
+                                        
+                                        {/* Inline Color Picker for Solid Color */}
+                                        {showPicker && (
+                                            <div className="mt-3 p-3 bg-slate-900/80 rounded border border-slate-600 w-full">
+                                                <div className="flex items-center gap-3">
+                                                    <input
+                                                        type="color"
+                                                        value={borderColor}
+                                                        onChange={(e) => setBorderColor(e.target.value)}
+                                                        className="w-12 h-12 rounded cursor-pointer border-2 border-slate-600"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    />
+                                                    <div className="flex-1">
+                                                        <div className="text-xs text-slate-400 mb-1">Color</div>
+                                                        <div className="text-sm font-mono text-white">{borderColor.toUpperCase()}</div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
-                                    {isSelected && (
-                                        <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded">
-                                            ACTIVE
-                                        </div>
-                                    )}
                                 </button>
                             );
                         })}
                     </div>
-
-                    {/* Color Picker for Solid Border */}
-                    {selectedBorder === 'solid' && (
-                        <div className="mt-6 p-4 bg-slate-800/50 rounded-lg border-2 border-slate-600">
-                            <h4 className="text-lg text-yellow-400 font-bold mb-3 uppercase">Customize Color</h4>
-                            <div className="flex items-center gap-4">
-                                <input
-                                    type="color"
-                                    value={borderColor}
-                                    onChange={(e) => setBorderColor(e.target.value)}
-                                    className="w-16 h-16 rounded cursor-pointer border-2 border-slate-600"
-                                />
-                                <div className="flex-1">
-                                    <div className="text-sm text-slate-400 mb-1">Selected Color</div>
-                                    <div className="text-lg font-mono text-white">{borderColor.toUpperCase()}</div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
