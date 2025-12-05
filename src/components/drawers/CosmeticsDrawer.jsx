@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
-import { THEMES_LIST } from '../../constants/gameData';
+import { THEMES_LIST, BASE_ASSETS } from '../../constants/gameData';
 
 const BORDER_EFFECTS = [
-    { id: 'solid', name: 'Solid Color', tier: 1, description: 'Classic solid glow' },
-    { id: 'rainbow', name: 'Rainbow', tier: 2, description: 'Animated rainbow outline' },
-    { id: 'gradient', name: 'Gradient Sweep', tier: 3, description: 'Animated gradient rotation' },
-    { id: 'sparkle', name: 'Particle Sparkle', tier: 4, description: 'Sparkling particles' },
-    { id: 'electric', name: 'Electric', tier: 5, description: 'Crackling lightning' },
-    { id: 'fire', name: 'Fire', tier: 6, description: 'Dancing flames' },
-    { id: 'frost', name: 'Frost', tier: 7, description: 'Crystalline ice shimmer' },
-    { id: 'shadow', name: 'Shadow Aura', tier: 7, description: 'Dark smoky tendrils' }
+    { id: 'solid', name: 'Default', badge: null, description: 'Classic solid glow (locked on yellow)' },
+    { id: 'solid-picker', name: 'Default', badge: 'Wood', description: 'Classic solid glow with color picker' },
+    { id: 'gradient', name: 'Copper', badge: 'Stone', description: 'Animated gradient rotation' },
+    { id: 'sparkle', name: 'Cloudy', badge: 'Gold', description: 'Sparkling particles' },
+    { id: 'electric', name: 'Lightning Rod', badge: 'Iron', description: 'Crackling lightning' },
+    { id: 'placeholder', name: 'Placeholder', badge: 'Emerald', description: 'A cool design to be determined' },
+    { id: 'frost', name: 'Frost', badge: 'Diamond', description: 'Crystalline ice shimmer' },
+    { id: 'fire', name: 'Lava', badge: 'Netherite', description: 'Dancing flames' },
+    { id: 'shadow', name: 'Nether Portal', badge: 'Obsidian', description: 'Dark smoky tendrils' },
+    { id: 'rainbow', name: 'Legendary!', badge: 'Star', description: 'Animated rainbow outline' }
 ];
 
 const CosmeticsDrawer = ({ 
@@ -26,8 +28,11 @@ const CosmeticsDrawer = ({
 }) => {
     const [showColorPicker, setShowColorPicker] = useState(false);
     
-    const isBorderUnlocked = (tier) => {
-        return unlockedBorders.includes(tier);
+    const isBorderUnlocked = (badge) => {
+        // Default (locked on yellow) is always unlocked
+        if (badge === null) return true;
+        // Check if the badge is unlocked
+        return unlockedBorders.includes(badge);
     };
 
     return (
@@ -84,21 +89,25 @@ const CosmeticsDrawer = ({
                         <Sparkles size={20} /> Border Effects
                     </h3>
                     <p className="text-sm text-slate-400 mb-4">
-                        Unlock borders by earning badges! Each tier unlocks new border effects.
+                        Unlock borders by earning badges! Each badge unlocks a new border effect.
                     </p>
                     <div className="grid grid-cols-2 gap-4">
                         {BORDER_EFFECTS.map(border => {
-                            const unlocked = isBorderUnlocked(border.tier);
+                            const unlocked = isBorderUnlocked(border.badge);
                             const isSelected = selectedBorder === border.id;
-                            const isSolid = border.id === 'solid';
-                            const showPicker = isSolid && isSelected && showColorPicker;
+                            const isSolid = border.id === 'solid' || border.id === 'solid-picker';
+                            const showPicker = border.id === 'solid-picker' && isSelected && showColorPicker;
+                            
+                            // Get badge image if badge is specified
+                            // Note: 'Star' badge is stored as 'Legendary' in BASE_ASSETS.badges
+                            const badgeImg = border.badge ? BASE_ASSETS.badges[border.badge === 'Star' ? 'Legendary' : border.badge] : null;
                             
                             return (
                                 <button
                                     key={border.id}
                                     onClick={() => {
                                         if (unlocked) {
-                                            if (isSolid && isSelected) {
+                                            if (border.id === 'solid-picker' && isSelected) {
                                                 setShowColorPicker(!showColorPicker);
                                             } else {
                                                 setSelectedBorder(border.id);
@@ -109,28 +118,38 @@ const CosmeticsDrawer = ({
                                     disabled={!unlocked}
                                     className={`relative p-4 rounded-lg border-2 transition-all duration-300 ${
                                         !unlocked 
-                                            ? 'bg-slate-800/50 border-slate-600 opacity-50 cursor-not-allowed grayscale' 
+                                            ? 'bg-slate-800/50 border-slate-600 opacity-70 cursor-not-allowed' 
                                             : isSelected
                                                 ? 'bg-yellow-900/30 border-yellow-400 ring-2 ring-yellow-400/20'
                                                 : 'bg-slate-800/70 border-slate-600 hover:border-yellow-400/50 hover:scale-105'
                                     }`}
                                 >
                                     <div className="flex flex-col items-center">
-                                        <div 
-                                            className={`w-16 h-16 mb-2 rounded border-4 ${
-                                                unlocked 
-                                                    ? `border-effect-${border.id}` 
-                                                    : 'border-gray-600'
-                                            }`}
-                                            style={
-                                                unlocked && isSolid 
-                                                    ? { borderColor: borderColor, boxShadow: `0 0 20px ${borderColor}` }
-                                                    : unlocked && (border.id === 'gradient' || border.id === 'sparkle') 
-                                                        ? { '--border-color': borderColor } 
-                                                        : {}
-                                            }
-                                        >
-                                            {/* Preview area */}
+                                        {/* Badge Icon and Effect Preview Container */}
+                                        <div className="flex items-center gap-2 mb-2">
+                                            {/* Badge Icon */}
+                                            {badgeImg && (
+                                                <SafeImage 
+                                                    src={badgeImg} 
+                                                    alt={`${border.badge} Badge`}
+                                                    className={`w-8 h-8 ${!unlocked ? 'opacity-30 grayscale' : ''}`}
+                                                />
+                                            )}
+                                            {/* Effect Preview Square */}
+                                            <div 
+                                                className={`w-16 h-16 rounded border-4 ${
+                                                    !isSolid ? `border-effect-${border.id}` : ''
+                                                }`}
+                                                style={
+                                                    isSolid 
+                                                        ? { borderColor: border.id === 'solid' ? '#FFD700' : borderColor, boxShadow: `0 0 20px ${border.id === 'solid' ? '#FFD700' : borderColor}` }
+                                                        : (border.id === 'gradient' || border.id === 'sparkle') 
+                                                            ? { '--border-color': borderColor } 
+                                                            : {}
+                                                }
+                                            >
+                                                {/* Preview area */}
+                                            </div>
                                         </div>
                                         <div className="text-center">
                                             <div className={`font-bold text-sm mb-1 ${isSelected ? 'text-yellow-400' : 'text-white'}`}>
@@ -139,9 +158,9 @@ const CosmeticsDrawer = ({
                                             <div className="text-xs text-slate-400">
                                                 {border.description}
                                             </div>
-                                            {!unlocked && (
+                                            {!unlocked && border.badge && (
                                                 <div className="text-xs text-red-400 mt-1">
-                                                    Requires Tier {border.tier} Badge
+                                                    Requires {border.badge} Badge
                                                 </div>
                                             )}
                                         </div>
@@ -151,7 +170,7 @@ const CosmeticsDrawer = ({
                                             </div>
                                         )}
                                         
-                                        {/* Inline Color Picker for Solid Color */}
+                                        {/* Inline Color Picker for Solid Color with Picker */}
                                         {showPicker && (
                                             <div className="mt-3 p-3 bg-slate-900/80 rounded border border-slate-600 w-full">
                                                 <div className="flex items-center gap-3">

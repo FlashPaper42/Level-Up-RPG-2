@@ -135,15 +135,17 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     let appliedBorderEffect = '';
     let borderStyle = {};
     if (isCenter && selectedBorder) {
-        if (selectedBorder === 'solid') {
+        if (selectedBorder === 'solid' || selectedBorder === 'solid-picker') {
             appliedBorderEffect = '';
+            // For 'solid', use locked yellow color; for 'solid-picker', use custom color
+            const effectiveColor = selectedBorder === 'solid' ? '#FFD700' : (borderColor || '#FFD700');
             borderStyle = { 
-                borderColor: borderColor || '#FFD700',
-                boxShadow: `0 0 20px ${borderColor || '#FFD700'}, 0 0 40px ${borderColor || '#FFD700'}`
+                borderColor: effectiveColor,
+                boxShadow: `0 0 20px ${effectiveColor}, 0 0 40px ${effectiveColor}`
             };
         } else {
             appliedBorderEffect = `border-effect-${selectedBorder}`;
-            if (selectedBorder === 'pulsing' || selectedBorder === 'sparkle') {
+            if (selectedBorder === 'gradient' || selectedBorder === 'sparkle') {
                 borderStyle = { '--border-color': borderColor || '#FFD700' };
             }
         }
