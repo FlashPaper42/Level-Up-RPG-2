@@ -31,6 +31,9 @@ const PARENT_PRIVILEGE_LEVEL = 200;
 const PARENT_PRIVILEGE_DIFFICULTY = 7;
 const PARENT_PRIVILEGE_BADGES = [1, 2, 3, 4, 5, 6, 7];
 
+// Voice recognition constants
+const MIN_SPOKEN_TEXT_LENGTH = 2;
+
 const App = () => {
     const [currentProfile, setCurrentProfile] = useState(() => localStorage.getItem('currentProfile_v1') ? parseInt(localStorage.getItem('currentProfile_v1')) : 1);
     const [profileNames, setProfileNames] = useState(() => localStorage.getItem('heroProfileNames_v1') ? JSON.parse(localStorage.getItem('heroProfileNames_v1')) : { 1: "Player 1", 2: "Player 2", 3: "Player 3" });
@@ -572,8 +575,12 @@ const App = () => {
         setBattlingSkillId(null);
         setBattleDifficulty(null);
         setChallengeData(null);
-        if (recognitionRef.current) recognitionRef.current.stop();
+        if (recognitionRef.current) {
+            recognitionRef.current.stop();
+            recognitionRef.current = null; // Clear ref to prevent auto-restart
+        }
         setIsListening(false);
+        setSpokenText("");
         playClick();
     };
 
@@ -633,6 +640,12 @@ const App = () => {
 
     const startVoiceListener = (targetId) => {
         if (!window.webkitSpeechRecognition) return;
+        
+        // If recognition already exists and is active, don't reinitialize
+        if (recognitionRef.current) {
+            return;
+        }
+        
         recognitionRef.current = new window.webkitSpeechRecognition();
         recognitionRef.current.lang = 'en-US';
         recognitionRef.current.continuous = true;
@@ -640,14 +653,33 @@ const App = () => {
             setIsListening(true); 
             setSpokenText("Listening..."); 
         };
-        recognitionRef.current.onend = () => setIsListening(false);
+        recognitionRef.current.onend = () => {
+            setIsListening(false);
+            // Auto-restart if still in Reading challenge
+            // Check battlingSkillId (use live state check inside timeout)
+            if (battlingSkillId === 'reading' || targetId === 'reading') {
+                // Small delay before restarting to avoid rapid restarts
+                setTimeout(() => {
+                    // Double-check that we're still in reading challenge
+                    if (battlingSkillId === 'reading') {
+                        recognitionRef.current = null; // Clear ref to allow restart
+                        startVoiceListener(targetId);
+                    }
+                }, 100);
+            }
+        };
         recognitionRef.current.onresult = (e) => { 
             const t = e.results[e.results.length - 1][0].transcript.toUpperCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, ""); 
             setSpokenText(t); 
             // Use the ref to get the CURRENT challenge data
             const currentChallenge = challengeDataRef.current;
-            if (currentChallenge && (t === currentChallenge.answer || HOMOPHONES[currentChallenge.answer]?.includes(t))) {
-                handleSuccessHit(targetId || battlingSkillId); 
+            if (currentChallenge && currentChallenge.type === 'reading') {
+                if (t === currentChallenge.answer || HOMOPHONES[currentChallenge.answer]?.includes(t)) {
+                    handleSuccessHit(targetId || battlingSkillId);
+                } else if (t && t.length >= MIN_SPOKEN_TEXT_LENGTH) {
+                    // Wrong answer - trigger error feedback
+                    handleSuccessHit(targetId || battlingSkillId, 'WRONG');
+                }
             }
         };
         recognitionRef.current.start();
