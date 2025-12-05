@@ -115,7 +115,7 @@ export const DIFFICULTY_CONTENT = {
     },
     math: {
         1: { operations: ['+'], range: [1, 9], description: 'Single-digit addition' },
-        2: { operations: ['+'], range: [1, 20], description: 'Double-digit addition (0-20)' },
+        2: { operations: ['+'], range: [1, 20], description: 'Addition (1-20)' },
         3: { operations: ['+', '-'], range: [1, 20], description: 'Addition and subtraction (0-20)' },
         4: { operations: ['+', '-', '*'], range: [1, 20], multiplyRange: [1, 10], description: 'Add, subtract, multiply (0-20)' },
         5: { operations: ['+', '-', '*', '/'], range: [1, 20], divisionRange: [1, 10], description: 'All operations (0-20)' },
