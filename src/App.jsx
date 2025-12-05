@@ -58,13 +58,11 @@ const App = () => {
                 lostLevel: false, // True if player died and lost a level
                 recoveryDifficulty: null, // Difficulty to suggest for recovery
                 memoryMob: skill.id === 'memory' ? getRandomFriendlyMob() : null, // Stable mob for Memory card display
-                patternMob: skill.id === 'patterns' ? getRandomAxolotl() : null, // Stable axolotl for Patterns card display
+                patternMob: skill.id === 'patterns' ? getRandomMob(null) : null, // Stable hostile mob for Patterns card display
                 currentMiniboss: getRandomMiniboss(), // Stable miniboss for miniboss encounters
                 readingMob: skill.id === 'reading' ? getRandomMob(null) : null, // Stable mob for Reading card display
                 mathMob: skill.id === 'math' ? getRandomMob(null) : null, // Stable mob for Math card display
                 writingMob: skill.id === 'writing' ? getRandomMob(null) : null // Stable mob for Writing card display
-                patternMob: skill.id === 'patterns' ? getRandomMob(null) : null, // Stable hostile mob for Patterns card display
-                currentMiniboss: getRandomMiniboss() // Stable miniboss for miniboss encounters
             }; 
         });
         let saved = localStorage.getItem(getStorageKey(profileId));
