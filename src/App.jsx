@@ -572,8 +572,12 @@ const App = () => {
         setBattlingSkillId(null);
         setBattleDifficulty(null);
         setChallengeData(null);
-        if (recognitionRef.current) recognitionRef.current.stop();
+        if (recognitionRef.current) {
+            recognitionRef.current.stop();
+            recognitionRef.current = null; // Clear ref to prevent auto-restart
+        }
         setIsListening(false);
+        setSpokenText("");
         playClick();
     };
 
@@ -633,6 +637,12 @@ const App = () => {
 
     const startVoiceListener = (targetId) => {
         if (!window.webkitSpeechRecognition) return;
+        
+        // If recognition already exists and is active, don't reinitialize
+        if (recognitionRef.current) {
+            return;
+        }
+        
         recognitionRef.current = new window.webkitSpeechRecognition();
         recognitionRef.current.lang = 'en-US';
         recognitionRef.current.continuous = true;
@@ -640,14 +650,31 @@ const App = () => {
             setIsListening(true); 
             setSpokenText("Listening..."); 
         };
-        recognitionRef.current.onend = () => setIsListening(false);
+        recognitionRef.current.onend = () => {
+            setIsListening(false);
+            // Auto-restart if still in Reading challenge
+            if (battlingSkillId === 'reading' || targetId === 'reading') {
+                // Small delay before restarting to avoid rapid restarts
+                setTimeout(() => {
+                    if (battlingSkillId === 'reading' || targetId === 'reading') {
+                        recognitionRef.current = null; // Clear ref to allow restart
+                        startVoiceListener(targetId);
+                    }
+                }, 100);
+            }
+        };
         recognitionRef.current.onresult = (e) => { 
             const t = e.results[e.results.length - 1][0].transcript.toUpperCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, ""); 
             setSpokenText(t); 
             // Use the ref to get the CURRENT challenge data
             const currentChallenge = challengeDataRef.current;
-            if (currentChallenge && (t === currentChallenge.answer || HOMOPHONES[currentChallenge.answer]?.includes(t))) {
-                handleSuccessHit(targetId || battlingSkillId); 
+            if (currentChallenge && currentChallenge.type === 'reading') {
+                if (t === currentChallenge.answer || HOMOPHONES[currentChallenge.answer]?.includes(t)) {
+                    handleSuccessHit(targetId || battlingSkillId);
+                } else if (t && t.length >= 2) {
+                    // Wrong answer - trigger error feedback
+                    handleSuccessHit(targetId || battlingSkillId, 'WRONG');
+                }
             }
         };
         recognitionRef.current.start();

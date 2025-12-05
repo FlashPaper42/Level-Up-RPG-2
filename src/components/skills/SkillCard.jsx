@@ -20,21 +20,15 @@ const AXOLOTL_NOTE_MAP = {
     'Black': 'g5'
 };
 
-// Dynamic font sizing for reading challenge based on word length
-const getReadingFontSize = (wordLength) => {
-    if (wordLength <= 8) return 'text-4xl';
-    if (wordLength <= 12) return 'text-3xl';
-    if (wordLength <= 18) return 'text-2xl';
-    if (wordLength <= 24) return 'text-xl';
-    return 'text-lg';
-};
-
 const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, challenge, isListening, spokenText, damageNumbers, onStartBattle, onEndBattle, onMathSubmit, onMicClick, difficulty, setDifficulty, unlockedDifficulty }) => {
     const [mathInput, setMathInput] = useState('');
     const [isHit, setIsHit] = useState(false);
     const [isWrong, setIsWrong] = useState(false);
+    const [isReadingWrong, setIsReadingWrong] = useState(false);
     const prevDamageCount = useRef(0);
     const inputRef = useRef(null);
+    const readingWordRef = useRef(null);
+    const prevSpokenTextRef = useRef('');
     
     const [memoryCards, setMemoryCards] = useState([]);
     const [flippedIndices, setFlippedIndices] = useState([]);
@@ -198,6 +192,25 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         if (damageNumbers.length > prevDamageCount.current) { setIsHit(true); setTimeout(() => setIsHit(false), 400); }
         prevDamageCount.current = damageNumbers.length;
     }, [damageNumbers]);
+
+    // Detect wrong reading answer based on spoken text changes
+    useEffect(() => {
+        if (config.challengeType === 'reading' && isBattling && spokenText && spokenText !== 'Listening...' && spokenText !== 'Mic Off') {
+            // Check if spoken text changed
+            if (spokenText !== prevSpokenTextRef.current) {
+                if (challenge?.answer) {
+                    const isCorrect = spokenText === challenge.answer;
+                    // Assume wrong if text is substantial and doesn't match
+                    if (!isCorrect && spokenText.length >= 2) {
+                        // Trigger wrong animation
+                        setIsReadingWrong(true);
+                        setTimeout(() => setIsReadingWrong(false), 500);
+                    }
+                }
+                prevSpokenTextRef.current = spokenText;
+            }
+        }
+    }, [spokenText, config.challengeType, isBattling, challenge?.answer]);
 
     // Pattern config based on difficulty
     const patternConfig = DIFFICULTY_CONTENT.patterns[difficulty] || DIFFICULTY_CONTENT.patterns[1];
@@ -427,7 +440,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                     </div>
                                 ) : (
                                     <>
-                                        <div className="flex-1 bg-black/40 rounded border-2 border-[#555] flex items-center justify-center mb-3 p-2 relative overflow-hidden w-full">
+                                        <div className={`flex-1 bg-black/40 rounded border-2 flex items-center justify-center mb-3 p-2 relative overflow-hidden w-full ${isReadingWrong ? 'border-red-500 bg-red-900/30 animate-shake' : 'border-[#555]'}`}>
                                             {config.challengeType === 'writing' ? (
                                                 // Display single or multiple item images for writing challenge
                                                 <div className="flex items-center justify-center gap-2">
@@ -438,8 +451,27 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                                         </React.Fragment>
                                                     ))}
                                                 </div>
-                                            ) : (() => { const word = challenge?.question.replace('Write: ', '') || ''; return <span className={`${getReadingFontSize(word.length)} text-white font-bold tracking-wider`}>{word}</span>; })()}
-                                            {config.challengeType === 'reading' && <div className="absolute bottom-1 text-xs text-gray-400">{spokenText || (isListening ? "Listening..." : "Mic Off")}</div>}
+                                            ) : (() => { 
+                                                const word = challenge?.question.replace('Write: ', '') || ''; 
+                                                // Use dynamic sizing that always fits the container
+                                                // Start with a base size and let CSS handle the overflow
+                                                return (
+                                                    <span 
+                                                        ref={readingWordRef}
+                                                        className="text-white font-bold tracking-wider px-2"
+                                                        style={{
+                                                            fontSize: 'clamp(1rem, 8vw, 2.5rem)',
+                                                            maxWidth: '100%',
+                                                            wordBreak: 'break-word',
+                                                            textAlign: 'center',
+                                                            lineHeight: '1.2'
+                                                        }}
+                                                    >
+                                                        {word}
+                                                    </span>
+                                                );
+                                            })()}
+                                            {config.challengeType === 'reading' && <div className={`absolute bottom-1 text-xs ${isReadingWrong ? 'text-red-400' : 'text-gray-400'}`}>{spokenText || (isListening ? "Listening..." : "Mic Off")}</div>}
                                         </div>
                                         {config.challengeType === 'math' && <div className="relative w-full flex justify-center"><input ref={inputRef} type="text" inputMode="numeric" pattern="[0-9]*" value={mathInput} onChange={(e) => { const val = e.target.value.replace(/[^0-9-]/g, ''); setMathInput(val); if (val === String(challenge?.answer)) { onMathSubmit(val); setMathInput(''); } else if (val.length === String(challenge?.answer).length) { setIsWrong(true); playMismatch(); onMathSubmit('WRONG'); setTimeout(() => { setIsWrong(false); setMathInput(''); setTimeout(() => inputRef.current?.focus(), 10); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={String(challenge?.answer).length} disabled={isWrong} /><div className={`flex gap-2 ${isWrong ? 'animate-shake' : ''}`}>{String(challenge?.answer).split('').map((char, i) => (<div key={i} className={`w-10 h-12 border-b-4 flex items-center justify-center text-2xl font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
                                         {config.challengeType === 'writing' && <div className="relative w-full flex justify-center"><input ref={inputRef} type="text" value={mathInput} onChange={(e) => { const val = e.target.value.toUpperCase(); setMathInput(val); if (val === challenge?.answer) { onMathSubmit(val); setMathInput(''); } else if (val.length === challenge?.answer.length) { setIsWrong(true); playMismatch(); setTimeout(() => { setIsWrong(false); setMathInput(''); setTimeout(() => inputRef.current?.focus(), 10); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={challenge?.answer.length} disabled={isWrong} /><div className={`flex gap-1 flex-wrap justify-center ${isWrong ? 'animate-shake' : ''}`}>{challenge?.answer.split('').map((char, i) => (<div key={i} className={`${challenge?.answer.length > 6 ? 'w-7 h-9 text-lg' : 'w-10 h-12 text-2xl'} border-b-4 flex items-center justify-center font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
