@@ -421,6 +421,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             <div className={bottomSectionClass}>
                 {isBattling ? (
                     <div className="flex flex-col h-full animate-in slide-in-from-bottom-10 duration-300">
+                        {config.id !== 'patterns' && config.id !== 'math' && <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>}
                         {config.id !== 'patterns' && config.id !== 'reading' && <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>}
                         {config.id === 'memory' ? (
                             <div className={`flex-1 grid gap-2 bg-black/20 p-2 rounded items-center`} style={{ gridTemplateColumns: `repeat(${memoryGridCols}, 1fr)` }}>
