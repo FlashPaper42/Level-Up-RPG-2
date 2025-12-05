@@ -741,7 +741,7 @@ const App = () => {
             <GlobalStyles />
             <div className="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
             <button onClick={() => { setIsMenuOpen(false); setIsSettingsOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', left: '16px' }}><Sparkles size={32} className="text-yellow-400" /></button>
-            <div className="absolute z-40 flex gap-2" style={{ top: '20px', left: '96px' }}>{Array(10).fill(0).map((_, i) => (<PixelHeart key={i} size={48} filled={i < playerHealth} />))}</div>
+            <div className="absolute z-40 flex gap-1" style={{ bottom: '20px', left: '16px' }}>{Array(10).fill(0).map((_, i) => (<PixelHeart key={i} size={30} filled={i < playerHealth} />))}</div>
             {/* Settings drawer overlay - click to close */}
             {isSettingsOpen && (
                 <div
