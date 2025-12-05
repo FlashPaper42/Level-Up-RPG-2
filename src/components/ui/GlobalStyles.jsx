@@ -117,6 +117,190 @@ const GlobalStyles = () => (
     .ring-rainbow {
         animation: rainbow-ring 3s linear infinite;
     }
+    
+    /* Border Effect Animations for Skill Cards */
+    
+    /* Rainbow Border */
+    @keyframes border-rainbow {
+        0% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000; }
+        14% { border-color: #ff7f00; box-shadow: 0 0 20px #ff7f00, 0 0 40px #ff7f00; }
+        28% { border-color: #ffff00; box-shadow: 0 0 20px #ffff00, 0 0 40px #ffff00; }
+        42% { border-color: #00ff00; box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
+        57% { border-color: #0000ff; box-shadow: 0 0 20px #0000ff, 0 0 40px #0000ff; }
+        71% { border-color: #4b0082; box-shadow: 0 0 20px #4b0082, 0 0 40px #4b0082; }
+        85% { border-color: #8f00ff; box-shadow: 0 0 20px #8f00ff, 0 0 40px #8f00ff; }
+        100% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000; }
+    }
+    .border-effect-rainbow {
+        animation: border-rainbow 3s linear infinite;
+    }
+    
+    /* Pulsing Glow */
+    @keyframes border-pulse {
+        0%, 100% { box-shadow: 0 0 10px var(--border-color, #FFD700), 0 0 20px var(--border-color, #FFD700); }
+        50% { box-shadow: 0 0 30px var(--border-color, #FFD700), 0 0 60px var(--border-color, #FFD700); }
+    }
+    .border-effect-pulsing {
+        animation: border-pulse 2s ease-in-out infinite;
+    }
+    
+    /* Particle Sparkle */
+    @keyframes border-sparkle {
+        0%, 100% { 
+            box-shadow: 
+                0 0 20px var(--border-color, #FFD700),
+                10px 10px 5px rgba(255, 255, 255, 0.8),
+                -10px -10px 5px rgba(255, 255, 255, 0.8);
+        }
+        25% { 
+            box-shadow: 
+                0 0 20px var(--border-color, #FFD700),
+                -10px 10px 5px rgba(255, 255, 255, 0.8),
+                10px -10px 5px rgba(255, 255, 255, 0.8);
+        }
+        50% { 
+            box-shadow: 
+                0 0 20px var(--border-color, #FFD700),
+                0 15px 5px rgba(255, 255, 255, 0.8),
+                0 -15px 5px rgba(255, 255, 255, 0.8);
+        }
+        75% { 
+            box-shadow: 
+                0 0 20px var(--border-color, #FFD700),
+                15px 0 5px rgba(255, 255, 255, 0.8),
+                -15px 0 5px rgba(255, 255, 255, 0.8);
+        }
+    }
+    .border-effect-sparkle {
+        animation: border-sparkle 1.5s linear infinite;
+    }
+    
+    /* Electric/Lightning */
+    @keyframes border-electric {
+        0%, 100% { 
+            box-shadow: 
+                0 0 10px #00ffff,
+                0 0 20px #00ffff,
+                0 0 30px #00ffff,
+                2px 2px 2px rgba(255, 255, 255, 0.9);
+            filter: brightness(1);
+        }
+        10%, 20%, 30%, 40% {
+            box-shadow: 
+                0 0 5px #00ffff,
+                0 0 10px #00ffff,
+                0 0 15px #00ffff;
+            filter: brightness(1.3);
+        }
+        15%, 25%, 35%, 45% {
+            box-shadow: 
+                0 0 15px #00ffff,
+                0 0 30px #00ffff,
+                0 0 45px #00ffff,
+                -2px -2px 2px rgba(255, 255, 255, 0.9);
+            filter: brightness(1.5);
+        }
+    }
+    .border-effect-electric {
+        animation: border-electric 1s linear infinite;
+        border-color: #00ffff;
+    }
+    
+    /* Fire/Flame */
+    @keyframes border-fire {
+        0%, 100% { 
+            box-shadow: 
+                0 0 20px #ff4500,
+                0 0 40px #ff8c00,
+                0 0 60px #ffd700;
+            filter: hue-rotate(0deg);
+        }
+        25% { 
+            box-shadow: 
+                0 0 30px #ff8c00,
+                0 0 50px #ffd700,
+                0 0 70px #ff4500;
+            filter: hue-rotate(5deg);
+        }
+        50% { 
+            box-shadow: 
+                0 0 25px #ffd700,
+                0 0 45px #ff4500,
+                0 0 65px #ff8c00;
+            filter: hue-rotate(-5deg);
+        }
+        75% { 
+            box-shadow: 
+                0 0 35px #ff4500,
+                0 0 55px #ff8c00,
+                0 0 75px #ffd700;
+            filter: hue-rotate(5deg);
+        }
+    }
+    .border-effect-fire {
+        animation: border-fire 1s ease-in-out infinite;
+        border-color: #ff4500;
+    }
+    
+    /* Frost/Ice */
+    @keyframes border-frost {
+        0%, 100% { 
+            box-shadow: 
+                0 0 20px #00ffff,
+                0 0 40px #87ceeb,
+                inset 0 0 10px rgba(255, 255, 255, 0.3);
+            filter: brightness(1);
+        }
+        50% { 
+            box-shadow: 
+                0 0 30px #87ceeb,
+                0 0 50px #00ffff,
+                inset 0 0 20px rgba(255, 255, 255, 0.5);
+            filter: brightness(1.2);
+        }
+    }
+    .border-effect-frost {
+        animation: border-frost 3s ease-in-out infinite;
+        border-color: #87ceeb;
+    }
+    
+    /* Shadow/Dark Aura */
+    @keyframes border-shadow {
+        0%, 100% { 
+            box-shadow: 
+                0 0 20px #4b0082,
+                0 0 40px #2f1847,
+                0 0 60px rgba(0, 0, 0, 0.8);
+            filter: contrast(1.1);
+        }
+        50% { 
+            box-shadow: 
+                0 0 30px #2f1847,
+                0 0 50px #4b0082,
+                0 0 70px rgba(0, 0, 0, 0.9);
+            filter: contrast(1.2);
+        }
+    }
+    .border-effect-shadow {
+        animation: border-shadow 2s ease-in-out infinite;
+        border-color: #4b0082;
+    }
+    
+    /* Chevron Ebb and Flow Animation */
+    @keyframes chevron-float {
+        0%, 100% { transform: translateX(0); opacity: 0.8; }
+        50% { transform: translateX(-3px); opacity: 1; }
+    }
+    @keyframes chevron-float-right {
+        0%, 100% { transform: translateX(0); opacity: 0.8; }
+        50% { transform: translateX(3px); opacity: 1; }
+    }
+    .animate-chevron-left {
+        animation: chevron-float 2s ease-in-out infinite;
+    }
+    .animate-chevron-right {
+        animation: chevron-float-right 2s ease-in-out infinite;
+    }
   `}</style>
 );
 
