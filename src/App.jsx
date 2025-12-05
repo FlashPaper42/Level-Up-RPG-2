@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-    Menu, Sparkles, ChevronLeft, ChevronRight, Gift
+    Menu, Sparkles, ChevronLeft, ChevronRight, Gift, Maximize, Minimize
 } from 'lucide-react';
 
 // Modules
@@ -177,6 +177,7 @@ const App = () => {
     const [dragStartX, setDragStartX] = useState(0);
     const [showDeathOverlay, setShowDeathOverlay] = useState(false);
     const [showLevelRestored, setShowLevelRestored] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
     const recognitionRef = useRef(null);
     const challengeDataRef = useRef(null);
     const [bgmVol, setBgmVol] = useState(0.3);
@@ -206,12 +207,35 @@ const App = () => {
         challengeDataRef.current = challengeData;
     }, [challengeData]);
     
+    // Listen for fullscreen changes
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+        
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
+    }, []);
+    
     // Start BGM on first user interaction
     const startBGM = useCallback(() => {
         if (!bgmManager.current.isPlaying) {
             bgmManager.current.play();
         }
     }, []);
+
+    // Toggle fullscreen mode
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+        playClick();
+    };
 
     const generateChallenge = (type, diff) => {
         // Math: Use difficulty-based problem generation
@@ -751,6 +775,7 @@ const App = () => {
             )}
             <SettingsDrawer isOpen={isSettingsOpen} activeTheme={activeTheme} setActiveTheme={setActiveTheme} onReset={() => setIsResetOpen(true)} bgmVol={bgmVol} setBgmVol={setBgmVol} sfxVol={sfxVol} setSfxVol={setSfxVolState} currentProfile={currentProfile} onSwitchProfile={handleSwitchProfile} profileNames={profileNames} onRenameProfile={handleRenameProfile} getProfileStats={getProfileStats} parentStatus={parentStatus} onParentVerified={handleParentVerified} currentSkills={skills} />
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
+            <button onClick={toggleFullscreen} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '76px' }}>{isFullscreen ? <Minimize size={32} /> : <Maximize size={32} />}</button>
             <button onClick={() => { setIsSettingsOpen(false); setIsMenuOpen(true); playClick(); }} className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" style={{ top: '16px', right: '16px' }}><Menu size={32} /></button>
             {/* Achievement drawer overlay - click to close */}
             {isMenuOpen && (
