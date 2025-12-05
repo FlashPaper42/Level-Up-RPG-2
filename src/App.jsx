@@ -312,10 +312,12 @@ const App = () => {
         // Writing: Use difficulty-based word selection from comprehensive index
         if (type === 'writing') {
             const wordData = getWordForDifficulty(diff);
+            // Use displayName in uppercase for the answer (handles multi-word items with spaces)
+            const answer = wordData.displayName.toUpperCase();
             return { 
                 type, 
                 question: "Spell it!", 
-                answer: wordData.displayName.toUpperCase(), 
+                answer, 
                 images: [wordData.image],
                 displayName: wordData.displayName
             };
