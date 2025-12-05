@@ -135,13 +135,31 @@ const GlobalStyles = () => (
         animation: border-rainbow 3s linear infinite;
     }
     
-    /* Pulsing Glow */
-    @keyframes border-pulse {
-        0%, 100% { box-shadow: 0 0 10px var(--border-color, #FFD700), 0 0 20px var(--border-color, #FFD700); }
-        50% { box-shadow: 0 0 30px var(--border-color, #FFD700), 0 0 60px var(--border-color, #FFD700); }
+    /* Gradient Sweep */
+    @keyframes border-gradient {
+        0% { 
+            border-image: linear-gradient(0deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4) 1;
+            box-shadow: 0 0 20px #ff6b6b;
+        }
+        25% { 
+            border-image: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4) 1;
+            box-shadow: 0 0 20px #4ecdc4;
+        }
+        50% { 
+            border-image: linear-gradient(180deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4) 1;
+            box-shadow: 0 0 20px #45b7d1;
+        }
+        75% { 
+            border-image: linear-gradient(270deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4) 1;
+            box-shadow: 0 0 20px #96ceb4;
+        }
+        100% { 
+            border-image: linear-gradient(360deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4) 1;
+            box-shadow: 0 0 20px #ff6b6b;
+        }
     }
-    .border-effect-pulsing {
-        animation: border-pulse 2s ease-in-out infinite;
+    .border-effect-gradient {
+        animation: border-gradient 3s linear infinite;
     }
     
     /* Particle Sparkle */
