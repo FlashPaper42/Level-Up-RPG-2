@@ -66,7 +66,7 @@ const ParentalVerificationModal = ({ isOpen, onClose, onVerified }) => {
     };
 
     return ReactDOM.createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={handleClose}></div>
             <div className="relative bg-stone-900 border-4 border-blue-600 rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
                 <button onClick={handleClose} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
