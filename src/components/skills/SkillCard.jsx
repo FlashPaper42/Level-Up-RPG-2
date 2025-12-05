@@ -421,6 +421,9 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             <div className={bottomSectionClass}>
                 {isBattling ? (
                     <div className="flex flex-col h-full animate-in slide-in-from-bottom-10 duration-300">
+                        {config.id !== 'patterns' && config.id !== 'reading' && config.challengeType !== 'writing' && <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>}
+                        {config.id !== 'patterns' && config.id !== 'math' && <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>}
+                        {config.id !== 'patterns' && config.id !== 'reading' && <div className="text-center mb-2"><span className="text-yellow-400 text-lg uppercase animate-pulse tracking-wide">{config.taskDescription}</span></div>}
                         {config.id === 'memory' ? (
                             <div className={`flex-1 grid gap-2 bg-black/20 p-2 rounded items-center`} style={{ gridTemplateColumns: `repeat(${memoryGridCols}, 1fr)` }}>
                                 {memoryCards.map((card, index) => {
@@ -492,7 +495,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                                     {challenge?.images?.map((img, idx) => (
                                                         <React.Fragment key={idx}>
                                                             {idx > 0 && <span className="text-3xl text-yellow-400 font-bold">+</span>}
-                                                            <SafeImage src={img} className="w-16 h-16 object-contain animate-bob" />
+                                                            <SafeImage src={img} className="w-24 h-24 object-contain animate-bob" />
                                                         </React.Fragment>
                                                     ))}
                                                 </div>
@@ -519,7 +522,27 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                             {config.challengeType === 'reading' && <div className={`absolute bottom-1 text-xs ${isReadingWrong ? 'text-red-400' : 'text-gray-400'}`}>{spokenText || (isListening ? "Listening..." : "Mic Off")}</div>}
                                         </div>
                                         {config.challengeType === 'math' && <div className="relative w-full flex justify-center"><input ref={inputRef} type="text" inputMode="numeric" pattern="[0-9]*" value={mathInput} onChange={(e) => { const val = e.target.value.replace(/[^0-9-]/g, ''); setMathInput(val); if (val === String(challenge?.answer)) { onMathSubmit(val); setMathInput(''); } else if (val.length === String(challenge?.answer).length) { setIsWrong(true); playMismatch(); onMathSubmit('WRONG'); setTimeout(() => { setIsWrong(false); setMathInput(''); setTimeout(() => inputRef.current?.focus(), 10); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={String(challenge?.answer).length} disabled={isWrong} /><div className={`flex gap-2 ${isWrong ? 'animate-shake' : ''}`}>{String(challenge?.answer).split('').map((char, i) => (<div key={i} className={`w-10 h-12 border-b-4 flex items-center justify-center text-2xl font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
-                                        {config.challengeType === 'writing' && <div className="relative w-full flex justify-center"><input ref={inputRef} type="text" value={mathInput} onChange={(e) => { const val = e.target.value.toUpperCase(); setMathInput(val); if (val === challenge?.answer) { onMathSubmit(val); setMathInput(''); } else if (val.length === challenge?.answer.length) { setIsWrong(true); playMismatch(); setTimeout(() => { setIsWrong(false); setMathInput(''); setTimeout(() => inputRef.current?.focus(), 10); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={challenge?.answer.length} disabled={isWrong} /><div className={`flex gap-1 flex-wrap justify-center ${isWrong ? 'animate-shake' : ''}`}>{challenge?.answer.split('').map((char, i) => (<div key={i} className={`${challenge?.answer.length > 6 ? 'w-7 h-9 text-lg' : 'w-10 h-12 text-2xl'} border-b-4 flex items-center justify-center font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (i < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>{mathInput[i] || ''}</div>))}</div></div>}
+                                        {config.challengeType === 'writing' && <div className="relative w-full flex justify-center"><input ref={inputRef} type="text" value={mathInput} onChange={(e) => { const val = e.target.value.toUpperCase().replace(/\s/g, ''); setMathInput(val); const answerNoSpaces = challenge?.answer.replace(/\s/g, ''); if (val === answerNoSpaces) { onMathSubmit(val); setMathInput(''); } else if (val.length === answerNoSpaces.length) { setIsWrong(true); playMismatch(); setTimeout(() => { setIsWrong(false); setMathInput(''); setTimeout(() => inputRef.current?.focus(), 10); }, 500); } }} className="absolute inset-0 opacity-0 cursor-pointer" autoFocus maxLength={challenge?.answer.replace(/\s/g, '').length} disabled={isWrong} /><div className={`flex gap-1 flex-wrap justify-center ${isWrong ? 'animate-shake' : ''}`}>{(() => {
+                                            const answerNoSpaces = challenge?.answer.replace(/\s/g, '');
+                                            const answerLength = answerNoSpaces.length;
+                                            return challenge?.answer.split('').map((char, i) => {
+                                                if (char === ' ') {
+                                                    return <div key={i} className="w-4"></div>;
+                                                }
+                                                // Calculate input index by counting non-space characters before this position
+                                                let inputIndex = 0;
+                                                for (let j = 0; j < i; j++) {
+                                                    if (challenge?.answer[j] !== ' ') {
+                                                        inputIndex++;
+                                                    }
+                                                }
+                                                return (
+                                                    <div key={i} className={`${answerLength > 6 ? 'w-7 h-9 text-lg' : 'w-10 h-12 text-2xl'} border-b-4 flex items-center justify-center font-mono font-bold text-white bg-black/20 rounded-t ${isWrong ? 'border-red-500 bg-red-900/30' : (inputIndex < mathInput.length ? 'border-green-500' : 'border-gray-600')}`}>
+                                                        {mathInput[inputIndex] || ''}
+                                                    </div>
+                                                );
+                                            });
+                                        })()}</div></div>}
                                         {config.challengeType === 'reading' && <button onClick={onMicClick} className={`w-full text-center p-2 rounded border-2 transition-colors flex items-center justify-center gap-2 ${isListening ? 'border-red-500 bg-red-900/20' : 'border-gray-600 hover:bg-white/10'}`}>{isListening ? <Mic className="inline animate-pulse text-red-500" /> : <><Mic className="inline text-gray-500" /><span className="text-xs uppercase font-bold text-stone-400">Tap to Speak</span></>}</button>}
                                         {config.challengeType === 'cleaning' && <button onClick={() => onMathSubmit(challenge?.answer)} className="w-full bg-green-600 hover:bg-green-500 text-white text-3xl font-bold py-4 rounded shadow-[0_4px_0_#166534] active:shadow-none active:translate-y-[4px] transition-all">Complete!</button>}
                                         {config.challengeType !== 'cleaning' && config.challengeType !== 'writing' && config.challengeType !== 'math' && <button onClick={() => onMathSubmit(challenge?.answer)} className="mt-auto text-xs text-gray-500 underline hover:text-white self-center">Skip / Manual Success</button>}
