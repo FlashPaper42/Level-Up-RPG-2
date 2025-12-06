@@ -56,7 +56,8 @@ export const getMobForSkill = (skillConfig, userSkill) => {
         return userSkill.currentMiniboss || getRandomMiniboss();
     }
     
-    // Combat skills (reading, math, writing, patterns): Return stored mob to prevent random changes on re-render
+    // Combat skills (reading, math, writing, patterns) at hostile mob levels:
+    // Return stored mob to prevent random changes on re-render
     const combatSkillMobs = {
         'reading': userSkill.readingMob,
         'math': userSkill.mathMob,

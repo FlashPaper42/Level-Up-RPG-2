@@ -117,12 +117,15 @@ const App = () => {
                     if (key === 'writing' && !initial[key].writingMob) {
                         initial[key].writingMob = getRandomMob(null);
                     }
-                    // Ensure miniboss and boss mobs exist (backward compatibility)
-                    if (!initial[key].currentMiniboss) {
-                        initial[key].currentMiniboss = getRandomMiniboss();
-                    }
-                    if (!initial[key].currentBoss) {
-                        initial[key].currentBoss = getRandomBoss();
+                    // Ensure miniboss and boss mobs exist for combat skills (backward compatibility)
+                    // Only initialize for skills that use the encounter type system (not cleaning or memory)
+                    if (key !== 'cleaning' && key !== 'memory') {
+                        if (!initial[key].currentMiniboss) {
+                            initial[key].currentMiniboss = getRandomMiniboss();
+                        }
+                        if (!initial[key].currentBoss) {
+                            initial[key].currentBoss = getRandomBoss();
+                        }
                     }
                 }); 
                 return initial; 
