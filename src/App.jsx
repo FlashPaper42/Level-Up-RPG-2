@@ -892,20 +892,20 @@ const App = () => {
             <div className="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
             
             {/* Top Left Buttons */}
-            {/* Button dimensions: p-3 (12px) + icon(32px) + p-3 (12px) + border-2*2 (4px) = 60px + 3px gap = 63px spacing */}
+            {/* Button dimensions: p-3 (12px) + icon(48px) + p-3 (12px) + border-2*2 (4px) = 76px + 8px gap = 84px spacing */}
             <button 
                 onClick={() => { setIsMenuOpen(false); setIsCosmeticsOpen(false); setIsSettingsOpen(true); playClick(); }} 
                 className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
-                style={{ top: '16px', left: '16px' }}
+                style={{ top: '24px', left: '24px' }}
             >
-                <Settings size={32} className="text-slate-400" />
+                <Settings size={48} className="text-slate-400" />
             </button>
             <button 
                 onClick={() => { setIsMenuOpen(false); setIsSettingsOpen(false); setIsCosmeticsOpen(true); playClick(); }} 
                 className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
-                style={{ top: '16px', left: 'calc(16px + 60px + 3px)' }}
+                style={{ top: '24px', left: 'calc(24px + 60px + 8px)' }}
             >
-                <Sparkles size={32} className="text-purple-400" />
+                <Sparkles size={48} className="text-purple-400" />
             </button>
             
             {/* Player Health Display */}
@@ -955,22 +955,22 @@ const App = () => {
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
             
             {/* Top Right Buttons */}
-            {/* Button dimensions: p-3 (12px) + icon(32px) + p-3 (12px) + border-2*2 (4px) = 60px + 3px gap = 63px spacing */}
+            {/* Button dimensions: p-3 (12px) + icon(48px) + p-3 (12px) + border-2*2 (4px) = 76px + 8px gap = 84px spacing */}
             <button 
                 onClick={toggleFullscreen} 
                 className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
-                style={{ top: '16px', right: 'calc(16px + 60px + 3px)' }} 
+                style={{ top: '24px', right: 'calc(24px + 60px + 8px)' }} 
                 aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'} 
                 title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
             >
-                {isFullscreen ? <Minimize size={32} /> : <Maximize size={32} />}
+                {isFullscreen ? <Minimize size={48} /> : <Maximize size={48} />}
             </button>
             <button 
                 onClick={() => { setIsSettingsOpen(false); setIsCosmeticsOpen(false); setIsMenuOpen(true); playClick(); }} 
                 className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
-                style={{ top: '16px', right: '16px' }}
+                style={{ top: '24px', right: '24px' }}
             >
-                <Menu size={32} />
+                <Menu size={48} />
             </button>
             
             {/* Achievement drawer overlay - click to close */}
