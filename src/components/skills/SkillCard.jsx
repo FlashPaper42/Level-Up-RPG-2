@@ -462,7 +462,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                     <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                     {!isBattling && <div className="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-white border border-white/20 z-20"><div className="text-xs text-gray-400 uppercase">{skillName}</div><div className="text-lg leading-none">{config.fantasyName}</div></div>}
                     {!isBattling && <div className="absolute top-2 right-2 z-20"><div className={`bg-black/60 px-3 py-1 rounded border border-white/20 text-3xl font-bold ${levelTextColor}`}>Lvl {data.level}</div></div>}
-                    {showMob && <div className="relative z-10 flex items-center justify-center h-full max-h-[200px]">
+                    {showMob && <div className="relative z-10 flex items-center justify-center h-full max-h-[200px] w-full">
                         {/* Spinning aura circle - only during battle */}
                         {isBattling && selectedAura && (
                             <div 
@@ -474,7 +474,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                             src={mobSrc} 
                             alt={displayMobName} 
                             className={`
-                                relative z-10
+                                relative z-10 mx-auto
                                 ${config.id === 'patterns' && isBattling ? 'max-w-[80px] max-h-[80px]' : 'max-w-[160px] max-h-[160px]'} 
                                 w-auto h-auto object-contain drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-transform duration-100 
                                 ${isHit ? 'animate-knockback' : bossHealing ? 'animate-shake' : 'animate-bob'} 
