@@ -210,6 +210,7 @@ const App = () => {
     const [bossHealing, setBossHealing] = useState(null); // skillId of boss being healed
     const recognitionRef = useRef(null);
     const challengeDataRef = useRef(null);
+    const damageIdRef = useRef(0); // Counter for generating unique damage number IDs
     const [bgmVol, setBgmVol] = useState(0.3);
     const [sfxVol, setSfxVolState] = useState(0.5);
     const bgmManager = useRef(getBGMManager());
@@ -373,6 +374,7 @@ const App = () => {
                 setSpokenText('');
             }
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [battlingSkillId, skills]); // Intentionally exclude battleDifficulty to prevent infinite loop
 
     const handleSuccessHit = (skillId, isWrong) => {
@@ -470,7 +472,7 @@ const App = () => {
         
         // Show damage numbers and play sounds
         if (skillConfig.id !== 'memory') {
-            const id = Date.now();
+            const id = ++damageIdRef.current;
             setDamageNumbers(prev => [...prev, { id, skillId, val: actualDamage, x: Math.random() * 100 - 50, y: Math.random() * 50 - 25 }]);
             setTimeout(() => setDamageNumbers(prev => prev.filter(n => n.id !== id)), 800);
             

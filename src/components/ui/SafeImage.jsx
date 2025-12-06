@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-const SafeImage = ({ src, alt, className, fallbackSrc, onClick }) => {
+const SafeImage = ({ src, alt, className, onClick }) => {
     const [error, setError] = useState(false);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => { setError(false); }, [src]);
     
     if (error || !src) {
