@@ -188,8 +188,9 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
         ? `${AURA_ADJECTIVES[mobAura]} ${displayMobName}`
         : displayMobName;
     
-    // Calculate mob/aura size based on skill and battle state
-    const mobSize = config.id === 'patterns' && isBattling ? '80px' : '160px';
+    // Use dynamic sizing for mobs to fill container
+    // No longer need fixed pixel sizes - let the container constrain the size
+    const mobSize = '100%';
 
     const gemStyle = {}; 
 
@@ -440,8 +441,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
                     {!isBattling && <div className="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-white border border-white/20 z-20"><div className="text-xs text-gray-400 uppercase">{skillName}</div><div className="text-lg leading-none">{config.fantasyName}</div></div>}
                     {!isBattling && <div className="absolute top-2 right-2 z-20"><div className={`bg-black/60 px-3 py-1 rounded border border-white/20 text-3xl font-bold ${levelTextColor}`}>Lvl {data.level}</div></div>}
                     {showMob && <div className="relative z-10 flex items-center justify-center h-full max-h-[200px] w-full">
-                        {/* Use MobWithAura component for battle mobs with aura, or plain image for non-battle */}
-                        {isBattling && mobAura ? (
+                        {/* Use MobWithAura component when aura exists (both battle and carousel states) */}
+                        {mobAura ? (
                             <MobWithAura
                                 mobSrc={mobSrc}
                                 aura={mobAura}
@@ -455,9 +456,9 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
                                 key={displayMobName} 
                                 src={mobSrc} 
                                 alt={displayMobName} 
-                                style={{ width: mobSize, height: mobSize }}
                                 className={`
                                     relative z-10
+                                    max-w-full max-h-full
                                     object-contain drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-transform duration-100 
                                     ${isHit ? 'animate-knockback' : bossHealing ? 'animate-shake' : 'animate-bob'} 
                                     ${bossHealing ? 'brightness-150 hue-rotate-90' : ''}
