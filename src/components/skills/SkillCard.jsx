@@ -110,6 +110,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     
     // Aura effect state for battle mob display
     const [selectedAura, setSelectedAura] = useState(null);
+    const auraSelectedRef = useRef(false);
 
     // Helper function to play axolotl-specific note with fallback to click
     const playAxolotlNote = useCallback((color) => {
@@ -275,13 +276,15 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
 
     // Select random aura when entering battle
     useEffect(() => {
-        if (isBattling && !selectedAura) {
+        if (isBattling && !auraSelectedRef.current) {
             const randomAura = AURA_EFFECTS[Math.floor(Math.random() * AURA_EFFECTS.length)];
             setSelectedAura(randomAura);
-        } else if (!isBattling) {
+            auraSelectedRef.current = true;
+        } else if (!isBattling && auraSelectedRef.current) {
             setSelectedAura(null);
+            auraSelectedRef.current = false;
         }
-    }, [isBattling, selectedAura]);
+    }, [isBattling]);
 
     // Detect wrong reading answer based on spoken text changes
     useEffect(() => {
