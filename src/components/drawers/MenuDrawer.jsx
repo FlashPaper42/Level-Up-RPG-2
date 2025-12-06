@@ -12,6 +12,10 @@ import {
 } from '../../utils/achievementUtils';
 import { calculateXPToLevel } from '../../utils/gameUtils';
 
+// Achievement grid constants
+const ACHIEVEMENT_GRID_COLUMNS = 6;
+const TOOLTIP_POSITION_THRESHOLD = 4; // Columns >= this show tooltip on left
+
 const MenuDrawer = ({ isOpen, skills, stats }) => {
     const totalLevels = Object.values(skills).reduce((acc, s) => acc + s.level, 0);
     
@@ -160,8 +164,8 @@ const MenuDrawer = ({ isOpen, skills, stats }) => {
                                 }
                                 
                                 // Calculate tooltip position (grid-cols-6)
-                                const columnIndex = index % 6;
-                                const tooltipPosition = columnIndex >= 4 ? 'right-full mr-2' : 'left-full ml-2';
+                                const columnIndex = index % ACHIEVEMENT_GRID_COLUMNS;
+                                const tooltipPosition = columnIndex >= TOOLTIP_POSITION_THRESHOLD ? 'right-full mr-2' : 'left-full ml-2';
                                 
                                 return (
                                     <div key={achievement.id} className="relative group">
