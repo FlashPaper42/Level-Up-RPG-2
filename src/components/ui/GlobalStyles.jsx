@@ -914,6 +914,150 @@ const GlobalStyles = () => (
         );
     }
     
+    /* Composite MobWithAura Container Styles */
+    /* The aura is rendered as a ::before pseudo-element that fills the container */
+    /* The mob image is centered within the container using flexbox */
+    /* This ensures perfect alignment because both share the same positioning context */
+    
+    .mob-with-aura-container::before {
+        content: '';
+        position: absolute;
+        inset: 0; /* Fills entire container */
+        opacity: 0.6;
+        z-index: 0;
+        animation: spin-aura 4s linear infinite;
+    }
+    
+    /* Apply aura styles based on data-aura attribute */
+    .mob-with-aura-container[data-aura="rainbow"]::before {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 0, 0, 0.3) 0%,
+            rgba(255, 127, 0, 0.3) 14%,
+            rgba(255, 255, 0, 0.3) 28%,
+            rgba(0, 255, 0, 0.3) 42%,
+            rgba(0, 0, 255, 0.3) 57%,
+            rgba(75, 0, 130, 0.3) 71%,
+            rgba(143, 0, 255, 0.3) 85%,
+            transparent 100%
+        );
+        border-radius: 47% 53% 45% 55% / 52% 48% 52% 48%;
+        filter: blur(3px);
+        box-shadow: 
+            0 0 30px rgba(255, 0, 255, 0.6),
+            0 0 60px rgba(0, 255, 255, 0.4),
+            inset 0 0 30px rgba(255, 255, 255, 0.2);
+    }
+    
+    .mob-with-aura-container[data-aura="frost"]::before {
+        background: radial-gradient(ellipse at center,
+            rgba(135, 206, 235, 0.5) 0%,
+            rgba(0, 255, 255, 0.4) 50%,
+            transparent 100%
+        );
+        clip-path: polygon(
+            50% 0%, 55% 10%, 65% 5%, 70% 15%, 80% 10%, 85% 20%, 95% 15%, 100% 25%,
+            95% 35%, 100% 45%, 95% 55%, 100% 65%, 95% 75%, 100% 85%, 90% 90%, 85% 100%,
+            75% 95%, 70% 100%, 60% 95%, 50% 100%, 40% 95%, 30% 100%, 25% 95%, 15% 100%,
+            10% 90%, 0% 85%, 5% 75%, 0% 65%, 5% 55%, 0% 45%, 5% 35%, 0% 25%,
+            5% 15%, 15% 10%, 20% 20%, 30% 5%, 35% 15%, 45% 10%
+        );
+        filter: blur(2px);
+        animation: spin-aura 4s linear infinite, aura-frost-cycle 3s ease-in-out infinite;
+    }
+    
+    .mob-with-aura-container[data-aura="shadow"]::before {
+        background: radial-gradient(ellipse at center,
+            rgba(75, 0, 130, 0.5) 0%,
+            rgba(47, 24, 71, 0.4) 50%,
+            rgba(0, 0, 0, 0.6) 100%
+        );
+        border-radius: 47% 53% 45% 55% / 52% 48% 52% 48%;
+        filter: blur(3px);
+        box-shadow: 
+            0 0 40px rgba(75, 0, 130, 0.9),
+            0 0 80px rgba(47, 24, 71, 0.7),
+            inset 0 0 30px rgba(0, 0, 0, 0.8);
+    }
+    
+    .mob-with-aura-container[data-aura="lava"]::before {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 69, 0, 0.6) 0%,
+            rgba(255, 140, 0, 0.5) 40%,
+            rgba(255, 215, 0, 0.4) 70%,
+            transparent 100%
+        );
+        border-radius: 47% 53% 45% 55% / 52% 48% 52% 48%;
+        filter: blur(3px);
+        animation: spin-aura 4s linear infinite, aura-lava-cycle 2s ease-in-out infinite;
+    }
+    
+    .mob-with-aura-container[data-aura="gradient"]::before {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 107, 107, 0.5) 0%,
+            rgba(78, 205, 196, 0.4) 33%,
+            rgba(69, 183, 209, 0.4) 66%,
+            transparent 100%
+        );
+        border-radius: 47% 53% 45% 55% / 52% 48% 52% 48%;
+        filter: blur(3px);
+        animation: spin-aura 4s linear infinite, aura-gradient-cycle 4s ease-in-out infinite;
+    }
+    
+    .mob-with-aura-container[data-aura="sparkle"]::before {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 215, 0, 0.5) 0%,
+            rgba(255, 223, 128, 0.3) 50%,
+            transparent 100%
+        );
+        border-radius: 47% 53% 45% 55% / 52% 48% 52% 48%;
+        filter: blur(3px);
+        box-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.9),
+            0 0 60px rgba(255, 215, 0, 0.6),
+            5px 5px 15px rgba(255, 255, 255, 0.8),
+            -5px -5px 15px rgba(255, 255, 255, 0.8),
+            10px -10px 15px rgba(255, 215, 0, 0.6),
+            -10px 10px 15px rgba(255, 215, 0, 0.6);
+    }
+    
+    .mob-with-aura-container[data-aura="plasma"]::before {
+        background: radial-gradient(ellipse at center,
+            rgba(0, 255, 255, 0.6) 0%,
+            rgba(255, 255, 0, 0.5) 50%,
+            transparent 100%
+        );
+        clip-path: polygon(
+            50% 0%, 55% 10%, 65% 5%, 70% 15%, 80% 10%, 85% 20%, 95% 15%, 100% 25%,
+            95% 35%, 100% 45%, 95% 55%, 100% 65%, 95% 75%, 100% 85%, 90% 90%, 85% 100%,
+            75% 95%, 70% 100%, 60% 95%, 50% 100%, 40% 95%, 30% 100%, 25% 95%, 15% 100%,
+            10% 90%, 0% 85%, 5% 75%, 0% 65%, 5% 55%, 0% 45%, 5% 35%, 0% 25%,
+            5% 15%, 15% 10%, 20% 20%, 30% 5%, 35% 15%, 45% 10%
+        );
+        filter: blur(2px);
+        animation: spin-aura 4s linear infinite, aura-plasma-cycle 1.5s ease-in-out infinite;
+    }
+    
+    .mob-with-aura-container[data-aura="nature"]::before {
+        background: radial-gradient(ellipse at center,
+            rgba(80, 200, 120, 0.6) 0%,
+            rgba(60, 179, 113, 0.5) 50%,
+            rgba(34, 139, 34, 0.4) 80%,
+            transparent 100%
+        );
+        border-radius: 47% 53% 45% 55% / 52% 48% 52% 48%;
+        filter: blur(3px);
+        animation: spin-aura 4s linear infinite, aura-nature-cycle 3.5s ease-in-out infinite;
+    }
+    
+    /* Mob image styling within the container */
+    .mob-with-aura-container .mob-image {
+        position: relative;
+        z-index: 1;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    
     /* New Achievement-Unlocked Border Effects */
     
     /* Live Wire - Electric sparks shooting out */
