@@ -105,12 +105,14 @@ const CosmeticsDrawer = ({
                     </h3>
                     <div className="grid grid-cols-3 gap-3">
                         {/* All border effects (badge-unlocked and achievement-unlocked) */}
-                        {BORDER_EFFECTS.map(effect => {
+                        {BORDER_EFFECTS.map((effect, index) => {
                             const unlocked = isBorderUnlocked(effect.badge);
                             const isSelected = selectedBorder === effect.id;
                             const isSolid = effect.id === 'solid' || effect.id === 'solid-picker';
                             const showPicker = effect.id === 'solid-picker' && isSelected && showColorPicker;
                             const IconComponent = effect.icon;
+                            const columnIndex = index % 3; // 0 = first column, 1 = middle, 2 = third column
+                            const tooltipPosition = columnIndex === 2 ? 'right-full mr-2' : 'left-full ml-2';
                             
                             return (
                                 <div key={effect.id} className="relative group">
@@ -195,7 +197,7 @@ const CosmeticsDrawer = ({
                                     </button>
                                     {/* Badge Info Popup - CSS hover/focus based */}
                                     {!unlocked && effect.badge && (
-                                        <div className="absolute z-50 left-full ml-2 top-0 w-48 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 pointer-events-none">
+                                        <div className={`absolute z-50 ${tooltipPosition} top-0 w-48 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 pointer-events-none`}>
                                             <div className="flex items-start gap-2 mb-2">
                                                 <div className="p-1.5 rounded bg-slate-700">
                                                     <IconComponent 
@@ -222,11 +224,15 @@ const CosmeticsDrawer = ({
                         })}
                         
                         {/* Achievement-unlocked effects */}
-                        {ACHIEVEMENT_EFFECTS.map(effect => {
+                        {ACHIEVEMENT_EFFECTS.map((effect, index) => {
                             const unlocked = isAchievementEffectUnlocked(effect.achievement);
                             const isSelected = selectedBorder === effect.id;
                             const IconComponent = effect.icon;
                             const achievement = ACHIEVEMENTS[effect.achievement];
+                            // Calculate column index considering BORDER_EFFECTS come first
+                            const totalIndex = BORDER_EFFECTS.length + index;
+                            const columnIndex = totalIndex % 3; // 0 = first column, 1 = middle, 2 = third column
+                            const tooltipPosition = columnIndex === 2 ? 'right-full mr-2' : 'left-full ml-2';
                             
                             return (
                                 <div key={effect.id} className="relative group">
@@ -278,7 +284,7 @@ const CosmeticsDrawer = ({
                                         </div>
                                     </button>
                                     {/* Achievement Info Popup - CSS hover/focus based */}
-                                    <div className="absolute z-50 right-full mr-2 top-0 w-64 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 pointer-events-none">
+                                    <div className={`absolute z-50 ${tooltipPosition} top-0 w-64 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 pointer-events-none`}>
                                         <div className="flex items-start gap-2 mb-2">
                                             {achievement && (
                                                 <>
