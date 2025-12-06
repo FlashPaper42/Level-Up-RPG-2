@@ -30,7 +30,7 @@ import {
 } from './utils/soundManager';
 import { 
     getDefaultStats, getNewlyUnlockedAchievements, getNewTierAchievements,
-    addUniqueToArray, recordLoginDate, isAchievementUnlocked
+    addUniqueToArray, isAchievementUnlocked
 } from './utils/achievementUtils';
 
 // Parent verification privilege constants
@@ -237,6 +237,7 @@ const App = () => {
     const recognitionRef = useRef(null);
     const challengeDataRef = useRef(null);
     const damageIdRef = useRef(0); // Counter for generating unique damage number IDs
+    const loginTrackedRef = useRef(false); // Track if we've already recorded today's login
     const [bgmVol, setBgmVol] = useState(0.3);
     const [sfxVol, setSfxVolState] = useState(0.5);
     const bgmManager = useRef(getBGMManager());
@@ -386,36 +387,8 @@ const App = () => {
 
     // Regenerate challenge when difficulty or level changes during active battle
     // This fixes the issue where challenges use stale difficulty after leveling up
-    useEffect(() => {
-        if (!battlingSkillId) return;
-        
-        const skillConfig = SKILL_DATA.find(s => s.id === battlingSkillId);
-        if (!skillConfig || !skillConfig.hasChallenge || skillConfig.id === 'memory' || skillConfig.id === 'patterns') return;
-        
-        const currentSkillState = skills[battlingSkillId];
-        if (!currentSkillState) return;
-        
-        const currentDiff = currentSkillState.difficulty || 1;
-        const playerLevel = currentSkillState.level;
-        
-        // Calculate what the challenge difficulty should be for the current encounter
-        const encounterType = getEncounterType(playerLevel);
-        const correctChallengeDiff = encounterType === 'miniboss'
-            ? Math.min(7, currentDiff + 1)
-            : currentDiff;
-        
-        // If the challenge difficulty needs to change, update it
-        // Note: We compare with battleDifficulty but don't include it in deps to avoid re-render loop
-        if (battleDifficulty !== correctChallengeDiff) {
-            setBattleDifficulty(correctChallengeDiff);
-            setChallengeData(generateChallenge(skillConfig.challengeType, correctChallengeDiff));
-            // Clear spokenText for reading challenges to prevent stale text from triggering false damage
-            if (skillConfig.challengeType === 'reading') {
-                setSpokenText('');
-            }
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [battlingSkillId, skills]); // Intentionally exclude battleDifficulty to prevent infinite loop
+    // Removed problematic useEffect that was causing infinite loop
+    // The startBattle function already sets battleDifficulty correctly
 
     // Check for achievement unlocks
     const checkAchievements = useCallback((oldStats, newStats, oldSkills, newSkills) => {
@@ -1018,11 +991,20 @@ const App = () => {
     
     // Track login date (once per day)
     useEffect(() => {
-        setStats(prev => ({
-            ...prev,
-            loginDates: recordLoginDate(prev.loginDates || [])
-        }));
-    }, []); // Run once on mount
+        if (loginTrackedRef.current) return; // Skip if already tracked
+        loginTrackedRef.current = true;
+        
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+        const currentDates = stats.loginDates || [];
+        // Only set if today's date is not already recorded
+        if (!currentDates.includes(today)) {
+            setStats(prev => ({
+                ...prev,
+                loginDates: [...(prev.loginDates || []), today]
+            }));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Run once on mount, guarded by loginTrackedRef
     
     const getVisibleItems = () => {
         const items = [];
