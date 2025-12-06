@@ -582,7 +582,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                         )}
                         {/* Current XP indicator - visible during battle */}
                         {(() => {
-                            const xpToLevel = calculateXPToLevel(difficulty);
+                            const xpToLevel = calculateXPToLevel(difficulty, data.level);
                             const xpPercent = Math.min(100, (data.xp / xpToLevel) * 100);
                             return (
                                 <div className="mt-2 bg-[#1a1a1a] p-2 rounded border border-[#333]">

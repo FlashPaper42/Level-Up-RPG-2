@@ -20,7 +20,7 @@ const MenuDrawer = ({ isOpen, skills }) => {
                     {Object.keys(skills).map(key => {
                         const userSkill = skills[key];
                         const skillDifficulty = userSkill.difficulty || 1;
-                        const xpToLevel = calculateXPToLevel(skillDifficulty);
+                        const xpToLevel = calculateXPToLevel(skillDifficulty, userSkill.level);
                         const xpPercent = Math.min(100, (userSkill.xp / xpToLevel) * 100);
                         const skillConfig = SKILL_DATA.find(s => s.id === key);
                         return (
