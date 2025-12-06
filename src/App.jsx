@@ -35,6 +35,9 @@ const PARENT_PRIVILEGE_BADGES = [1, 2, 3, 4, 5, 6, 7, 8];
 // Voice recognition constants
 const MIN_SPOKEN_TEXT_LENGTH = 2;
 
+// Boss healing animation duration (ms)
+const BOSS_HEALING_ANIMATION_DURATION = 600;
+
 const App = () => {
     const [currentProfile, setCurrentProfile] = useState(() => localStorage.getItem('currentProfile_v1') ? parseInt(localStorage.getItem('currentProfile_v1')) : 1);
     const [profileNames, setProfileNames] = useState(() => localStorage.getItem('heroProfileNames_v1') ? JSON.parse(localStorage.getItem('heroProfileNames_v1')) : { 1: "Player 1", 2: "Player 2", 3: "Player 3" });
@@ -384,7 +387,7 @@ const App = () => {
                     
                     // Trigger boss healing animation
                     setBossHealing(battlingSkillId);
-                    setTimeout(() => setBossHealing(null), 600);
+                    setTimeout(() => setBossHealing(null), BOSS_HEALING_ANIMATION_DURATION);
                     
                     // Play fail sound to indicate mistake
                     playFail();
