@@ -386,36 +386,8 @@ const App = () => {
 
     // Regenerate challenge when difficulty or level changes during active battle
     // This fixes the issue where challenges use stale difficulty after leveling up
-    useEffect(() => {
-        if (!battlingSkillId) return;
-        
-        const skillConfig = SKILL_DATA.find(s => s.id === battlingSkillId);
-        if (!skillConfig || !skillConfig.hasChallenge || skillConfig.id === 'memory' || skillConfig.id === 'patterns') return;
-        
-        const currentSkillState = skills[battlingSkillId];
-        if (!currentSkillState) return;
-        
-        const currentDiff = currentSkillState.difficulty || 1;
-        const playerLevel = currentSkillState.level;
-        
-        // Calculate what the challenge difficulty should be for the current encounter
-        const encounterType = getEncounterType(playerLevel);
-        const correctChallengeDiff = encounterType === 'miniboss'
-            ? Math.min(7, currentDiff + 1)
-            : currentDiff;
-        
-        // If the challenge difficulty needs to change, update it
-        // Note: We compare with battleDifficulty but don't include it in deps to avoid re-render loop
-        if (battleDifficulty !== correctChallengeDiff) {
-            setBattleDifficulty(correctChallengeDiff);
-            setChallengeData(generateChallenge(skillConfig.challengeType, correctChallengeDiff));
-            // Clear spokenText for reading challenges to prevent stale text from triggering false damage
-            if (skillConfig.challengeType === 'reading') {
-                setSpokenText('');
-            }
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [battlingSkillId, skills]); // Intentionally exclude battleDifficulty to prevent infinite loop
+    // Removed problematic useEffect that was causing infinite loop
+    // The startBattle function already sets battleDifficulty correctly
 
     // Check for achievement unlocks
     const checkAchievements = useCallback((oldStats, newStats, oldSkills, newSkills) => {
