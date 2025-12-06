@@ -1003,40 +1003,58 @@ const App = () => {
                 <div className="z-10 relative mb-[-30px] md:mb-[-50px] pointer-events-none opacity-90"><SafeImage src={currentThemeData.assets.logo} fallbackSrc="https://placehold.co/800x300/333/FFD700?text=LOGO+PLACEHOLDER&font=monsterrat" alt="Game Logo" className="w-[480px] md:w-[720px] lg:w-[960px] object-contain drop-shadow-2xl" /></div>
                 <h1 className="text-9xl text-yellow-400 tracking-widest uppercase mb-[80px] z-20 relative drop-shadow-[4px_4px_0_#000]" style={{ textShadow: '6px 6px 0 #000' }}>Level Up!</h1>
                 
-                {/* Enhanced Left Chevron - Taller with rotation */}
+                {/* Left Chevron - Parenthesis style with gradient fade */}
                 <button 
                     onClick={() => {setSelectedIndex(p => p - 1); playActionCardLeft();}} 
-                    className="flex absolute left-4 md:left-8 z-30 text-white items-center justify-center"
+                    className="flex absolute left-0 z-30 items-center justify-center h-full"
                     style={{ 
-                        background: 'radial-gradient(ellipse 140px 280px at left, rgba(0,0,0,0.7), transparent)',
-                        padding: '24px 32px',
-                        borderRadius: '0 12px 12px 0',
-                        transform: 'rotate(-5deg)'
+                        background: 'linear-gradient(to right, rgba(100, 100, 100, 0.6), transparent)',
+                        width: '80px',
+                        padding: '0'
                     }}
                 >
-                    <div className="flex flex-col gap-0 animate-chevron-left">
-                        <ChevronLeft size={48} className="md:w-14 md:h-14" />
-                        <ChevronLeft size={48} className="md:w-14 md:h-14 -mt-6" />
-                        <ChevronLeft size={48} className="md:w-14 md:h-14 -mt-6" />
-                    </div>
+                    <svg 
+                        width="60" 
+                        height="450" 
+                        viewBox="0 0 60 450" 
+                        className="animate-chevron-left"
+                        style={{ opacity: 0.8 }}
+                    >
+                        <path 
+                            d="M 50 25 Q 15 225 50 425" 
+                            stroke="rgba(150, 150, 150, 0.9)" 
+                            strokeWidth="8" 
+                            fill="none" 
+                            strokeLinecap="round"
+                        />
+                    </svg>
                 </button>
                 
-                {/* Enhanced Right Chevron - Taller with rotation */}
+                {/* Right Chevron - Parenthesis style with gradient fade */}
                 <button 
                     onClick={() => {setSelectedIndex(p => p + 1); playActionCardRight();}} 
-                    className="flex absolute right-4 md:right-8 z-30 text-white items-center justify-center"
+                    className="flex absolute right-0 z-30 items-center justify-center h-full"
                     style={{ 
-                        background: 'radial-gradient(ellipse 140px 280px at right, rgba(0,0,0,0.7), transparent)',
-                        padding: '24px 32px',
-                        borderRadius: '12px 0 0 12px',
-                        transform: 'rotate(5deg)'
+                        background: 'linear-gradient(to left, rgba(100, 100, 100, 0.6), transparent)',
+                        width: '80px',
+                        padding: '0'
                     }}
                 >
-                    <div className="flex flex-col gap-0 animate-chevron-right">
-                        <ChevronRight size={48} className="md:w-14 md:h-14" />
-                        <ChevronRight size={48} className="md:w-14 md:h-14 -mt-6" />
-                        <ChevronRight size={48} className="md:w-14 md:h-14 -mt-6" />
-                    </div>
+                    <svg 
+                        width="60" 
+                        height="450" 
+                        viewBox="0 0 60 450" 
+                        className="animate-chevron-right"
+                        style={{ opacity: 0.8 }}
+                    >
+                        <path 
+                            d="M 10 25 Q 45 225 10 425" 
+                            stroke="rgba(150, 150, 150, 0.9)" 
+                            strokeWidth="8" 
+                            fill="none" 
+                            strokeLinecap="round"
+                        />
+                    </svg>
                 </button>
                 <div 
                     className={`relative w-full flex items-center justify-center perspective-1000 h-[650px] mb-12 ${battlingSkillId ? 'z-50' : ''}`}
@@ -1053,16 +1071,29 @@ const App = () => {
                         const isItemBattling = item.offset === 0 && battlingSkillId === item.id;
                         // Calculate curved positioning based on offset
                         const getVerticalOffset = (offset) => {
-                            if (offset === 0) return -60; // Center card raised highest
+                            if (offset === 0) return -55; // Center card lowered by 5px (was -60)
                             if (Math.abs(offset) === 1) return -30; // Adjacent cards at intermediate height
                             return 20; // Outer cards at lowest position
                         };
                         const translateY = getVerticalOffset(item.offset);
-                        // Add subtle rotation for 3D effect
-                        const rotateX = Math.abs(item.offset) === 2 ? 8 : (Math.abs(item.offset) === 1 ? 4 : 0);
+                        // Add subtle rotation for 3D effect - negative values warp outward
+                        const rotateX = Math.abs(item.offset) === 2 ? -8 : (Math.abs(item.offset) === 1 ? -4 : 0);
                         
                         return (
-                        <div key={item.key} className="absolute transition-all duration-500 ease-out" style={{ transform: `translateX(${item.offset * 320}px) translateY(${translateY}px) rotateX(${rotateX}deg) scale(${item.offset === 0 ? 1.1 : 0.85})`, opacity: item.offset === 0 ? 1 : 0.6, zIndex: isItemBattling ? 50 : (item.offset === 0 ? 20 : 10 - Math.abs(item.offset)), filter: item.offset === 0 ? 'none' : 'brightness(0.5) blur(1px)', cursor: item.offset !== 0 && !battlingSkillId ? 'pointer' : 'default' }} onClick={() => handleCardClick(item.offset)}>
+                        <div 
+                            key={item.key} 
+                            className="absolute transition-all duration-500 ease-out" 
+                            style={{ 
+                                transform: `translateX(${item.offset * 320}px) translateY(${translateY}px) rotateX(${rotateX}deg) scale(${item.offset === 0 ? 1.1 : 0.85})`, 
+                                opacity: item.offset === 0 ? 1 : (Math.abs(item.offset) === 2 ? 0.3 : 0.6), 
+                                zIndex: isItemBattling ? 50 : (item.offset === 0 ? 20 : 10 - Math.abs(item.offset)), 
+                                filter: item.offset === 0 ? 'none' : 'brightness(0.5) blur(1px)', 
+                                cursor: item.offset !== 0 && !battlingSkillId ? 'pointer' : 'default',
+                                // Smooth entry/exit transitions along the parabola
+                                transitionTimingFunction: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
+                            }} 
+                            onClick={() => handleCardClick(item.offset)}
+                        >
                             <SkillCard 
                                 config={item} data={skills[item.id]} themeData={currentThemeData} isCenter={item.offset === 0} isBattling={item.offset === 0 && battlingSkillId === item.id}
                                 mobName={getMobForSkill(item, skills[item.id])} challenge={challengeData} isListening={isListening} spokenText={spokenText} damageNumbers={damageNumbers.filter(d => d.skillId === item.id)}
