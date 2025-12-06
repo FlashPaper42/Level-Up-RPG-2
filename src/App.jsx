@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-    Menu, Sparkles, Gift, Maximize, Minimize, Settings
+    Menu, Sparkles, Gift, Maximize, Minimize, Settings, Bug
 } from 'lucide-react';
 
 // Modules
@@ -8,6 +8,7 @@ import GlobalStyles from './components/ui/GlobalStyles';
 import SafeImage from './components/ui/SafeImage';
 import PixelHeart from './components/ui/PixelHeart';
 import ResetModal from './components/modals/ResetModal';
+import BugReportModal from './components/modals/BugReportModal';
 import SettingsDrawer from './components/drawers/SettingsDrawer';
 import CosmeticsDrawer from './components/drawers/CosmeticsDrawer';
 import MenuDrawer from './components/drawers/MenuDrawer';
@@ -198,6 +199,7 @@ const App = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isCosmeticsOpen, setIsCosmeticsOpen] = useState(false);
     const [isResetOpen, setIsResetOpen] = useState(false);
+    const [isBugReportOpen, setIsBugReportOpen] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const [spokenText, setSpokenText] = useState("");
     const [damageNumbers, setDamageNumbers] = useState([]);
@@ -965,6 +967,7 @@ const App = () => {
                 currentSkills={skills} 
             />
             <ResetModal isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} onConfirm={handleReset} />
+            <BugReportModal isOpen={isBugReportOpen} onClose={() => setIsBugReportOpen(false)} />
             
             {/* Top Right Buttons */}
             {/* Button dimensions: p-3 (12px) + icon(48px) + p-3 (12px) + border-2*2 (4px) = 76px + 8px gap = 84px spacing */}
@@ -993,6 +996,16 @@ const App = () => {
                 />
             )}
             <MenuDrawer isOpen={isMenuOpen} skills={skills} />
+            
+            {/* Bottom Right Bug Report Button */}
+            <button 
+                onClick={() => { setIsMenuOpen(false); setIsCosmeticsOpen(false); setIsSettingsOpen(false); setIsBugReportOpen(true); playClick(); }} 
+                className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
+                style={{ bottom: '24px', right: '24px' }}
+            >
+                <Bug size={48} className="text-red-400" />
+            </button>
+            
             {/* Backdrop overlay when battling - click to exit */}
             {battlingSkillId && (
                 <div
