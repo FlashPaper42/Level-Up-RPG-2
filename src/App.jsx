@@ -30,7 +30,7 @@ import {
 } from './utils/soundManager';
 import { 
     getDefaultStats, getNewlyUnlockedAchievements, getNewTierAchievements,
-    addUniqueToArray, recordLoginDate, isAchievementUnlocked
+    addUniqueToArray, isAchievementUnlocked
 } from './utils/achievementUtils';
 
 // Parent verification privilege constants
@@ -1003,7 +1003,8 @@ const App = () => {
                 loginDates: [...(prev.loginDates || []), today]
             }));
         }
-    }, []); // Run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Run once on mount, guarded by loginTrackedRef
     
     const getVisibleItems = () => {
         const items = [];
