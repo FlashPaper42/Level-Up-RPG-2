@@ -108,18 +108,25 @@ export const getExpectedDifficulty = (playerLevel) => {
 // Calculate XP reward for defeating a mob
 // Scales with difficulty played, but with diminishing returns when playing below expected difficulty
 export const calculateXPReward = (difficulty, playerLevel) => {
-    const baseDifficultyReward = getDifficultyMultiplier(difficulty) * BASE_XP_REWARD;
-    
     // If playerLevel is not provided, return base reward (backward compatibility)
     if (playerLevel === undefined) {
+        const baseDifficultyReward = getDifficultyMultiplier(difficulty) * BASE_XP_REWARD;
         return baseDifficultyReward;
     }
     
     const expectedDifficulty = getExpectedDifficulty(playerLevel);
     
+    // Base XP scales with player level (same as XP to level)
+    const levelScalingFactor = 1.035;
+    const baseXPScaled = BASE_XP_REWARD * Math.pow(levelScalingFactor, playerLevel - 1);
+    
+    // Apply difficulty multiplier
+    const difficultyMultiplier = getDifficultyMultiplier(difficulty);
+    const fullReward = Math.floor(baseXPScaled * difficultyMultiplier);
+    
     // If playing at or above expected difficulty, full reward
     if (difficulty >= expectedDifficulty) {
-        return baseDifficultyReward;
+        return fullReward;
     }
     
     // If playing below expected difficulty, apply exponential penalty
@@ -127,7 +134,7 @@ export const calculateXPReward = (difficulty, playerLevel) => {
     const difficultyGap = expectedDifficulty - difficulty;
     const penaltyFactor = Math.pow(0.3, difficultyGap); // Each level below reduces reward to 30%
     
-    return Math.floor(baseDifficultyReward * penaltyFactor);
+    return Math.floor(fullReward * penaltyFactor);
 };
 
 // Calculate XP required to level up
