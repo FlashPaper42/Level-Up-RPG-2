@@ -424,8 +424,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                 {isCenter && data.level >= PRESTIGE_LEVEL_THRESHOLD && <div className="gem-socket"><div className="gem-stone" style={gemStyle}></div></div>}
                 <div className={topSectionBaseClass} style={config.colorStyle}>
                     <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                    <div className="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-white border border-white/20 z-20"><div className="text-xs text-gray-400 uppercase">{skillName}</div><div className="text-lg leading-none">{config.fantasyName}</div></div>
-                    <div className="absolute top-2 right-2 z-20"><div className={`bg-black/60 px-3 py-1 rounded border border-white/20 text-3xl font-bold ${levelTextColor}`}>Lvl {data.level}</div></div>
+                    {!isBattling && <div className="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-white border border-white/20 z-20"><div className="text-xs text-gray-400 uppercase">{skillName}</div><div className="text-lg leading-none">{config.fantasyName}</div></div>}
+                    {!isBattling && <div className="absolute top-2 right-2 z-20"><div className={`bg-black/60 px-3 py-1 rounded border border-white/20 text-3xl font-bold ${levelTextColor}`}>Lvl {data.level}</div></div>}
                     {showMob && <div className="relative z-10 flex items-center justify-center h-full max-h-[200px]">
                         <SafeImage 
                             key={displayMobName} 
@@ -448,7 +448,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                             </div>
                         ))}
                     </div>}
-                    {config.id !== 'memory' && <div className={`absolute bottom-4 ${isCenter ? 'left-2' : 'left-1/2 -translate-x-1/2'} bg-black/70 px-6 py-2 rounded-full text-white border-2 border-white/30 text-xl font-bold tracking-wide z-10 shadow-lg whitespace-nowrap min-w-max`}>{displayMobName}</div>}
+                    {config.id !== 'memory' && !isBattling && <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 px-6 py-2 rounded-full text-white border-2 border-white/30 text-xl font-bold tracking-wide z-10 shadow-lg whitespace-nowrap min-w-max">{displayMobName}</div>}
                 </div>
                 {(!isBattling || config.id !== 'memory') && <div className="bg-[#1a1a1a] p-2 border-t-4 border-b-4 border-black relative"><div className="flex justify-between text-gray-400 text-xs mb-1 uppercase"><span>HP</span><span>{hpPercent}%</span></div><div className="w-full h-6 bg-[#333] rounded-full overflow-hidden border-2 border-[#555] relative"><div className="h-full bg-gradient-to-r from-red-600 to-red-500 transition-all duration-200" style={{ width: `${hpPercent}%` }}></div></div></div>}
             <div className={bottomSectionClass}>
@@ -620,14 +620,60 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                         className="fixed inset-0 z-50 flex items-center justify-center"
                         onClick={onEndBattle}
                     >
-                        <div 
-                            style={{
-                                transform: 'scale(1.5)',
-                                transformOrigin: 'center center',
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            {cardContent}
+                        <div className="flex items-start gap-6" onClick={(e) => e.stopPropagation()}>
+                            <div 
+                                style={{
+                                    transform: 'scale(1.5)',
+                                    transformOrigin: 'center center',
+                                }}
+                            >
+                                {cardContent}
+                            </div>
+                            {/* Battle Info Side Panel */}
+                            <div 
+                                className="bg-[#2b2b2b] border-4 border-stone-700 rounded-lg p-6 w-[350px]"
+                                style={{
+                                    transform: 'scale(1.5)',
+                                    transformOrigin: 'top left',
+                                    boxShadow: '0 0 30px rgba(0,0,0,0.8)',
+                                }}
+                            >
+                                {/* Retro pixel-style header */}
+                                <div className="border-b-2 border-stone-600 pb-3 mb-4">
+                                    <div className="text-yellow-400 text-xs uppercase tracking-widest mb-1 font-bold" style={{ textShadow: '2px 2px 0 #000' }}>
+                                        Battle Info
+                                    </div>
+                                </div>
+
+                                {/* Skill Card Type */}
+                                <div className="mb-4 bg-black/30 p-3 rounded border border-stone-600">
+                                    <div className="text-xs text-gray-400 uppercase mb-1">Skill Type</div>
+                                    <div className="text-white font-bold text-lg">{skillName}</div>
+                                    <div className="text-gray-300 text-sm">{config.fantasyName}</div>
+                                </div>
+
+                                {/* Enemy/Mob Name */}
+                                <div className="mb-4 bg-black/30 p-3 rounded border border-stone-600">
+                                    <div className="text-xs text-gray-400 uppercase mb-1">Enemy</div>
+                                    <div className="text-white font-bold text-2xl tracking-wide">{displayMobName}</div>
+                                </div>
+
+                                {/* Level */}
+                                <div className="mb-4 bg-black/30 p-3 rounded border border-stone-600">
+                                    <div className="text-xs text-gray-400 uppercase mb-1">Level</div>
+                                    <div className={`font-bold text-3xl ${levelTextColor}`} style={{ textShadow: '2px 2px 0 #000' }}>
+                                        {data.level}
+                                    </div>
+                                </div>
+
+                                {/* Flavor Text */}
+                                <div className="bg-black/30 p-3 rounded border border-stone-600">
+                                    <div className="text-xs text-gray-400 uppercase mb-2">Quest</div>
+                                    <div className="text-gray-200 text-sm leading-relaxed italic">
+                                        {config.taskDescription}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>,
                     document.body
