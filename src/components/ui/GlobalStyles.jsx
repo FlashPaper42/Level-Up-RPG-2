@@ -322,25 +322,56 @@ const GlobalStyles = () => (
         border-color: #4b0082;
     }
     
-    /* Placeholder - Emerald theme (to be replaced with cool design) */
-    @keyframes border-placeholder {
-        0%, 100% { 
+    /* Lifestream - Swirling emerald energy tendrils */
+    @keyframes border-lifestream {
+        0% { 
             box-shadow: 
                 0 0 20px #50C878,
-                0 0 40px #3cb371,
-                inset 0 0 10px rgba(80, 200, 120, 0.3);
-            filter: brightness(1);
+                5px 5px 15px #3cb371,
+                -5px -5px 15px #2e8b57,
+                10px -10px 20px rgba(80, 200, 120, 0.6),
+                -10px 10px 20px rgba(60, 179, 113, 0.6);
+            filter: brightness(1) hue-rotate(0deg);
+        }
+        25% { 
+            box-shadow: 
+                0 0 25px #3cb371,
+                -5px 10px 15px #50C878,
+                10px -5px 15px #2e8b57,
+                -10px -10px 20px rgba(60, 179, 113, 0.6),
+                10px 10px 20px rgba(80, 200, 120, 0.6);
+            filter: brightness(1.1) hue-rotate(5deg);
         }
         50% { 
             box-shadow: 
-                0 0 30px #3cb371,
-                0 0 50px #50C878,
-                inset 0 0 20px rgba(80, 200, 120, 0.5);
-            filter: brightness(1.2);
+                0 0 30px #2e8b57,
+                -10px -5px 15px #3cb371,
+                5px 10px 15px #50C878,
+                10px 10px 20px rgba(46, 139, 87, 0.6),
+                -10px -10px 20px rgba(80, 200, 120, 0.6);
+            filter: brightness(1.2) hue-rotate(-5deg);
+        }
+        75% { 
+            box-shadow: 
+                0 0 25px #50C878,
+                10px -5px 15px #2e8b57,
+                -5px 5px 15px #3cb371,
+                -10px 10px 20px rgba(80, 200, 120, 0.6),
+                10px -10px 20px rgba(46, 139, 87, 0.6);
+            filter: brightness(1.1) hue-rotate(5deg);
+        }
+        100% { 
+            box-shadow: 
+                0 0 20px #50C878,
+                5px 5px 15px #3cb371,
+                -5px -5px 15px #2e8b57,
+                10px -10px 20px rgba(80, 200, 120, 0.6),
+                -10px 10px 20px rgba(60, 179, 113, 0.6);
+            filter: brightness(1) hue-rotate(0deg);
         }
     }
-    .border-effect-placeholder {
-        animation: border-placeholder 2s ease-in-out infinite;
+    .border-effect-lifestream {
+        animation: border-lifestream 3s ease-in-out infinite;
         border-color: #50C878;
     }
     
@@ -410,6 +441,245 @@ const GlobalStyles = () => (
     .aura-nature {
         border: 4px solid #50C878;
         box-shadow: 0 0 20px #50C878, 0 0 40px #3cb371, inset 0 0 10px rgba(80, 200, 120, 0.3);
+    }
+    
+    /* New Achievement-Unlocked Border Effects */
+    
+    /* Live Wire - Electric sparks shooting out */
+    @keyframes border-livewire {
+        0%, 100% { 
+            box-shadow: 
+                0 0 15px #ffff00,
+                3px 3px 8px rgba(255, 255, 0, 0.9),
+                -3px -3px 8px rgba(255, 255, 0, 0.9),
+                8px -8px 4px rgba(255, 255, 255, 0.8),
+                -8px 8px 4px rgba(255, 255, 255, 0.8);
+            filter: brightness(1.2);
+        }
+        10% {
+            box-shadow: 
+                0 0 25px #ffff00,
+                -5px 5px 12px rgba(255, 255, 0, 0.9),
+                5px -5px 12px rgba(255, 255, 0, 0.9),
+                12px 12px 6px rgba(255, 255, 255, 0.9),
+                -12px -12px 6px rgba(255, 255, 255, 0.9);
+            filter: brightness(1.5);
+        }
+        20% {
+            box-shadow: 
+                0 0 15px #ffff00,
+                5px -5px 8px rgba(255, 255, 0, 0.9),
+                -5px 5px 8px rgba(255, 255, 0, 0.9),
+                -8px 8px 4px rgba(255, 255, 255, 0.8),
+                8px -8px 4px rgba(255, 255, 255, 0.8);
+            filter: brightness(1.2);
+        }
+        35%, 65% {
+            box-shadow: 
+                0 0 20px #ffff00,
+                0 10px 10px rgba(255, 255, 0, 0.9),
+                0 -10px 10px rgba(255, 255, 0, 0.9);
+            filter: brightness(1.3);
+        }
+    }
+    .border-effect-livewire {
+        animation: border-livewire 1.2s linear infinite;
+        border-color: #ffff00;
+    }
+    
+    /* Void/Cosmic - Stars and galaxies */
+    @keyframes border-void {
+        0%, 100% { 
+            box-shadow: 
+                0 0 20px #4b0082,
+                0 0 40px #8b00ff,
+                inset 0 0 15px rgba(138, 43, 226, 0.4),
+                5px 5px 3px rgba(255, 255, 255, 0.8),
+                -8px -8px 3px rgba(255, 255, 255, 0.6),
+                10px -10px 3px rgba(255, 255, 255, 0.4);
+            filter: brightness(1);
+        }
+        33% { 
+            box-shadow: 
+                0 0 25px #8b00ff,
+                0 0 45px #4b0082,
+                inset 0 0 20px rgba(75, 0, 130, 0.5),
+                -5px 8px 3px rgba(255, 255, 255, 0.8),
+                10px -5px 3px rgba(255, 255, 255, 0.6),
+                -10px -10px 3px rgba(255, 255, 255, 0.4);
+            filter: brightness(1.1);
+        }
+        66% { 
+            box-shadow: 
+                0 0 30px #4b0082,
+                0 0 50px #8b00ff,
+                inset 0 0 18px rgba(138, 43, 226, 0.45),
+                8px -8px 3px rgba(255, 255, 255, 0.8),
+                -5px 5px 3px rgba(255, 255, 255, 0.6),
+                10px 10px 3px rgba(255, 255, 255, 0.4);
+            filter: brightness(1.15);
+        }
+    }
+    .border-effect-void {
+        animation: border-void 4s ease-in-out infinite;
+        border-color: #8b00ff;
+    }
+    
+    /* Toxic/Acid - Dripping corrosive effect */
+    @keyframes border-toxic {
+        0%, 100% { 
+            box-shadow: 
+                0 0 20px #39ff14,
+                0 5px 25px #7fff00,
+                0 -2px 15px #32cd32,
+                inset 0 3px 10px rgba(57, 255, 20, 0.3);
+            filter: brightness(1) saturate(1.2);
+        }
+        25% { 
+            box-shadow: 
+                0 0 25px #7fff00,
+                0 8px 30px #39ff14,
+                0 0 15px #32cd32,
+                inset 0 5px 15px rgba(127, 255, 0, 0.4);
+            filter: brightness(1.1) saturate(1.3);
+        }
+        50% { 
+            box-shadow: 
+                0 0 30px #32cd32,
+                0 10px 35px #7fff00,
+                0 2px 20px #39ff14,
+                inset 0 8px 20px rgba(50, 205, 50, 0.5);
+            filter: brightness(1.2) saturate(1.4);
+        }
+        75% { 
+            box-shadow: 
+                0 0 25px #39ff14,
+                0 6px 28px #32cd32,
+                0 -2px 18px #7fff00,
+                inset 0 4px 12px rgba(57, 255, 20, 0.35);
+            filter: brightness(1.05) saturate(1.25);
+        }
+    }
+    .border-effect-toxic {
+        animation: border-toxic 2.5s ease-in-out infinite;
+        border-color: #39ff14;
+    }
+    
+    /* Holographic/Glitch - Digital cyberpunk feel */
+    @keyframes border-holo {
+        0%, 100% { 
+            box-shadow: 
+                0 0 20px #00ffff,
+                2px 0 15px #ff00ff,
+                -2px 0 15px #ffff00;
+            filter: brightness(1);
+            transform: translateX(0);
+        }
+        10% {
+            box-shadow: 
+                0 0 25px #ff00ff,
+                3px 0 20px #00ffff,
+                -3px 0 20px #ffff00;
+            filter: brightness(1.3);
+            transform: translateX(2px);
+        }
+        20% {
+            box-shadow: 
+                0 0 20px #ffff00,
+                -2px 0 15px #ff00ff,
+                2px 0 15px #00ffff;
+            filter: brightness(1);
+            transform: translateX(-2px);
+        }
+        30% {
+            box-shadow: 
+                0 0 22px #00ffff,
+                1px 0 18px #ff00ff,
+                -1px 0 18px #ffff00;
+            filter: brightness(1.1);
+            transform: translateX(0);
+        }
+        35%, 95% {
+            box-shadow: 
+                0 0 20px #00ffff,
+                2px 0 15px #ff00ff,
+                -2px 0 15px #ffff00;
+            filter: brightness(1);
+            transform: translateX(0);
+        }
+        96% {
+            box-shadow: 
+                0 0 30px #ff00ff,
+                4px 0 25px #ffff00,
+                -4px 0 25px #00ffff;
+            filter: brightness(1.5);
+            transform: translateX(3px);
+        }
+        98% {
+            box-shadow: 
+                0 0 20px #00ffff,
+                -2px 0 15px #ff00ff,
+                2px 0 15px #ffff00;
+            filter: brightness(1);
+            transform: translateX(-1px);
+        }
+    }
+    .border-effect-holo {
+        animation: border-holo 3s linear infinite;
+        border-color: #00ffff;
+    }
+    
+    /* Crystalline - Prismatic crystal formations */
+    @keyframes border-crystal {
+        0%, 100% { 
+            box-shadow: 
+                0 0 20px #b9f2ff,
+                5px 5px 15px rgba(138, 43, 226, 0.6),
+                -5px -5px 15px rgba(255, 105, 180, 0.6),
+                10px -10px 10px rgba(0, 255, 255, 0.5),
+                -10px 10px 10px rgba(255, 215, 0, 0.5);
+            filter: brightness(1) hue-rotate(0deg);
+        }
+        20% { 
+            box-shadow: 
+                0 0 25px #b9f2ff,
+                -5px 8px 15px rgba(255, 105, 180, 0.6),
+                8px -5px 15px rgba(138, 43, 226, 0.6),
+                -10px -10px 10px rgba(255, 215, 0, 0.5),
+                10px 10px 10px rgba(0, 255, 255, 0.5);
+            filter: brightness(1.1) hue-rotate(15deg);
+        }
+        40% { 
+            box-shadow: 
+                0 0 30px #b9f2ff,
+                8px -8px 15px rgba(0, 255, 255, 0.6),
+                -8px 8px 15px rgba(255, 215, 0, 0.6),
+                5px 10px 10px rgba(138, 43, 226, 0.5),
+                -5px -10px 10px rgba(255, 105, 180, 0.5);
+            filter: brightness(1.2) hue-rotate(30deg);
+        }
+        60% { 
+            box-shadow: 
+                0 0 25px #b9f2ff,
+                -8px -5px 15px rgba(255, 215, 0, 0.6),
+                5px 8px 15px rgba(0, 255, 255, 0.6),
+                -10px 5px 10px rgba(255, 105, 180, 0.5),
+                10px -5px 10px rgba(138, 43, 226, 0.5);
+            filter: brightness(1.1) hue-rotate(45deg);
+        }
+        80% { 
+            box-shadow: 
+                0 0 22px #b9f2ff,
+                5px -8px 15px rgba(255, 105, 180, 0.6),
+                -5px 5px 15px rgba(138, 43, 226, 0.6),
+                8px 8px 10px rgba(255, 215, 0, 0.5),
+                -8px -8px 10px rgba(0, 255, 255, 0.5);
+            filter: brightness(1.05) hue-rotate(20deg);
+        }
+    }
+    .border-effect-crystal {
+        animation: border-crystal 5s ease-in-out infinite;
+        border-color: #b9f2ff;
     }
   `}</style>
 );

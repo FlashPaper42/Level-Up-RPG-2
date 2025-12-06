@@ -30,7 +30,7 @@ import {
 } from './utils/soundManager';
 import { 
     getDefaultStats, getNewlyUnlockedAchievements, getNewTierAchievements,
-    addUniqueToArray, recordLoginDate
+    addUniqueToArray, recordLoginDate, isAchievementUnlocked
 } from './utils/achievementUtils';
 
 // Parent verification privilege constants
@@ -287,6 +287,20 @@ const App = () => {
         });
         return Array.from(unlockedBadges);
     }, [skills]);
+    
+    // Calculate unlocked achievements (memoized)
+    const unlockedAchievements = React.useMemo(() => {
+        const unlocked = [];
+        const achievementIds = ['speed_demon', 'world_ender', 'monster_manual', 'perfectionist', 'full_set'];
+        
+        achievementIds.forEach(id => {
+            if (isAchievementUnlocked(id, stats, skills)) {
+                unlocked.push(id);
+            }
+        });
+        
+        return unlocked;
+    }, [stats, skills]);
 
     // Update BGM volume
     useEffect(() => { 
@@ -1097,6 +1111,7 @@ const App = () => {
                 borderColor={borderColor}
                 setBorderColor={setBorderColor}
                 unlockedBorders={unlockedBorders}
+                unlockedAchievements={unlockedAchievements}
             />
             
             {/* Settings drawer overlay - click to close */}
