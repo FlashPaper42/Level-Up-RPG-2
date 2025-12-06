@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Flame, Snowflake, Zap, Skull, Star, Activity, Atom, Droplet, Grid3x3, Gem } from 'lucide-react';
+import { Sparkles, Flame, Snowflake, Zap, Skull, Star, Activity, Atom, Droplet, Grid3x3, Gem, Info } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { THEMES_LIST, BASE_ASSETS } from '../../constants/gameData';
 import { ACHIEVEMENTS } from '../../constants/achievements';
@@ -26,9 +26,6 @@ const ACHIEVEMENT_EFFECTS = [
     { id: 'crystal', name: 'Crystalline', achievement: 'full_set', description: 'Prismatic shard array', icon: Gem }
 ];
 
-// Combined unified array for 3x5 grid display
-const ALL_BORDER_EFFECTS = [...BORDER_EFFECTS, ...ACHIEVEMENT_EFFECTS];
-
 const CosmeticsDrawer = ({ 
     isOpen, 
     activeTheme, 
@@ -51,11 +48,6 @@ const CosmeticsDrawer = ({
     
     const isAchievementEffectUnlocked = (achievementId) => {
         return unlockedAchievements.includes(achievementId);
-    };
-    
-    const getAchievementName = (achievementId) => {
-        const achievement = ACHIEVEMENTS[achievementId];
-        return achievement ? achievement.name : achievementId;
     };
 
     return (
@@ -106,116 +98,289 @@ const CosmeticsDrawer = ({
                     </div>
                 </div>
 
-                {/* Border Effect Selection - Unified 3x5 Grid */}
+                {/* Border Effect Selection - 3 Column Layout */}
                 <div>
                     <h3 className="text-xl text-blue-300 mb-4 font-bold flex items-center gap-3 uppercase tracking-wider">
                         <Sparkles size={20} /> Border Effects
                     </h3>
-                    <div className="grid grid-cols-3 gap-2">
-                        {ALL_BORDER_EFFECTS.map(effect => {
-                            // Determine if this is a badge-based or achievement-based effect
-                            const isBadgeEffect = effect.badge !== undefined;
-                            const unlocked = isBadgeEffect ? isBorderUnlocked(effect.badge) : isAchievementEffectUnlocked(effect.achievement);
-                            const isSelected = selectedBorder === effect.id;
-                            const isSolid = effect.id === 'solid' || effect.id === 'solid-picker';
-                            const showPicker = effect.id === 'solid-picker' && isSelected && showColorPicker;
-                            
-                            // Get badge image if badge is specified
-                            const badgeImg = effect.badge ? BASE_ASSETS.badges[effect.badge === 'Star' ? 'Legendary' : effect.badge] : null;
-                            const IconComponent = effect.icon;
-                            
-                            // Determine unlock requirement text for tooltip
-                            let unlockRequirement = '';
-                            if (!unlocked) {
-                                if (isBadgeEffect && effect.badge) {
-                                    unlockRequirement = `Requires ${effect.badge} Badge`;
-                                } else if (effect.achievement) {
-                                    unlockRequirement = `Requires ${getAchievementName(effect.achievement)}`;
-                                }
-                            }
-                            
-                            return (
-                                <button
-                                    key={effect.id}
-                                    onClick={() => {
-                                        if (unlocked) {
-                                            if (effect.id === 'solid-picker' && isSelected) {
-                                                setShowColorPicker(!showColorPicker);
-                                            } else {
+                    <div className="inline-flex gap-3">
+                        {/* Column 1: Badge effects 1-5 */}
+                        <div className="flex flex-col gap-2">
+                            {BORDER_EFFECTS.slice(0, 5).map(effect => {
+                                const unlocked = isBorderUnlocked(effect.badge);
+                                const isSelected = selectedBorder === effect.id;
+                                const isSolid = effect.id === 'solid' || effect.id === 'solid-picker';
+                                const showPicker = effect.id === 'solid-picker' && isSelected && showColorPicker;
+                                const badgeImg = effect.badge ? BASE_ASSETS.badges[effect.badge === 'Star' ? 'Legendary' : effect.badge] : null;
+                                const IconComponent = effect.icon;
+                                
+                                return (
+                                    <button
+                                        key={effect.id}
+                                        onClick={() => {
+                                            if (unlocked) {
+                                                if (effect.id === 'solid-picker' && isSelected) {
+                                                    setShowColorPicker(!showColorPicker);
+                                                } else {
+                                                    setSelectedBorder(effect.id);
+                                                    setShowColorPicker(false);
+                                                }
+                                            }
+                                        }}
+                                        disabled={!unlocked}
+                                        className={`relative p-2 rounded-lg border-2 transition-all duration-300 w-fit ${
+                                            !unlocked 
+                                                ? 'bg-slate-800/50 border-slate-600 opacity-70 cursor-not-allowed' 
+                                                : isSelected
+                                                    ? 'bg-yellow-900/30 border-yellow-400 ring-2 ring-yellow-400/20'
+                                                    : 'bg-slate-800/70 border-slate-600 hover:border-yellow-400/50 hover:scale-105'
+                                        }`}
+                                    >
+                                        <div className="flex flex-col gap-2">
+                                            {/* Badge Icon and Effect Preview Container */}
+                                            <div className="flex items-center gap-3">
+                                                {/* Badge Icon */}
+                                                {badgeImg && (
+                                                    <SafeImage 
+                                                        src={badgeImg} 
+                                                        alt={`${effect.badge} Badge`}
+                                                        className={`w-20 h-20 ${!unlocked ? 'opacity-30 grayscale' : ''}`}
+                                                    />
+                                                )}
+                                                {/* Effect Preview Square */}
+                                                <div 
+                                                    className={`w-20 h-20 rounded border-4 flex items-center justify-center ${
+                                                        !isSolid ? `border-effect-${effect.id}` : ''
+                                                    }`}
+                                                    style={
+                                                        isSolid 
+                                                            ? { borderColor: effect.id === 'solid' ? '#FFD700' : borderColor, boxShadow: `0 0 20px ${effect.id === 'solid' ? '#FFD700' : borderColor}` }
+                                                            : (effect.id === 'gradient' || effect.id === 'sparkle') 
+                                                                ? { '--border-color': borderColor } 
+                                                                : {}
+                                                    }
+                                                >
+                                                    {/* Icon inside preview */}
+                                                    <IconComponent 
+                                                        size={28} 
+                                                        className={`${!unlocked ? 'text-slate-600' : 'text-slate-300'}`}
+                                                    />
+                                                </div>
+                                            </div>
+                                            {/* Name and Description */}
+                                            <div className="text-left">
+                                                <div className={`text-sm font-bold ${!unlocked ? 'text-slate-500' : 'text-yellow-400'}`}>
+                                                    {effect.name}
+                                                </div>
+                                                <div className={`text-xs ${!unlocked ? 'text-slate-600' : 'text-slate-400'}`}>
+                                                    {effect.description}
+                                                </div>
+                                                {!unlocked && effect.badge && (
+                                                    <div className="text-xs text-red-400 mt-1">
+                                                        Requires {effect.badge} Badge
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {isSelected && (
+                                                <div className="absolute top-1 right-1 bg-yellow-400 text-black text-[9px] font-bold px-1.5 py-0.5 rounded">
+                                                    ACTIVE
+                                                </div>
+                                            )}
+                                            
+                                            {/* Inline Color Picker for Solid Color with Picker */}
+                                            {showPicker && (
+                                                <div className="mt-2 p-2 bg-slate-900/80 rounded border border-slate-600 w-full">
+                                                    <div className="flex items-center gap-2">
+                                                        <input
+                                                            type="color"
+                                                            value={borderColor}
+                                                            onChange={(e) => setBorderColor(e.target.value)}
+                                                            className="w-10 h-10 rounded cursor-pointer border-2 border-slate-600"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                        />
+                                                        <div className="flex-1">
+                                                            <div className="text-[9px] text-slate-400 mb-0.5">Color</div>
+                                                            <div className="text-[11px] font-mono text-white">{borderColor.toUpperCase()}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        
+                        {/* Column 2: Badge effects 6-10 */}
+                        <div className="flex flex-col gap-2">
+                            {BORDER_EFFECTS.slice(5, 10).map(effect => {
+                                const unlocked = isBorderUnlocked(effect.badge);
+                                const isSelected = selectedBorder === effect.id;
+                                const isSolid = effect.id === 'solid' || effect.id === 'solid-picker';
+                                const badgeImg = effect.badge ? BASE_ASSETS.badges[effect.badge === 'Star' ? 'Legendary' : effect.badge] : null;
+                                const IconComponent = effect.icon;
+                                
+                                return (
+                                    <button
+                                        key={effect.id}
+                                        onClick={() => {
+                                            if (unlocked) {
                                                 setSelectedBorder(effect.id);
                                                 setShowColorPicker(false);
                                             }
-                                        }
-                                    }}
-                                    disabled={!unlocked}
-                                    title={`${effect.name} - ${effect.description}${unlockRequirement ? '\n' + unlockRequirement : ''}`}
-                                    className={`relative p-1 rounded-lg border-2 transition-all duration-300 ${
-                                        !unlocked 
-                                            ? 'bg-slate-800/50 border-slate-600 opacity-70 cursor-not-allowed' 
-                                            : isSelected
-                                                ? 'bg-yellow-900/30 border-yellow-400 ring-2 ring-yellow-400/20'
-                                                : 'bg-slate-800/70 border-slate-600 hover:border-yellow-400/50 hover:scale-105'
-                                    }`}
-                                >
-                                    <div className="flex flex-col items-center">
-                                        {/* Badge Icon and Effect Preview Container */}
-                                        <div className="flex items-center justify-center gap-1">
-                                            {/* Badge Icon */}
-                                            {badgeImg && (
-                                                <SafeImage 
-                                                    src={badgeImg} 
-                                                    alt={`${effect.badge} Badge`}
-                                                    className={`w-16 h-16 ${!unlocked ? 'opacity-30 grayscale' : ''}`}
-                                                />
-                                            )}
-                                            {/* Effect Preview Square */}
-                                            <div 
-                                                className={`w-16 h-16 rounded border-4 flex items-center justify-center ${
-                                                    !isSolid ? `border-effect-${effect.id}` : ''
-                                                }`}
-                                                style={
-                                                    isSolid 
-                                                        ? { borderColor: effect.id === 'solid' ? '#FFD700' : borderColor, boxShadow: `0 0 20px ${effect.id === 'solid' ? '#FFD700' : borderColor}` }
-                                                        : (effect.id === 'gradient' || effect.id === 'sparkle') 
-                                                            ? { '--border-color': borderColor } 
-                                                            : {}
-                                                }
-                                            >
-                                                {/* Icon inside preview */}
-                                                <IconComponent 
-                                                    size={24} 
-                                                    className={`${!unlocked ? 'text-slate-600' : 'text-slate-300'}`}
-                                                />
-                                            </div>
-                                        </div>
-                                        {isSelected && (
-                                            <div className="absolute top-0.5 right-0.5 bg-yellow-400 text-black text-[9px] font-bold px-1.5 py-0.5 rounded">
-                                                ACTIVE
-                                            </div>
-                                        )}
-                                        
-                                        {/* Inline Color Picker for Solid Color with Picker */}
-                                        {showPicker && (
-                                            <div className="mt-2 p-2 bg-slate-900/80 rounded border border-slate-600 w-full">
-                                                <div className="flex items-center gap-2">
-                                                    <input
-                                                        type="color"
-                                                        value={borderColor}
-                                                        onChange={(e) => setBorderColor(e.target.value)}
-                                                        className="w-10 h-10 rounded cursor-pointer border-2 border-slate-600"
-                                                        onClick={(e) => e.stopPropagation()}
+                                        }}
+                                        disabled={!unlocked}
+                                        className={`relative p-2 rounded-lg border-2 transition-all duration-300 w-fit ${
+                                            !unlocked 
+                                                ? 'bg-slate-800/50 border-slate-600 opacity-70 cursor-not-allowed' 
+                                                : isSelected
+                                                    ? 'bg-yellow-900/30 border-yellow-400 ring-2 ring-yellow-400/20'
+                                                    : 'bg-slate-800/70 border-slate-600 hover:border-yellow-400/50 hover:scale-105'
+                                        }`}
+                                    >
+                                        <div className="flex flex-col gap-2">
+                                            {/* Badge Icon and Effect Preview Container */}
+                                            <div className="flex items-center gap-3">
+                                                {/* Badge Icon */}
+                                                {badgeImg && (
+                                                    <SafeImage 
+                                                        src={badgeImg} 
+                                                        alt={`${effect.badge} Badge`}
+                                                        className={`w-20 h-20 ${!unlocked ? 'opacity-30 grayscale' : ''}`}
                                                     />
-                                                    <div className="flex-1">
-                                                        <div className="text-[9px] text-slate-400 mb-0.5">Color</div>
-                                                        <div className="text-[11px] font-mono text-white">{borderColor.toUpperCase()}</div>
-                                                    </div>
+                                                )}
+                                                {/* Effect Preview Square */}
+                                                <div 
+                                                    className={`w-20 h-20 rounded border-4 flex items-center justify-center ${
+                                                        !isSolid ? `border-effect-${effect.id}` : ''
+                                                    }`}
+                                                    style={
+                                                        isSolid 
+                                                            ? { borderColor: effect.id === 'solid' ? '#FFD700' : borderColor, boxShadow: `0 0 20px ${effect.id === 'solid' ? '#FFD700' : borderColor}` }
+                                                            : (effect.id === 'gradient' || effect.id === 'sparkle') 
+                                                                ? { '--border-color': borderColor } 
+                                                                : {}
+                                                    }
+                                                >
+                                                    {/* Icon inside preview */}
+                                                    <IconComponent 
+                                                        size={28} 
+                                                        className={`${!unlocked ? 'text-slate-600' : 'text-slate-300'}`}
+                                                    />
                                                 </div>
                                             </div>
-                                        )}
+                                            {/* Name and Description */}
+                                            <div className="text-left">
+                                                <div className={`text-sm font-bold ${!unlocked ? 'text-slate-500' : 'text-yellow-400'}`}>
+                                                    {effect.name}
+                                                </div>
+                                                <div className={`text-xs ${!unlocked ? 'text-slate-600' : 'text-slate-400'}`}>
+                                                    {effect.description}
+                                                </div>
+                                                {!unlocked && effect.badge && (
+                                                    <div className="text-xs text-red-400 mt-1">
+                                                        Requires {effect.badge} Badge
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {isSelected && (
+                                                <div className="absolute top-1 right-1 bg-yellow-400 text-black text-[9px] font-bold px-1.5 py-0.5 rounded">
+                                                    ACTIVE
+                                                </div>
+                                            )}
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        
+                        {/* Column 3: Achievement effects */}
+                        <div className="flex flex-col gap-2">
+                            {ACHIEVEMENT_EFFECTS.map(effect => {
+                                const unlocked = isAchievementEffectUnlocked(effect.achievement);
+                                const isSelected = selectedBorder === effect.id;
+                                const IconComponent = effect.icon;
+                                const achievement = ACHIEVEMENTS[effect.achievement];
+                                
+                                return (
+                                    <div key={effect.id} className="relative group">
+                                        <button
+                                            onClick={() => {
+                                                if (unlocked) {
+                                                    setSelectedBorder(effect.id);
+                                                    setShowColorPicker(false);
+                                                }
+                                            }}
+                                            disabled={!unlocked}
+                                            className={`relative p-2 rounded-lg border-2 transition-all duration-300 w-fit ${
+                                                !unlocked 
+                                                    ? 'bg-slate-800/50 border-slate-600 opacity-70 cursor-not-allowed' 
+                                                    : isSelected
+                                                        ? 'bg-yellow-900/30 border-yellow-400 ring-2 ring-yellow-400/20'
+                                                        : 'bg-slate-800/70 border-slate-600 hover:border-yellow-400/50 hover:scale-105'
+                                            }`}
+                                        >
+                                            <div className="flex flex-col gap-2">
+                                                {/* Effect Preview (no badge) */}
+                                                <div className="flex items-center gap-2">
+                                                    <div 
+                                                        className={`w-20 h-20 rounded border-4 flex items-center justify-center border-effect-${effect.id}`}
+                                                    >
+                                                        <IconComponent 
+                                                            size={28} 
+                                                            className={`${!unlocked ? 'text-slate-600' : 'text-slate-300'}`}
+                                                        />
+                                                    </div>
+                                                    {!unlocked && (
+                                                        <Info size={16} className="text-slate-500" />
+                                                    )}
+                                                </div>
+                                                {/* Name and Description */}
+                                                <div className="text-left">
+                                                    <div className={`text-sm font-bold ${!unlocked ? 'text-slate-500' : 'text-yellow-400'}`}>
+                                                        {effect.name}
+                                                    </div>
+                                                    <div className={`text-xs ${!unlocked ? 'text-slate-600' : 'text-slate-400'}`}>
+                                                        {effect.description}
+                                                    </div>
+                                                </div>
+                                                {isSelected && (
+                                                    <div className="absolute top-1 right-1 bg-yellow-400 text-black text-[9px] font-bold px-1.5 py-0.5 rounded">
+                                                        ACTIVE
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </button>
+                                        {/* Achievement Info Popup - CSS hover/focus based */}
+                                        <div className="absolute z-50 right-full mr-2 top-0 w-64 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 pointer-events-none">
+                                            <div className="flex items-start gap-2 mb-2">
+                                                {achievement && (
+                                                    <>
+                                                        <div className={`p-1.5 rounded ${unlocked ? 'bg-yellow-400/20' : 'bg-slate-700'}`}>
+                                                            <IconComponent 
+                                                                size={20} 
+                                                                className={unlocked ? 'text-yellow-400' : 'text-slate-400'} 
+                                                            />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <h4 className={`text-sm font-bold ${unlocked ? 'text-yellow-400' : 'text-slate-300'}`}>
+                                                                {achievement.name}
+                                                            </h4>
+                                                            <p className="text-xs text-slate-400 mt-0.5">
+                                                                {achievement.description}
+                                                            </p>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                            <div className={`text-xs px-2 py-1 rounded ${unlocked ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
+                                                {unlocked ? '✓ Unlocked' : '✗ Locked'}
+                                            </div>
+                                        </div>
                                     </div>
-                                </button>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             </div>
