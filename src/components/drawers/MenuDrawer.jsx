@@ -49,25 +49,28 @@ const MenuDrawer = ({ isOpen, skills }) => {
                                 </div>
                                 
                                 {/* LEGENDARY! Badge - Centered with Stack Count */}
-                                {userSkill.level >= 180 && (
-                                    <div className="flex justify-center mb-8 mt-6">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-32 h-32 border-4 rounded-2xl flex items-center justify-center relative mb-3 shadow-lg transition-all duration-300 border-yellow-500 bg-gradient-to-br from-yellow-900 to-stone-800 scale-110">
-                                                <SafeImage src={BASE_ASSETS.badges.Legendary} className="w-20 h-20 object-contain" />
-                                                {Math.floor((userSkill.level - 160) / 20) >= 2 && (
-                                                    <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 border-2 border-yellow-400 rounded-full flex items-center justify-center shadow-lg">
-                                                        <span className="text-white font-bold text-xl">
-                                                            {Math.floor((userSkill.level - 160) / 20)}
-                                                        </span>
-                                                    </div>
-                                                )}
+                                {userSkill.level >= 180 && (() => {
+                                    const legendaryCount = Math.floor((userSkill.level - 160) / 20);
+                                    return (
+                                        <div className="flex justify-center mb-8 mt-6">
+                                            <div className="flex flex-col items-center">
+                                                <div className="w-32 h-32 border-4 rounded-2xl flex items-center justify-center relative mb-3 shadow-lg transition-all duration-300 border-yellow-500 bg-gradient-to-br from-yellow-900 to-stone-800 scale-110">
+                                                    <SafeImage src={BASE_ASSETS.badges.Legendary} className="w-20 h-20 object-contain" />
+                                                    {legendaryCount >= 2 && (
+                                                        <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 border-2 border-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+                                                            <span className="text-white font-bold text-xl">
+                                                                {legendaryCount}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <span className="text-3xl uppercase font-bold tracking-widest text-center text-yellow-200 drop-shadow-lg" aria-label="legendary">
+                                                    LEGENDARY!
+                                                </span>
                                             </div>
-                                            <span className="text-3xl uppercase font-bold tracking-widest text-center text-yellow-200 drop-shadow-lg">
-                                                LEGENDARY!
-                                            </span>
                                         </div>
-                                    </div>
-                                )}
+                                    );
+                                })()}
                             </div>
                         );
                     })}
