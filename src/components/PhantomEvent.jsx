@@ -122,7 +122,7 @@ const PhantomEvent = ({ battlingSkillId, onAwardLevel }) => {
             }}
             onClick={handleClick}
         >
-            <div style={{ transform: fromLeft ? 'scaleX(1)' : 'scaleX(-1)' }}>
+            <div style={{ transform: fromLeft ? 'scaleX(-1)' : 'scaleX(1)' }}>
                 <img
                     key={`phantom-${fromLeft}`}
                     src={phantomSrc}
