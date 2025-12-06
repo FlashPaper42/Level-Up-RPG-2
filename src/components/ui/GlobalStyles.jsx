@@ -537,7 +537,7 @@ const GlobalStyles = () => (
     
     /* Shifting/Gradient Aura Rainbow-like Shifting */
     @keyframes aura-gradient-cycle {
-        0% {
+        0%, 100% {
             box-shadow: 
                 0 0 45px rgba(255, 107, 107, 0.8),
                 0 0 85px rgba(78, 205, 196, 0.6),
@@ -572,12 +572,6 @@ const GlobalStyles = () => (
                 0 0 49px rgba(69, 183, 209, 0.88),
                 0 0 89px rgba(255, 107, 107, 0.68),
                 0 0 129px rgba(78, 205, 196, 0.48);
-        }
-        100% {
-            box-shadow: 
-                0 0 45px rgba(255, 107, 107, 0.8),
-                0 0 85px rgba(78, 205, 196, 0.6),
-                0 0 125px rgba(69, 183, 209, 0.4);
         }
     }
     
