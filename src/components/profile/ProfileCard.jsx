@@ -9,6 +9,7 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename, isParent,
     const [tempName, setTempName] = useState(name);
     const [showParentalModal, setShowParentalModal] = useState(false);
     
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => { if (!isCurrent) setIsEditing(false); }, [isCurrent]);
 
     let themeBg = null;
