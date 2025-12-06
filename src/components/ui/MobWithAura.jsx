@@ -12,21 +12,24 @@ import SafeImage from './SafeImage';
  * @param {string} mobSrc - Source path for the mob image
  * @param {string} aura - Aura type (rainbow, frost, shadow, lava, gradient, sparkle, plasma, nature)
  * @param {string} displayName - Display name for the mob (with aura adjective)
- * @param {number|string} size - Size in pixels (e.g., 160) or CSS value (e.g., '160px')
+ * @param {number|string} size - Size in pixels (e.g., 160), percentage (e.g., '100%'), or CSS value
  * @param {boolean} isHit - Whether the mob is being hit (for animation)
  * @param {boolean} bossHealing - Whether boss is healing (for animation)
  * @param {string} className - Additional CSS classes to apply
  */
-const MobWithAura = ({ mobSrc, aura, displayName, size = 160, isHit = false, bossHealing = false, className = '' }) => {
-    // Normalize size to ensure it has 'px' suffix
+const MobWithAura = ({ mobSrc, aura, displayName, size = '100%', isHit = false, bossHealing = false, className = '' }) => {
+    // Normalize size - if it's a number, add 'px' suffix; otherwise use as-is
     const normalizedSize = typeof size === 'number' ? `${size}px` : size;
+    
+    // Determine if we should fill the parent container (percentage-based sizing)
+    const isFillContainer = normalizedSize.includes('%');
     
     return (
         <div 
             className={`mob-with-aura-container ${className}`}
             style={{ 
-                width: normalizedSize, 
-                height: normalizedSize,
+                width: isFillContainer ? '100%' : normalizedSize,
+                height: isFillContainer ? '100%' : normalizedSize,
                 position: 'relative',
                 display: 'flex',
                 alignItems: 'center',
