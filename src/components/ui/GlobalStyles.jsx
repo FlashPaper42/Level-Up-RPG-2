@@ -326,14 +326,14 @@ const GlobalStyles = () => (
         border-color: #50C878;
     }
     
-    /* Chevron Ebb and Flow Animation */
+    /* Chevron Ebb and Flow Animation - Enhanced for curved carousel */
     @keyframes chevron-float {
-        0%, 100% { transform: translateX(0); opacity: 0.8; }
-        50% { transform: translateX(-3px); opacity: 1; }
+        0%, 100% { transform: translateX(0) translateY(0); opacity: 0.8; }
+        50% { transform: translateX(-4px) translateY(-2px); opacity: 1; }
     }
     @keyframes chevron-float-right {
-        0%, 100% { transform: translateX(0); opacity: 0.8; }
-        50% { transform: translateX(3px); opacity: 1; }
+        0%, 100% { transform: translateX(0) translateY(0); opacity: 0.8; }
+        50% { transform: translateX(4px) translateY(-2px); opacity: 1; }
     }
     .animate-chevron-left {
         animation: chevron-float 2s ease-in-out infinite;
