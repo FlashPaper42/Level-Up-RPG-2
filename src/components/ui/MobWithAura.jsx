@@ -12,46 +12,26 @@ import SafeImage from './SafeImage';
  * @param {string} mobSrc - Source path for the mob image
  * @param {string} aura - Aura type (rainbow, frost, shadow, lava, gradient, sparkle, plasma, nature)
  * @param {string} displayName - Display name for the mob (with aura adjective)
- * @param {number|string|object} size - Size constraints. Can be:
- *   - number: Fixed size in pixels (legacy support)
- *   - string: Fixed size CSS value (legacy support)
- *   - object: { maxWidth, maxHeight } for dynamic sizing (CSS-only, no state)
+ * @param {number|string} size - Size in pixels (e.g., 160) or CSS value (e.g., '160px')
  * @param {boolean} isHit - Whether the mob is being hit (for animation)
  * @param {boolean} bossHealing - Whether boss is healing (for animation)
  * @param {string} className - Additional CSS classes to apply
  */
 const MobWithAura = ({ mobSrc, aura, displayName, size = 160, isHit = false, bossHealing = false, className = '' }) => {
-    // Determine container style based on size type
-    let containerStyle;
-    if (typeof size === 'object' && size.maxWidth && size.maxHeight) {
-        // Dynamic sizing: use max constraints, let browser handle aspect ratio
-        containerStyle = {
-            maxWidth: `${size.maxWidth}px`,
-            maxHeight: `${size.maxHeight}px`,
-            width: '100%',
-            height: '100%',
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-        };
-    } else {
-        // Legacy: fixed size
-        const normalizedSize = typeof size === 'number' ? `${size}px` : size;
-        containerStyle = {
-            width: normalizedSize,
-            height: normalizedSize,
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-        };
-    }
+    // Normalize size to ensure it has 'px' suffix
+    const normalizedSize = typeof size === 'number' ? `${size}px` : size;
     
     return (
         <div 
             className={`mob-with-aura-container ${className}`}
-            style={containerStyle}
+            style={{ 
+                width: normalizedSize, 
+                height: normalizedSize,
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}
             data-aura={aura}
         >
             {/* Aura is rendered via CSS ::before pseudo-element in GlobalStyles.jsx */}

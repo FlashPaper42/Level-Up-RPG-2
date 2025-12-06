@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
@@ -95,9 +95,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
     // Ref to track if patterns game session was initialized for the current battle
     const simonSessionStartedRef = useRef(false);
 
-    // State for dynamically calculated mob size (for non-aura SafeImage fallback)
-
-
     // Helper function to play axolotl-specific note with fallback to click
     const playAxolotlNote = useCallback((color) => {
         const noteName = AXOLOTL_NOTE_MAP[color];
@@ -192,27 +189,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
         : displayMobName;
     
     // Calculate mob/aura size based on skill and battle state
-    // Use container constraints for dynamic sizing that adapts to sprite aspect ratios
-    // Memoize to prevent infinite loops in useEffect
-    const mobSize = useMemo(() => {
-        if (isBattling) {
-            // Battling state: larger display area with 1.5x scale applied via CSS transform
-            // The container has approximately 330px height available (55% of 600px card height)
-            // After 1.5x scale, effective area is 330 * 1.5 = 495px
-            // Use conservative constraints to ensure mobs fill the space appropriately
-            if (config.id === 'patterns') {
-                // Pattern recognition has smaller area due to UI elements
-                return { maxWidth: 120, maxHeight: 120 };
-            } else {
-                // Other battling skills have more space
-                return { maxWidth: 240, maxHeight: 240 };
-            }
-        } else {
-            // Carousel state: constrained by max-h-[200px] on the container
-            // Account for padding and spacing, use slightly smaller max
-            return { maxWidth: 180, maxHeight: 180 };
-        }
-    }, [isBattling, config.id]);
+    const mobSize = config.id === 'patterns' && isBattling ? '80px' : '160px';
 
     const gemStyle = {}; 
 
@@ -254,7 +231,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
 
     useEffect(() => { setMathInput(''); }, [challenge]);
     
-    // Convert mobSize to a stable string for dependency checking
     // Memory game config based on difficulty
     const memoryConfig = DIFFICULTY_CONTENT.memory[difficulty] || DIFFICULTY_CONTENT.memory[1];
     const memoryPairs = memoryConfig.pairs || 3;
@@ -476,11 +452,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
                                 key={displayMobName} 
                                 src={mobSrc} 
                                 alt={displayMobName} 
-                                style={
-                                    typeof mobSize === 'object'
-                                        ? { maxWidth: `${mobSize.maxWidth}px`, maxHeight: `${mobSize.maxHeight}px` }
-                                        : { width: mobSize, height: mobSize }
-                                }
+                                style={{ width: mobSize, height: mobSize }}
                                 className={`
                                     relative z-10
                                     object-contain drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-transform duration-100 
