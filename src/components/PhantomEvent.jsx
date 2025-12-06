@@ -122,15 +122,15 @@ const PhantomEvent = ({ battlingSkillId, onAwardLevel }) => {
             }}
             onClick={handleClick}
         >
-            <img
-                src={phantomSrc}
-                alt="Phantom"
-                className="w-24 h-24 object-contain drop-shadow-[0_0_10px_rgba(100,200,255,0.8)]"
-                style={{
-                    transform: fromLeft ? 'scaleX(1)' : 'scaleX(-1)',
-                }}
-                draggable={false}
-            />
+            <div style={{ transform: fromLeft ? 'scaleX(1)' : 'scaleX(-1)' }}>
+                <img
+                    key={`phantom-${fromLeft}`}
+                    src={phantomSrc}
+                    alt="Phantom"
+                    className="w-24 h-24 object-contain drop-shadow-[0_0_10px_rgba(100,200,255,0.8)]"
+                    draggable={false}
+                />
+            </div>
             {clicked && (
                 <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-yellow-400 text-2xl font-bold animate-bounce drop-shadow-[0_0_5px_rgba(255,215,0,0.8)]">
