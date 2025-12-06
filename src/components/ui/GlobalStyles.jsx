@@ -369,7 +369,7 @@ const GlobalStyles = () => (
         animation: spin-aura 4s linear infinite;
     }
     
-    /* Breathing/Pulsing Animation for Auras */
+    /* Breathing/Pulsing Animation for Organic Auras */
     @keyframes aura-breathe {
         0%, 100% { 
             transform: scale(1);
@@ -381,28 +381,48 @@ const GlobalStyles = () => (
         }
     }
     
-    /* Base Aura Styles - Multiple Organic Layers */
+    /* Pulsing for Spiky Auras (no scale, just opacity) */
+    @keyframes aura-pulse-spiky {
+        0%, 100% { 
+            opacity: 0.7;
+        }
+        50% { 
+            opacity: 0.9;
+        }
+    }
+    
+    /* Base Aura Styles - Organic Shapes */
     .aura-rainbow,
-    .aura-frost,
     .aura-shadow,
     .aura-lava,
     .aura-gradient,
     .aura-sparkle,
-    .aura-plasma,
     .aura-nature {
         position: relative;
         border-radius: 47% 53% 45% 55% / 52% 48% 52% 48%; /* Organic shape */
         filter: blur(3px);
     }
     
-    /* Create multiple layers with pseudo-elements */
+    /* Spiky Auras - Frost and Plasma */
+    .aura-frost,
+    .aura-plasma {
+        position: relative;
+        clip-path: polygon(
+            50% 0%, 55% 10%, 65% 5%, 70% 15%, 80% 10%, 85% 20%, 95% 15%, 100% 25%,
+            95% 35%, 100% 45%, 95% 55%, 100% 65%, 95% 75%, 100% 85%, 90% 90%, 85% 100%,
+            75% 95%, 70% 100%, 60% 95%, 50% 100%, 40% 95%, 30% 100%, 25% 95%, 15% 100%,
+            10% 90%, 0% 85%, 5% 75%, 0% 65%, 5% 55%, 0% 45%, 5% 35%, 0% 25%,
+            5% 15%, 15% 10%, 20% 20%, 30% 5%, 35% 15%, 45% 10%
+        ); /* Jagged, spiky shape */
+        filter: blur(2px);
+    }
+    
+    /* Organic aura layers with pseudo-elements */
     .aura-rainbow::before,
-    .aura-frost::before,
     .aura-shadow::before,
     .aura-lava::before,
     .aura-gradient::before,
     .aura-sparkle::before,
-    .aura-plasma::before,
     .aura-nature::before {
         content: '';
         position: absolute;
@@ -416,12 +436,10 @@ const GlobalStyles = () => (
     }
     
     .aura-rainbow::after,
-    .aura-frost::after,
     .aura-shadow::after,
     .aura-lava::after,
     .aura-gradient::after,
     .aura-sparkle::after,
-    .aura-plasma::after,
     .aura-nature::after {
         content: '';
         position: absolute;
@@ -432,6 +450,45 @@ const GlobalStyles = () => (
         border-radius: 52% 48% 47% 53% / 55% 45% 55% 45%; /* Another organic shape */
         animation: aura-breathe 2.5s ease-in-out infinite 0.5s;
         filter: blur(5px);
+    }
+    
+    /* Spiky aura layers - different clip-paths for variation */
+    .aura-frost::before,
+    .aura-plasma::before {
+        content: '';
+        position: absolute;
+        top: -20%;
+        left: -20%;
+        width: 140%;
+        height: 140%;
+        clip-path: polygon(
+            50% 5%, 53% 12%, 60% 8%, 67% 18%, 75% 12%, 82% 22%, 88% 18%, 95% 28%,
+            92% 38%, 97% 48%, 92% 58%, 97% 68%, 92% 78%, 95% 88%, 88% 92%, 82% 95%,
+            75% 90%, 67% 95%, 60% 90%, 50% 95%, 40% 90%, 33% 95%, 25% 90%, 18% 95%,
+            12% 92%, 5% 88%, 8% 78%, 3% 68%, 8% 58%, 3% 48%, 8% 38%, 5% 28%,
+            12% 18%, 18% 22%, 25% 12%, 33% 18%, 40% 8%, 47% 12%
+        );
+        animation: aura-pulse-spiky 2s ease-in-out infinite;
+        filter: blur(6px);
+    }
+    
+    .aura-frost::after,
+    .aura-plasma::after {
+        content: '';
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        clip-path: polygon(
+            50% 2%, 54% 12%, 62% 7%, 68% 17%, 77% 10%, 84% 20%, 90% 15%, 98% 25%,
+            93% 35%, 98% 45%, 93% 55%, 98% 65%, 93% 75%, 98% 85%, 90% 88%, 84% 93%,
+            77% 87%, 68% 93%, 62% 87%, 50% 98%, 38% 87%, 32% 93%, 23% 87%, 16% 93%,
+            10% 88%, 2% 85%, 7% 75%, 2% 65%, 7% 55%, 2% 45%, 7% 35%, 2% 25%,
+            10% 15%, 16% 20%, 23% 10%, 32% 17%, 38% 7%, 46% 12%
+        );
+        animation: aura-pulse-spiky 1.7s ease-in-out infinite 0.3s;
+        filter: blur(4px);
     }
     
     /* Prismatic/Rainbow Aura */
