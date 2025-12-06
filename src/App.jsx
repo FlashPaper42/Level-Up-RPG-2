@@ -903,7 +903,7 @@ const App = () => {
             <button 
                 onClick={() => { setIsMenuOpen(false); setIsSettingsOpen(false); setIsCosmeticsOpen(true); playClick(); }} 
                 className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
-                style={{ top: '24px', left: 'calc(24px + 60px + 8px)' }}
+                style={{ top: '24px', left: 'calc(24px + 76px + 12px)' }}
             >
                 <Sparkles size={48} className="text-purple-400" />
             </button>
@@ -959,7 +959,7 @@ const App = () => {
             <button 
                 onClick={toggleFullscreen} 
                 className="absolute z-40 bg-stone-800/90 text-white p-3 rounded-lg border-2 border-stone-600 hover:bg-stone-700 transition-all shadow-lg" 
-                style={{ top: '24px', right: 'calc(24px + 60px + 8px)' }} 
+                style={{ top: '24px', right: 'calc(24px + 76px + 12px)' }} 
                 aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'} 
                 title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
             >
