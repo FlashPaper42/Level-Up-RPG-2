@@ -237,6 +237,7 @@ const App = () => {
     const recognitionRef = useRef(null);
     const challengeDataRef = useRef(null);
     const damageIdRef = useRef(0); // Counter for generating unique damage number IDs
+    const loginTrackedRef = useRef(false); // Track if we've already recorded today's login
     const [bgmVol, setBgmVol] = useState(0.3);
     const [sfxVol, setSfxVolState] = useState(0.5);
     const bgmManager = useRef(getBGMManager());
@@ -990,10 +991,18 @@ const App = () => {
     
     // Track login date (once per day)
     useEffect(() => {
-        setStats(prev => ({
-            ...prev,
-            loginDates: recordLoginDate(prev.loginDates || [])
-        }));
+        if (loginTrackedRef.current) return; // Skip if already tracked
+        loginTrackedRef.current = true;
+        
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+        const currentDates = stats.loginDates || [];
+        // Only set if today's date is not already recorded
+        if (!currentDates.includes(today)) {
+            setStats(prev => ({
+                ...prev,
+                loginDates: [...(prev.loginDates || []), today]
+            }));
+        }
     }, []); // Run once on mount
     
     const getVisibleItems = () => {
