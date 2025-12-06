@@ -47,9 +47,9 @@ const ProfileCard = ({ id, name, stats, isCurrent, onSwitch, onRename, isParent,
         const baseClasses = 'relative w-full h-[100px] rounded-xl overflow-hidden transition-all cursor-pointer group select-none';
         if (isCurrent) {
             const ringClass = isParent ? 'ring-rainbow' : 'ring-4 ring-yellow-400';
-            return `${baseClasses} ${ringClass} scale-[1.02] z-10`;
+            return `${baseClasses} ${ringClass} z-10`;  // No scale - this is the "full size"
         }
-        return `${baseClasses} hover:scale-[1.01] opacity-70 hover:opacity-100`;
+        return `${baseClasses} scale-[0.98] hover:scale-[0.99] opacity-70 hover:opacity-100`;  // Shrunk when inactive
     };
 
     const getProfileCardStyles = () => {
