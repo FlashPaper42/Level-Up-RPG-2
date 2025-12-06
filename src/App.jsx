@@ -30,7 +30,7 @@ import {
 // Parent verification privilege constants
 const PARENT_PRIVILEGE_LEVEL = 200;
 const PARENT_PRIVILEGE_DIFFICULTY = 7;
-const PARENT_PRIVILEGE_BADGES = [1, 2, 3, 4, 5, 6, 7];
+const PARENT_PRIVILEGE_BADGES = [1, 2, 3, 4, 5, 6, 7, 8];
 
 // Voice recognition constants
 const MIN_SPOKEN_TEXT_LENGTH = 2;

@@ -41,6 +41,15 @@ const MenuDrawer = ({ isOpen, skills }) => {
                                             <span className={`text-2xl uppercase font-bold tracking-wider text-center ${userSkill.level >= tier.level ? 'text-yellow-200' : 'text-stone-600'}`}>{tier.title}</span>
                                         </div>
                                     ))}
+                                    {/* Star Badges - one for every 20 levels starting at 180 */}
+                                    {userSkill.level >= 180 && Array.from({ length: Math.floor((userSkill.level - 160) / 20) }).map((_, index) => (
+                                        <div key={`star-${index}`} className="flex flex-col items-center">
+                                            <div className="w-24 h-24 border-4 rounded-2xl flex items-center justify-center relative mb-3 shadow-lg transition-all duration-300 border-yellow-500 bg-stone-800 scale-105">
+                                                <SafeImage src={BASE_ASSETS.badges.Legendary} className="w-16 h-16 object-contain" />
+                                            </div>
+                                            <span className="text-2xl uppercase font-bold tracking-wider text-center text-yellow-200">Star</span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         );
