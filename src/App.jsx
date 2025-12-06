@@ -64,7 +64,7 @@ const App = () => {
                 memoryMob: skill.id === 'memory' ? getRandomFriendlyMob() : null, // Stable mob for Memory card display
                 patternMob: skill.id === 'patterns' ? getRandomMob(null) : null, // Stable hostile mob for Patterns card display
                 currentMiniboss: getRandomMiniboss(), // Stable miniboss for miniboss encounters
-                currentBoss: null, // Stable boss for boss encounters (assigned when reaching boss level)
+                currentBoss: getRandomBoss(), // Stable boss for boss encounters
                 readingMob: skill.id === 'reading' ? getRandomMob(null) : null, // Stable mob for Reading card display
                 mathMob: skill.id === 'math' ? getRandomMob(null) : null, // Stable mob for Math card display
                 writingMob: skill.id === 'writing' ? getRandomMob(null) : null // Stable mob for Writing card display
