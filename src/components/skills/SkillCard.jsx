@@ -463,12 +463,12 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                     {!isBattling && <div className="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-white border border-white/20 z-20"><div className="text-xs text-gray-400 uppercase">{skillName}</div><div className="text-lg leading-none">{config.fantasyName}</div></div>}
                     {!isBattling && <div className="absolute top-2 right-2 z-20"><div className={`bg-black/60 px-3 py-1 rounded border border-white/20 text-3xl font-bold ${levelTextColor}`}>Lvl {data.level}</div></div>}
                     {showMob && <div className="relative z-10 flex items-center justify-center h-full max-h-[200px] w-full">
-                        {/* Centered anchor point for both aura and mob */}
-                        <div className="relative">
+                        {/* Centered anchor point for both aura and mob - fixed size container */}
+                        <div className="relative w-40 h-40 flex items-center justify-center">
                             {/* Spinning aura circle - only during battle */}
                             {isBattling && selectedAura && (
                                 <div 
-                                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 animate-spin-aura opacity-60 z-0 aura-${selectedAura}`}
+                                    className={`absolute inset-0 animate-spin-aura opacity-60 z-0 aura-${selectedAura}`}
                                 ></div>
                             )}
                             <SafeImage 

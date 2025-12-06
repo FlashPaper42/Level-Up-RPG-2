@@ -20,3 +20,6 @@ Thumbs.db
 # Vite
 .vite/
 node_modules/
+
+# Temporary files
+tmp/
