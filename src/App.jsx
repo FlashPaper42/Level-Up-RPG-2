@@ -918,8 +918,8 @@ const App = () => {
                 <Sparkles size={48} className="text-purple-400" />
             </button>
             
-            {/* Player Health Display */}
-            <div className="absolute z-40 flex gap-1.5" style={{ bottom: '20px', left: '16px' }}>{Array(10).fill(0).map((_, i) => (<PixelHeart key={i} size={48} filled={i < playerHealth} />))}</div>
+            {/* Player Health Display - Centered */}
+            <div className="absolute z-40 flex gap-1.5" style={{ bottom: '20px', left: '50%', transform: 'translateX(-50%)' }}>{Array(10).fill(0).map((_, i) => (<PixelHeart key={i} size={48} filled={i < playerHealth} />))}</div>
             
             {/* Cosmetics drawer overlay - click to close */}
             {isCosmeticsOpen && (
@@ -1003,35 +1003,39 @@ const App = () => {
                 <div className="z-10 relative mb-[-30px] md:mb-[-50px] pointer-events-none opacity-90"><SafeImage src={currentThemeData.assets.logo} fallbackSrc="https://placehold.co/800x300/333/FFD700?text=LOGO+PLACEHOLDER&font=monsterrat" alt="Game Logo" className="w-[480px] md:w-[720px] lg:w-[960px] object-contain drop-shadow-2xl" /></div>
                 <h1 className="text-9xl text-yellow-400 tracking-widest uppercase mb-[80px] z-20 relative drop-shadow-[4px_4px_0_#000]" style={{ textShadow: '6px 6px 0 #000' }}>Level Up!</h1>
                 
-                {/* Enhanced Left Chevron */}
+                {/* Enhanced Left Chevron - Taller with rotation */}
                 <button 
                     onClick={() => {setSelectedIndex(p => p - 1); playActionCardLeft();}} 
                     className="flex absolute left-4 md:left-8 z-30 text-white items-center justify-center"
                     style={{ 
-                        background: 'radial-gradient(ellipse 120px 200px at left, rgba(0,0,0,0.7), transparent)',
-                        padding: '16px 24px',
-                        borderRadius: '0 8px 8px 0'
+                        background: 'radial-gradient(ellipse 140px 280px at left, rgba(0,0,0,0.7), transparent)',
+                        padding: '24px 32px',
+                        borderRadius: '0 12px 12px 0',
+                        transform: 'rotate(-5deg)'
                     }}
                 >
-                    <div className="flex items-center gap-1 animate-chevron-left">
-                        <ChevronLeft size={32} className="md:w-10 md:h-10" />
-                        <ChevronLeft size={32} className="md:w-10 md:h-10 -ml-5" />
+                    <div className="flex flex-col gap-0 animate-chevron-left">
+                        <ChevronLeft size={48} className="md:w-14 md:h-14" />
+                        <ChevronLeft size={48} className="md:w-14 md:h-14 -mt-6" />
+                        <ChevronLeft size={48} className="md:w-14 md:h-14 -mt-6" />
                     </div>
                 </button>
                 
-                {/* Enhanced Right Chevron */}
+                {/* Enhanced Right Chevron - Taller with rotation */}
                 <button 
                     onClick={() => {setSelectedIndex(p => p + 1); playActionCardRight();}} 
                     className="flex absolute right-4 md:right-8 z-30 text-white items-center justify-center"
                     style={{ 
-                        background: 'radial-gradient(ellipse 120px 200px at right, rgba(0,0,0,0.7), transparent)',
-                        padding: '16px 24px',
-                        borderRadius: '8px 0 0 8px'
+                        background: 'radial-gradient(ellipse 140px 280px at right, rgba(0,0,0,0.7), transparent)',
+                        padding: '24px 32px',
+                        borderRadius: '12px 0 0 12px',
+                        transform: 'rotate(5deg)'
                     }}
                 >
-                    <div className="flex items-center gap-1 animate-chevron-right">
-                        <ChevronRight size={32} className="md:w-10 md:h-10 -mr-5" />
-                        <ChevronRight size={32} className="md:w-10 md:h-10" />
+                    <div className="flex flex-col gap-0 animate-chevron-right">
+                        <ChevronRight size={48} className="md:w-14 md:h-14" />
+                        <ChevronRight size={48} className="md:w-14 md:h-14 -mt-6" />
+                        <ChevronRight size={48} className="md:w-14 md:h-14 -mt-6" />
                     </div>
                 </button>
                 <div 
@@ -1047,8 +1051,18 @@ const App = () => {
                 >
                     {getVisibleItems().map((item) => {
                         const isItemBattling = item.offset === 0 && battlingSkillId === item.id;
+                        // Calculate curved positioning based on offset
+                        const getVerticalOffset = (offset) => {
+                            if (offset === 0) return -60; // Center card raised highest
+                            if (Math.abs(offset) === 1) return -30; // Adjacent cards at intermediate height
+                            return 20; // Outer cards at lowest position
+                        };
+                        const translateY = getVerticalOffset(item.offset);
+                        // Add subtle rotation for 3D effect
+                        const rotateX = Math.abs(item.offset) === 2 ? 8 : (Math.abs(item.offset) === 1 ? 4 : 0);
+                        
                         return (
-                        <div key={item.key} className="absolute transition-all duration-500 ease-out" style={{ transform: `translateX(${item.offset * 320}px) scale(${item.offset === 0 ? 1.1 : 0.85})`, opacity: item.offset === 0 ? 1 : 0.6, zIndex: isItemBattling ? 50 : (item.offset === 0 ? 20 : 10 - Math.abs(item.offset)), filter: item.offset === 0 ? 'none' : 'brightness(0.5) blur(1px)', cursor: item.offset !== 0 && !battlingSkillId ? 'pointer' : 'default' }} onClick={() => handleCardClick(item.offset)}>
+                        <div key={item.key} className="absolute transition-all duration-500 ease-out" style={{ transform: `translateX(${item.offset * 320}px) translateY(${translateY}px) rotateX(${rotateX}deg) scale(${item.offset === 0 ? 1.1 : 0.85})`, opacity: item.offset === 0 ? 1 : 0.6, zIndex: isItemBattling ? 50 : (item.offset === 0 ? 20 : 10 - Math.abs(item.offset)), filter: item.offset === 0 ? 'none' : 'brightness(0.5) blur(1px)', cursor: item.offset !== 0 && !battlingSkillId ? 'pointer' : 'default' }} onClick={() => handleCardClick(item.offset)}>
                             <SkillCard 
                                 config={item} data={skills[item.id]} themeData={currentThemeData} isCenter={item.offset === 0} isBattling={item.offset === 0 && battlingSkillId === item.id}
                                 mobName={getMobForSkill(item, skills[item.id])} challenge={challengeData} isListening={isListening} spokenText={spokenText} damageNumbers={damageNumbers.filter(d => d.skillId === item.id)}
