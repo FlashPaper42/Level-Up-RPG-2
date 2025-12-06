@@ -26,37 +26,6 @@ const ACHIEVEMENT_EFFECTS = [
     { id: 'crystal', name: 'Crystalline', achievement: 'full_set', description: 'Prismatic shard array', icon: Gem }
 ];
 
-// In-game style popup for achievement info
-const AchievementPopup = ({ achievement, unlocked }) => {
-    if (!achievement) return null;
-    
-    const IconComponent = achievement.icon;
-    
-    return (
-        <div 
-            className="absolute z-50 right-full mr-2 top-0 w-64 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3"
-            onClick={(e) => e.stopPropagation()}
-        >
-            <div className="flex items-start gap-2 mb-2">
-                <div className={`p-1.5 rounded ${unlocked ? 'bg-yellow-400/20' : 'bg-slate-700'}`}>
-                    <IconComponent size={20} className={unlocked ? 'text-yellow-400' : 'text-slate-400'} />
-                </div>
-                <div className="flex-1">
-                    <h4 className={`text-sm font-bold ${unlocked ? 'text-yellow-400' : 'text-slate-300'}`}>
-                        {achievement.name}
-                    </h4>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                        {achievement.description}
-                    </p>
-                </div>
-            </div>
-            <div className={`text-xs px-2 py-1 rounded ${unlocked ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
-                {unlocked ? '✓ Unlocked' : '✗ Locked'}
-            </div>
-        </div>
-    );
-};
-
 const CosmeticsDrawer = ({ 
     isOpen, 
     activeTheme, 
@@ -69,7 +38,6 @@ const CosmeticsDrawer = ({
     unlockedAchievements = [] // New prop for unlocked achievements
 }) => {
     const [showColorPicker, setShowColorPicker] = useState(false);
-    const [hoveredAchievement, setHoveredAchievement] = useState(null);
     
     const isBorderUnlocked = (badge) => {
         // Default (locked on yellow) is always unlocked
@@ -335,7 +303,7 @@ const CosmeticsDrawer = ({
                                 const achievement = ACHIEVEMENTS[effect.achievement];
                                 
                                 return (
-                                    <div key={effect.id} className="relative">
+                                    <div key={effect.id} className="relative group">
                                         <button
                                             onClick={() => {
                                                 if (unlocked) {
@@ -343,8 +311,6 @@ const CosmeticsDrawer = ({
                                                     setShowColorPicker(false);
                                                 }
                                             }}
-                                            onMouseEnter={() => setHoveredAchievement(effect.achievement)}
-                                            onMouseLeave={() => setHoveredAchievement(null)}
                                             disabled={!unlocked}
                                             className={`relative p-2 rounded-lg border-2 transition-all duration-300 w-fit ${
                                                 !unlocked 
@@ -385,13 +351,32 @@ const CosmeticsDrawer = ({
                                                 )}
                                             </div>
                                         </button>
-                                        {/* Achievement Info Popup */}
-                                        {hoveredAchievement === effect.achievement && (
-                                            <AchievementPopup 
-                                                achievement={achievement} 
-                                                unlocked={unlocked}
-                                            />
-                                        )}
+                                        {/* Achievement Info Popup - CSS hover based */}
+                                        <div className="absolute z-50 right-full mr-2 top-0 w-64 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none">
+                                            <div className="flex items-start gap-2 mb-2">
+                                                {achievement && (
+                                                    <>
+                                                        <div className={`p-1.5 rounded ${unlocked ? 'bg-yellow-400/20' : 'bg-slate-700'}`}>
+                                                            {React.createElement(achievement.icon, { 
+                                                                size: 20, 
+                                                                className: unlocked ? 'text-yellow-400' : 'text-slate-400' 
+                                                            })}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <h4 className={`text-sm font-bold ${unlocked ? 'text-yellow-400' : 'text-slate-300'}`}>
+                                                                {achievement.name}
+                                                            </h4>
+                                                            <p className="text-xs text-slate-400 mt-0.5">
+                                                                {achievement.description}
+                                                            </p>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                            <div className={`text-xs px-2 py-1 rounded ${unlocked ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
+                                                {unlocked ? '✓ Unlocked' : '✗ Locked'}
+                                            </div>
+                                        </div>
                                     </div>
                                 );
                             })}
