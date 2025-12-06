@@ -269,19 +269,6 @@ const App = () => {
     const [sfxVol, setSfxVolState] = useState(0.5);
     const bgmManager = useRef(getBGMManager());
     
-    // DEBUG: Effect run counters
-    const effectCounters = useRef({
-        localStorage: 0,
-        cosmetics: 0,
-        bgmVolume: 0,
-        sfxVolume: 0,
-        challengeDataRef: 0,
-        fullscreen: 0,
-        lootBox: 0,
-        achievementToast: 0,
-        loginTracking: 0
-    });
-    
     // Cosmetics state
     const [selectedBorder, setSelectedBorder] = useState(() => {
         const saved = localStorage.getItem(`borderEffect_p${currentProfile}`);
@@ -293,12 +280,6 @@ const App = () => {
     });
 
     useEffect(() => { 
-        effectCounters.current.localStorage++;
-        console.log('[DEBUG] localStorage effect ran:', effectCounters.current.localStorage, 'times');
-        if (effectCounters.current.localStorage > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in localStorage effect');
-            return;
-        }
         const dataToSave = { skills: skills, theme: activeTheme, stats: stats };
         localStorage.setItem(getStorageKey(currentProfile), JSON.stringify(dataToSave)); 
         localStorage.setItem('currentProfile_v1', currentProfile);
@@ -308,12 +289,6 @@ const App = () => {
     
     // Save cosmetics preferences
     useEffect(() => {
-        effectCounters.current.cosmetics++;
-        console.log('[DEBUG] cosmetics effect ran:', effectCounters.current.cosmetics, 'times');
-        if (effectCounters.current.cosmetics > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in cosmetics effect');
-            return;
-        }
         localStorage.setItem(`borderEffect_p${currentProfile}`, selectedBorder);
         localStorage.setItem(`borderColor_p${currentProfile}`, borderColor);
     }, [selectedBorder, borderColor, currentProfile]);
@@ -356,46 +331,22 @@ const App = () => {
     }, [stats, skills]);
 
     // Update BGM volume
-    useEffect(() => {
-        effectCounters.current.bgmVolume++;
-        console.log('[DEBUG] bgmVolume effect ran:', effectCounters.current.bgmVolume, 'times');
-        if (effectCounters.current.bgmVolume > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in bgmVolume effect');
-            return;
-        }
+    useEffect(() => { 
         bgmManager.current.setVolume(bgmVol); 
     }, [bgmVol]);
     
     // Update SFX volume in sound manager
     useEffect(() => {
-        effectCounters.current.sfxVolume++;
-        console.log('[DEBUG] sfxVolume effect ran:', effectCounters.current.sfxVolume, 'times');
-        if (effectCounters.current.sfxVolume > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in sfxVolume effect');
-            return;
-        }
         setSfxVolume(sfxVol);
     }, [sfxVol]);
     
     // Keep challengeDataRef in sync with challengeData state for voice listener
     useEffect(() => {
-        effectCounters.current.challengeDataRef++;
-        console.log('[DEBUG] challengeDataRef effect ran:', effectCounters.current.challengeDataRef, 'times');
-        if (effectCounters.current.challengeDataRef > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in challengeDataRef effect');
-            return;
-        }
         challengeDataRef.current = challengeData;
     }, [challengeData]);
     
     // Listen for fullscreen changes
     useEffect(() => {
-        effectCounters.current.fullscreen++;
-        console.log('[DEBUG] fullscreen effect ran:', effectCounters.current.fullscreen, 'times');
-        if (effectCounters.current.fullscreen > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in fullscreen effect');
-            return;
-        }
         const handleFullscreenChange = () => {
             setIsFullscreen(!!document.fullscreenElement);
         };
@@ -1080,24 +1031,10 @@ const App = () => {
         recognitionRef.current.start();
     };
 
-    useEffect(() => { 
-        effectCounters.current.lootBox++;
-        console.log('[DEBUG] lootBox effect ran:', effectCounters.current.lootBox, 'times');
-        if (effectCounters.current.lootBox > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in lootBox effect');
-            return;
-        }
-        if(lootBox) setTimeout(() => setLootBox(null), 4000); 
-    }, [lootBox]);
+    useEffect(() => { if(lootBox) setTimeout(() => setLootBox(null), 4000); }, [lootBox]);
     
     // Achievement toast auto-dismiss
-    useEffect(() => {
-        effectCounters.current.achievementToast++;
-        console.log('[DEBUG] achievementToast effect ran:', effectCounters.current.achievementToast, 'times');
-        if (effectCounters.current.achievementToast > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in achievementToast effect');
-            return;
-        }
+    useEffect(() => { 
         if(achievementToast) {
             setTimeout(() => setAchievementToast(null), 6000); 
         }
@@ -1105,12 +1042,6 @@ const App = () => {
     
     // Track login date (once per day)
     useEffect(() => {
-        effectCounters.current.loginTracking++;
-        console.log('[DEBUG] loginTracking effect ran:', effectCounters.current.loginTracking, 'times');
-        if (effectCounters.current.loginTracking > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in loginTracking effect');
-            return;
-        }
         if (loginTrackedRef.current) return; // Skip if already tracked
         loginTrackedRef.current = true;
         

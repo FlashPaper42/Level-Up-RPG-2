@@ -94,15 +94,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
     
     // Ref to track if patterns game session was initialized for the current battle
     const simonSessionStartedRef = useRef(false);
-    
-    // DEBUG: Effect run counters
-    const effectCounters = useRef({
-        mathInput: 0,
-        memoryGame: 0,
-        damageNumbers: 0,
-        readingWrong: 0,
-        simonGame: 0
-    });
 
     // Helper function to play axolotl-specific note with fallback to click
     const playAxolotlNote = useCallback((color) => {
@@ -238,15 +229,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
         audio.play().catch(() => {});
     };
 
-    useEffect(() => {
-        effectCounters.current.mathInput++;
-        console.log('[DEBUG] SkillCard mathInput effect ran:', effectCounters.current.mathInput, 'times', 'for', config.id);
-        if (effectCounters.current.mathInput > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in SkillCard mathInput effect for', config.id);
-            return;
-        }
-        setMathInput('');
-    }, [challenge, config.id]);
+    useEffect(() => { setMathInput(''); }, [challenge]);
     
     // Memory game config based on difficulty
     const memoryConfig = DIFFICULTY_CONTENT.memory[difficulty] || DIFFICULTY_CONTENT.memory[1];
@@ -254,12 +237,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
     const memoryGridCols = memoryConfig.gridCols || 4;
     
     useEffect(() => {
-        effectCounters.current.memoryGame++;
-        console.log('[DEBUG] SkillCard memoryGame effect ran:', effectCounters.current.memoryGame, 'times', 'for', config.id);
-        if (effectCounters.current.memoryGame > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in SkillCard memoryGame effect for', config.id);
-            return;
-        }
         if (isBattling && config.id === 'memory' && !memorySessionStartedRef.current) {
             // Only regenerate cards when entering battle if no session started yet
             memorySessionStartedRef.current = true;
@@ -279,24 +256,12 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
     }, [isBattling, config.id, memoryPairs]);
 
     useEffect(() => {
-        effectCounters.current.damageNumbers++;
-        console.log('[DEBUG] SkillCard damageNumbers effect ran:', effectCounters.current.damageNumbers, 'times', 'for', config.id);
-        if (effectCounters.current.damageNumbers > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in SkillCard damageNumbers effect for', config.id);
-            return;
-        }
         if (damageNumbers.length > prevDamageCount.current) { setIsHit(true); setTimeout(() => setIsHit(false), 400); }
         prevDamageCount.current = damageNumbers.length;
-    }, [damageNumbers, config.id]);
+    }, [damageNumbers]);
 
     // Detect wrong reading answer based on spoken text changes
     useEffect(() => {
-        effectCounters.current.readingWrong++;
-        console.log('[DEBUG] SkillCard readingWrong effect ran:', effectCounters.current.readingWrong, 'times', 'for', config.id);
-        if (effectCounters.current.readingWrong > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in SkillCard readingWrong effect for', config.id);
-            return;
-        }
         if (config.challengeType === 'reading' && isBattling && spokenText && spokenText !== 'Listening...' && spokenText !== 'Mic Off') {
             // Check if spoken text changed
             if (spokenText !== prevSpokenTextRef.current) {
@@ -313,7 +278,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
                 prevSpokenTextRef.current = spokenText;
             }
         }
-    }, [spokenText, config.challengeType, isBattling, challenge?.answer, config.id]);
+    }, [spokenText, config.challengeType, isBattling, challenge?.answer]);
 
     // Pattern config based on difficulty
     const patternConfig = DIFFICULTY_CONTENT.patterns[difficulty] || DIFFICULTY_CONTENT.patterns[1];
@@ -414,12 +379,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
     };
 
     useEffect(() => {
-        effectCounters.current.simonGame++;
-        console.log('[DEBUG] SkillCard simonGame effect ran:', effectCounters.current.simonGame, 'times', 'for', config.id);
-        if (effectCounters.current.simonGame > 50) {
-            console.error('[FORCE STOP] Infinite loop detected in SkillCard simonGame effect for', config.id);
-            return;
-        }
         if (isBattling && config.id === 'patterns' && !simonSessionStartedRef.current) {
             // Only start a new game when entering battle if no session started yet
             simonSessionStartedRef.current = true;
