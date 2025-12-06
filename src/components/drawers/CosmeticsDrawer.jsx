@@ -278,7 +278,7 @@ const CosmeticsDrawer = ({
                                         </div>
                                     </button>
                                     {/* Achievement Info Popup - CSS hover/focus based */}
-                                    <div className="absolute z-50 left-full ml-2 top-0 w-64 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 pointer-events-none">
+                                    <div className="absolute z-50 right-full mr-2 top-0 w-64 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 pointer-events-none">
                                         <div className="flex items-start gap-2 mb-2">
                                             {achievement && (
                                                 <>
