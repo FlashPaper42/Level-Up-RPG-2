@@ -351,16 +351,16 @@ const CosmeticsDrawer = ({
                                                 )}
                                             </div>
                                         </button>
-                                        {/* Achievement Info Popup - CSS hover based */}
-                                        <div className="absolute z-50 right-full mr-2 top-0 w-64 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none">
+                                        {/* Achievement Info Popup - CSS hover/focus based */}
+                                        <div className="absolute z-50 right-full mr-2 top-0 w-64 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 pointer-events-none">
                                             <div className="flex items-start gap-2 mb-2">
                                                 {achievement && (
                                                     <>
                                                         <div className={`p-1.5 rounded ${unlocked ? 'bg-yellow-400/20' : 'bg-slate-700'}`}>
-                                                            {React.createElement(achievement.icon, { 
-                                                                size: 20, 
-                                                                className: unlocked ? 'text-yellow-400' : 'text-slate-400' 
-                                                            })}
+                                                            <IconComponent 
+                                                                size={20} 
+                                                                className={unlocked ? 'text-yellow-400' : 'text-slate-400'} 
+                                                            />
                                                         </div>
                                                         <div className="flex-1">
                                                             <h4 className={`text-sm font-bold ${unlocked ? 'text-yellow-400' : 'text-slate-300'}`}>
