@@ -663,7 +663,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                     {/* Photo area with mob image */}
                                     <div className="p-2 bg-gradient-to-b from-amber-50 to-stone-200">
                                         <div className="bg-black/80 border-2 border-amber-900 p-1 relative overflow-hidden">
-                                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')] opacity-10"></div>
                                             <div className="relative w-full h-20 flex items-center justify-center">
                                                 <img 
                                                     src={mobSrc} 
@@ -690,7 +689,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                             </div>
                                             <div className="flex-1 bg-amber-900/20 border-2 border-amber-900/40 rounded p-1.5">
                                                 <div className="text-[8px] text-amber-900 uppercase font-bold">Level</div>
-                                                <div className="font-black text-base leading-tight text-stone-900" style={{ 
+                                                <div className={`font-black text-base leading-tight ${levelTextColor}`} style={{ 
                                                     WebkitTextStroke: '0.5px rgba(0,0,0,0.5)',
                                                     filter: 'drop-shadow(1px 1px 0 rgba(0,0,0,0.3))'
                                                 }}>
