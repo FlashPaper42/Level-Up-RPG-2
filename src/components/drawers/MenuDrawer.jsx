@@ -32,25 +32,45 @@ const MenuDrawer = ({ isOpen, skills }) => {
                                         <div className="w-full h-6 bg-stone-900 rounded-full border-2 border-stone-600 relative overflow-hidden"><div className="h-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-500" style={{ width: `${xpPercent}%` }}></div><div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white drop-shadow-md">{userSkill.xp} / {xpToLevel} XP</div></div>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-4 gap-y-8 gap-x-4 mb-8">
-                                    {BADGE_TIERS.map((tier) => (
-                                        <div key={tier.level} className="flex flex-col items-center">
+                                {/* Tier Badges in Compact Zig-Zag Layout */}
+                                <div className="grid grid-cols-4 gap-y-3 gap-x-4 mb-6">
+                                    {BADGE_TIERS.map((tier, index) => (
+                                        <div 
+                                            key={tier.level} 
+                                            className="flex flex-col items-center"
+                                            style={{ marginTop: index % 2 === 1 ? '1.5rem' : '0' }}
+                                        >
                                             <div className={`w-24 h-24 border-4 rounded-2xl flex items-center justify-center relative mb-3 shadow-lg transition-all duration-300 ${userSkill.level >= tier.level ? 'border-yellow-500 bg-stone-800 scale-105' : 'border-stone-600 bg-stone-900/50 opacity-60'}`}>
                                                 {userSkill.level >= tier.level ? <SafeImage src={BASE_ASSETS.badges[tier.title]} className="w-16 h-16 object-contain" /> : <Lock size={40} className="text-stone-500" />}
                                             </div>
                                             <span className={`text-2xl uppercase font-bold tracking-wider text-center ${userSkill.level >= tier.level ? 'text-yellow-200' : 'text-stone-600'}`}>{tier.title}</span>
                                         </div>
                                     ))}
-                                    {/* Star Badges - one for every 20 levels starting at 180 */}
-                                    {userSkill.level >= 180 && Array.from({ length: Math.floor((userSkill.level - 160) / 20) }).map((_, index) => (
-                                        <div key={`star-${index}`} className="flex flex-col items-center">
-                                            <div className="w-24 h-24 border-4 rounded-2xl flex items-center justify-center relative mb-3 shadow-lg transition-all duration-300 border-yellow-500 bg-stone-800 scale-105">
-                                                <SafeImage src={BASE_ASSETS.badges.Legendary} className="w-16 h-16 object-contain" />
-                                            </div>
-                                            <span className="text-2xl uppercase font-bold tracking-wider text-center text-yellow-200">Star</span>
-                                        </div>
-                                    ))}
                                 </div>
+                                
+                                {/* LEGENDARY! Badge - Centered with Stack Count */}
+                                {userSkill.level >= 180 && (() => {
+                                    const legendaryCount = Math.floor((userSkill.level - 160) / 20);
+                                    return (
+                                        <div className="flex justify-center mb-8 mt-6">
+                                            <div className="flex flex-col items-center">
+                                                <div className="w-32 h-32 border-4 rounded-2xl flex items-center justify-center relative mb-3 shadow-lg transition-all duration-300 border-yellow-500 bg-gradient-to-br from-yellow-900 to-stone-800 scale-110">
+                                                    <SafeImage src={BASE_ASSETS.badges.Legendary} className="w-20 h-20 object-contain" />
+                                                    {legendaryCount >= 2 && (
+                                                        <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 border-2 border-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+                                                            <span className="text-white font-bold text-xl">
+                                                                {legendaryCount}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <span className="text-3xl uppercase font-bold tracking-widest text-center text-yellow-200 drop-shadow-lg" aria-label="legendary">
+                                                    LEGENDARY!
+                                                </span>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         );
                     })}
