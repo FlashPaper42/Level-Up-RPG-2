@@ -341,6 +341,58 @@ const GlobalStyles = () => (
     .animate-chevron-right {
         animation: chevron-float-right 2s ease-in-out infinite;
     }
+    
+    /* Spinning Aura Animation for Battle Mob Display */
+    @keyframes spin-aura {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .animate-spin-aura {
+        animation: spin-aura 4s linear infinite;
+    }
+    
+    /* Aura Circle Border Effects */
+    .aura-rainbow {
+        border: 4px solid transparent;
+        background: linear-gradient(white, white) padding-box,
+                    linear-gradient(0deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff, #ff0000) border-box;
+    }
+    
+    .aura-frost {
+        border: 4px solid #87ceeb;
+        box-shadow: 0 0 20px #00ffff, 0 0 40px #87ceeb, inset 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+    
+    .aura-shadow {
+        border: 4px solid #4b0082;
+        box-shadow: 0 0 20px #4b0082, 0 0 40px #2f1847, 0 0 60px rgba(0, 0, 0, 0.8);
+    }
+    
+    .aura-lava {
+        border: 4px solid #ff4500;
+        box-shadow: 0 0 20px #ff4500, 0 0 40px #ff8c00, 0 0 60px #ffd700;
+    }
+    
+    .aura-gradient {
+        border: 4px solid transparent;
+        background: linear-gradient(white, white) padding-box,
+                    linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4) border-box;
+    }
+    
+    .aura-sparkle {
+        border: 4px solid #FFD700;
+        box-shadow: 0 0 20px #FFD700, 10px 10px 5px rgba(255, 255, 255, 0.8), -10px -10px 5px rgba(255, 255, 255, 0.8);
+    }
+    
+    .aura-plasma {
+        border: 4px solid #00ffff;
+        box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+    }
+    
+    .aura-nature {
+        border: 4px solid #50C878;
+        box-shadow: 0 0 20px #50C878, 0 0 40px #3cb371, inset 0 0 10px rgba(80, 200, 120, 0.3);
+    }
   `}</style>
 );
 

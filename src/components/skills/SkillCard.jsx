@@ -27,6 +27,21 @@ const AXOLOTL_NOTE_MAP = {
     'Black': 'g5'
 };
 
+// Aura effects for battle mob display
+const AURA_EFFECTS = ['rainbow', 'frost', 'shadow', 'lava', 'gradient', 'sparkle', 'plasma', 'nature'];
+
+// Aura adjectives mapping
+const AURA_ADJECTIVES = {
+    'frost': 'Frozen',
+    'lava': 'Flaming',
+    'shadow': 'Shadowy',
+    'rainbow': 'Prismatic',
+    'gradient': 'Shifting',
+    'sparkle': 'Glittering',
+    'plasma': 'Volatile',
+    'nature': 'Overgrown'
+};
+
 // Helper: clamp a value between min and max
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -92,6 +107,10 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     
     // Ref to track if patterns game session was initialized for the current battle
     const simonSessionStartedRef = useRef(false);
+    
+    // Aura effect state for battle mob display
+    const [selectedAura, setSelectedAura] = useState(null);
+    const auraSelectedRef = useRef(false);
 
     // Helper function to play axolotl-specific note with fallback to click
     const playAxolotlNote = useCallback((color) => {
@@ -180,6 +199,11 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
             mobSrc = HOSTILE_MOBS[displayMobName] || BASE_ASSETS.axolotls.Pink;
         }
     }
+    
+    // Add aura adjective to mob name when battling
+    const displayMobNameWithAura = isBattling && selectedAura && AURA_ADJECTIVES[selectedAura]
+        ? `${AURA_ADJECTIVES[selectedAura]} ${displayMobName}`
+        : displayMobName;
 
     const gemStyle = {}; 
 
@@ -249,6 +273,18 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         if (damageNumbers.length > prevDamageCount.current) { setIsHit(true); setTimeout(() => setIsHit(false), 400); }
         prevDamageCount.current = damageNumbers.length;
     }, [damageNumbers]);
+
+    // Select random aura when entering battle
+    useEffect(() => {
+        if (isBattling && !auraSelectedRef.current) {
+            const randomAura = AURA_EFFECTS[Math.floor(Math.random() * AURA_EFFECTS.length)];
+            setSelectedAura(randomAura);
+            auraSelectedRef.current = true;
+        } else if (!isBattling && auraSelectedRef.current) {
+            setSelectedAura(null);
+            auraSelectedRef.current = false;
+        }
+    }, [isBattling]);
 
     // Detect wrong reading answer based on spoken text changes
     useEffect(() => {
@@ -427,6 +463,13 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                     {!isBattling && <div className="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-white border border-white/20 z-20"><div className="text-xs text-gray-400 uppercase">{skillName}</div><div className="text-lg leading-none">{config.fantasyName}</div></div>}
                     {!isBattling && <div className="absolute top-2 right-2 z-20"><div className={`bg-black/60 px-3 py-1 rounded border border-white/20 text-3xl font-bold ${levelTextColor}`}>Lvl {data.level}</div></div>}
                     {showMob && <div className="relative z-10 flex items-center justify-center h-full max-h-[200px]">
+                        {/* Spinning aura circle - only during battle */}
+                        {isBattling && selectedAura && (
+                            <div 
+                                className={`absolute w-40 h-40 rounded-full animate-spin-aura opacity-60 aura-${selectedAura}`}
+                                style={{ zIndex: 1 }}
+                            ></div>
+                        )}
                         <SafeImage 
                             key={displayMobName} 
                             src={mobSrc} 
@@ -436,7 +479,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                 w-auto h-auto object-contain drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-transform duration-100 
                                 ${isHit ? 'animate-knockback' : bossHealing ? 'animate-shake' : 'animate-bob'} 
                                 ${bossHealing ? 'brightness-150 hue-rotate-90' : ''}
-                            `} 
+                            `}
+                            style={{ zIndex: 10, position: 'relative' }}
                         />
                         {damageNumbers.map(dmg => (
                             <div 
@@ -631,12 +675,12 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                 {cardContent}
                             </div>
                             {/* Battle Info Side Panel - Offset to the right with gap */}
-                            {/* Positioning: 50% (center) + 225px (half of scaled card 450px) + 20px (gap) */}
+                            {/* Positioning: 50% (center) + 225px (half of scaled card 450px) + 30px (gap) */}
                             <div 
-                                className="absolute left-[calc(50%+225px+20px)] top-1/2 -translate-y-1/2"
+                                className="absolute left-[calc(50%+225px+30px)] top-0"
                                 style={{
                                     transform: 'scale(1.5)',
-                                    transformOrigin: 'left center',
+                                    transformOrigin: 'left top',
                                 }}
                             >
                                 <div 
@@ -661,25 +705,12 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                         <div className="absolute top-1 right-2 w-2 h-2 bg-amber-900 rounded-full border border-amber-950"></div>
                                     </div>
 
-                                    {/* Photo area with mob image */}
-                                    <div className="p-2 bg-gradient-to-b from-amber-50 to-stone-200">
-                                        <div className="bg-black/80 border-2 border-amber-900 p-1 relative overflow-hidden">
-                                            <div className="relative w-full h-20 flex items-center justify-center">
-                                                <img 
-                                                    src={mobSrc} 
-                                                    alt={displayMobName} 
-                                                    className="max-w-[60px] max-h-[60px] object-contain drop-shadow-lg"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     {/* Info sections with vintage styling */}
                                     <div className="p-2 space-y-1.5">
                                         {/* Enemy Name */}
                                         <div className="bg-amber-900/20 border-2 border-amber-900/40 rounded p-1.5">
                                             <div className="text-[8px] text-amber-900 uppercase font-bold tracking-wide">Target</div>
-                                            <div className="text-stone-900 font-black text-sm leading-tight">{displayMobName}</div>
+                                            <div className="text-stone-900 font-black text-sm leading-tight">{displayMobNameWithAura}</div>
                                         </div>
 
                                         {/* Skill and Level in a row */}
