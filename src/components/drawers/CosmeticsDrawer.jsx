@@ -104,7 +104,7 @@ const CosmeticsDrawer = ({
                         <Sparkles size={20} /> Border Effects
                     </h3>
                     <div className="grid grid-cols-3 gap-3">
-                        {/* Badge-unlocked effects */}
+                        {/* All border effects (badge-unlocked and achievement-unlocked) */}
                         {BORDER_EFFECTS.map(effect => {
                             const unlocked = isBorderUnlocked(effect.badge);
                             const isSelected = selectedBorder === effect.id;
