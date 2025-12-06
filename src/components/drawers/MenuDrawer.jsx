@@ -76,7 +76,7 @@ const MenuDrawer = ({ isOpen, skills, stats }) => {
                 <div className="flex-1 overflow-y-auto pr-2 scrollbar-hide">
                     {activeTab === 'badges' ? (
                         /* Skill Badges Section */
-                        <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
                             {Object.keys(skills).map(key => {
                                 const userSkill = skills[key];
                                 const skillDifficulty = userSkill.difficulty || 1;
