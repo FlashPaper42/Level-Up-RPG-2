@@ -21,8 +21,8 @@ const MobWithAura = ({ mobSrc, aura, displayName, size = '100%', isHit = false, 
     // Normalize size - if it's a number, add 'px' suffix; otherwise use as-is
     const normalizedSize = typeof size === 'number' ? `${size}px` : size;
     
-    // Determine if we should fill the parent container (percentage or '100%')
-    const isFillContainer = normalizedSize.includes('%') || normalizedSize === '100%';
+    // Determine if we should fill the parent container (percentage-based sizing)
+    const isFillContainer = normalizedSize.includes('%');
     
     return (
         <div 
