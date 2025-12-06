@@ -631,10 +631,11 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                 {cardContent}
                             </div>
                             {/* Battle Info Side Panel - Offset to the right with gap */}
+                            {/* Positioning: 50% (center) + 225px (half of scaled card 450px) + 20px (gap) */}
                             <div 
                                 className="absolute left-[calc(50%+225px+20px)] top-1/2 -translate-y-1/2"
                                 style={{
-                                    transform: 'translateY(-50%) scale(1.5)',
+                                    transform: 'scale(1.5)',
                                     transformOrigin: 'left center',
                                 }}
                             >
