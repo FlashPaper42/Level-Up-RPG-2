@@ -204,6 +204,9 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     const displayMobNameWithAura = isBattling && selectedAura && AURA_ADJECTIVES[selectedAura]
         ? `${AURA_ADJECTIVES[selectedAura]} ${displayMobName}`
         : displayMobName;
+    
+    // Calculate mob/aura size based on skill and battle state
+    const mobSize = config.id === 'patterns' && isBattling ? '80px' : '160px';
 
     const gemStyle = {}; 
 
@@ -465,35 +468,26 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                     {showMob && <div className="relative z-10 flex items-center justify-center h-full max-h-[200px] w-full">
                         {/* Centered anchor point for both aura and mob */}
                         <div className="relative flex items-center justify-center">
-                            {(() => {
-                                // Calculate mob/aura size based on skill and battle state
-                                const mobSize = config.id === 'patterns' && isBattling ? '80px' : '160px';
-                                
-                                return (
-                                    <>
-                                        {/* Mob sprite - determines actual display size */}
-                                        <SafeImage 
-                                            key={displayMobName} 
-                                            src={mobSrc} 
-                                            alt={displayMobName} 
-                                            style={{ width: mobSize, height: mobSize }}
-                                            className={`
-                                                relative z-10
-                                                object-contain drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-transform duration-100 
-                                                ${isHit ? 'animate-knockback' : bossHealing ? 'animate-shake' : 'animate-bob'} 
-                                                ${bossHealing ? 'brightness-150 hue-rotate-90' : ''}
-                                            `}
-                                        />
-                                        {/* Spinning aura circle - only during battle, centered on mob */}
-                                        {isBattling && selectedAura && (
-                                            <div 
-                                                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-spin-aura opacity-60 z-0 aura-${selectedAura}`}
-                                                style={{ width: mobSize, height: mobSize }}
-                                            ></div>
-                                        )}
-                                    </>
-                                );
-                            })()}
+                            {/* Mob sprite - determines actual display size */}
+                            <SafeImage 
+                                key={displayMobName} 
+                                src={mobSrc} 
+                                alt={displayMobName} 
+                                style={{ width: mobSize, height: mobSize }}
+                                className={`
+                                    relative z-10
+                                    object-contain drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-transform duration-100 
+                                    ${isHit ? 'animate-knockback' : bossHealing ? 'animate-shake' : 'animate-bob'} 
+                                    ${bossHealing ? 'brightness-150 hue-rotate-90' : ''}
+                                `}
+                            />
+                            {/* Spinning aura circle - only during battle, centered on mob */}
+                            {isBattling && selectedAura && (
+                                <div 
+                                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-spin-aura opacity-60 z-0 aura-${selectedAura}`}
+                                    style={{ width: mobSize, height: mobSize }}
+                                ></div>
+                            )}
                         </div>
                         {damageNumbers.map(dmg => (
                             <div 
