@@ -18,6 +18,7 @@ import AchievementToast from './components/ui/AchievementToast';
 
 // Utils & Constants
 import { getRandomMob, getRandomFriendlyMob, getRandomMiniboss, getRandomBoss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getWordForDifficulty, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
+import { getRandomAura } from './utils/mobDisplayUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
     HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS, BOSS_MOBS, MINIBOSS_MOBS
@@ -73,7 +74,14 @@ const App = () => {
                 currentBoss: getRandomBoss(), // Stable boss for boss encounters
                 readingMob: skill.id === 'reading' ? getRandomMob(null) : null, // Stable mob for Reading card display
                 mathMob: skill.id === 'math' ? getRandomMob(null) : null, // Stable mob for Math card display
-                writingMob: skill.id === 'writing' ? getRandomMob(null) : null // Stable mob for Writing card display
+                writingMob: skill.id === 'writing' ? getRandomMob(null) : null, // Stable mob for Writing card display
+                // Auras for each mob type
+                readingMobAura: skill.id === 'reading' ? getRandomAura() : null,
+                mathMobAura: skill.id === 'math' ? getRandomAura() : null,
+                writingMobAura: skill.id === 'writing' ? getRandomAura() : null,
+                patternMobAura: skill.id === 'patterns' ? getRandomAura() : null,
+                currentMinibossAura: getRandomAura(), // Aura for miniboss encounters
+                currentBossAura: getRandomAura() // Aura for boss encounters
             }; 
         });
         let saved = localStorage.getItem(getStorageKey(profileId));
@@ -123,6 +131,19 @@ const App = () => {
                     if (key === 'writing' && !initial[key].writingMob) {
                         initial[key].writingMob = getRandomMob(null);
                     }
+                    // Ensure auras exist for combat skill mobs (backward compatibility)
+                    if (key === 'reading' && !initial[key].readingMobAura) {
+                        initial[key].readingMobAura = getRandomAura();
+                    }
+                    if (key === 'math' && !initial[key].mathMobAura) {
+                        initial[key].mathMobAura = getRandomAura();
+                    }
+                    if (key === 'writing' && !initial[key].writingMobAura) {
+                        initial[key].writingMobAura = getRandomAura();
+                    }
+                    if (key === 'patterns' && !initial[key].patternMobAura) {
+                        initial[key].patternMobAura = getRandomAura();
+                    }
                     // Ensure miniboss and boss mobs exist for combat skills (backward compatibility)
                     // Only initialize for skills that use the encounter type system (not cleaning or memory)
                     if (key !== 'cleaning' && key !== 'memory') {
@@ -131,6 +152,12 @@ const App = () => {
                         }
                         if (!initial[key].currentBoss) {
                             initial[key].currentBoss = getRandomBoss();
+                        }
+                        if (!initial[key].currentMinibossAura) {
+                            initial[key].currentMinibossAura = getRandomAura();
+                        }
+                        if (!initial[key].currentBossAura) {
+                            initial[key].currentBossAura = getRandomAura();
                         }
                     }
                 }); 
@@ -557,6 +584,12 @@ const App = () => {
             let newReadingMob = current.readingMob;
             let newMathMob = current.mathMob;
             let newWritingMob = current.writingMob;
+            let newReadingMobAura = current.readingMobAura;
+            let newMathMobAura = current.mathMobAura;
+            let newWritingMobAura = current.writingMobAura;
+            let newPatternMobAura = current.patternMobAura;
+            let newMinibossAura = current.currentMinibossAura;
+            let newBossAura = current.currentBossAura;
             
             // Calculate XP reward for this hit
             // Total XP is split evenly among all hits required to defeat the mob
@@ -628,13 +661,23 @@ const App = () => {
                 }
                 if (skillConfig.id === 'patterns') {
                     newPatternMob = getRandomMob(current.currentMob);
+                    newPatternMobAura = getRandomAura();
                 }
                 
                 // Update stable mobs for combat skills on completion
                 const combatSkillMobUpdates = {
-                    'reading': () => { newReadingMob = getRandomMob(current.readingMob); },
-                    'math': () => { newMathMob = getRandomMob(current.mathMob); },
-                    'writing': () => { newWritingMob = getRandomMob(current.writingMob); }
+                    'reading': () => { 
+                        newReadingMob = getRandomMob(current.readingMob);
+                        newReadingMobAura = getRandomAura();
+                    },
+                    'math': () => { 
+                        newMathMob = getRandomMob(current.mathMob);
+                        newMathMobAura = getRandomAura();
+                    },
+                    'writing': () => { 
+                        newWritingMob = getRandomMob(current.writingMob);
+                        newWritingMobAura = getRandomAura();
+                    }
                 };
                 
                 if (combatSkillMobUpdates[skillConfig.id]) {
@@ -644,11 +687,13 @@ const App = () => {
                 // Update miniboss when defeating a miniboss encounter
                 if (getEncounterType(current.level) === 'miniboss') {
                     newMiniboss = getRandomMiniboss();
+                    newMinibossAura = getRandomAura();
                 }
                 
                 // Update boss when defeating a boss encounter
                 if (getEncounterType(current.level) === 'boss') {
                     newBoss = getRandomBoss();
+                    newBossAura = getRandomAura();
                 }
                 
                 // Check for level restoration first
@@ -730,7 +775,13 @@ const App = () => {
                     currentBoss: newBoss,
                     readingMob: newReadingMob,
                     mathMob: newMathMob,
-                    writingMob: newWritingMob
+                    writingMob: newWritingMob,
+                    readingMobAura: newReadingMobAura,
+                    mathMobAura: newMathMobAura,
+                    writingMobAura: newWritingMobAura,
+                    patternMobAura: newPatternMobAura,
+                    currentMinibossAura: newMinibossAura,
+                    currentBossAura: newBossAura
                 }
             };
         });
@@ -1052,6 +1103,34 @@ const App = () => {
         }
     };
 
+    // Helper to get the aura for the current mob encounter
+    const getAuraForSkill = (skillConfig, userSkill) => {
+        // Memory and Cleaning don't use auras
+        if (skillConfig.id === 'memory' || skillConfig.id === 'cleaning') {
+            return null;
+        }
+        
+        const encounterType = getEncounterType(userSkill.level);
+        
+        if (encounterType === 'boss') {
+            return userSkill.currentBossAura;
+        }
+        
+        if (encounterType === 'miniboss') {
+            return userSkill.currentMinibossAura;
+        }
+        
+        // Combat skills have their own auras
+        const combatSkillAuras = {
+            'reading': userSkill.readingMobAura,
+            'math': userSkill.mathMobAura,
+            'writing': userSkill.writingMobAura,
+            'patterns': userSkill.patternMobAura
+        };
+        
+        return combatSkillAuras[skillConfig.id] || null;
+    };
+
     return (
         <div className="min-h-screen overflow-hidden relative flex flex-col bg-cover bg-center bg-no-repeat font-sans text-stone-100" style={containerStyle}>
             <GlobalStyles />
@@ -1264,7 +1343,9 @@ const App = () => {
                         >
                             <SkillCard 
                                 config={item} data={skills[item.id]} themeData={currentThemeData} isCenter={item.offset === 0} isBattling={item.offset === 0 && battlingSkillId === item.id}
-                                mobName={getMobForSkill(item, skills[item.id])} challenge={challengeData} isListening={isListening} spokenText={spokenText} damageNumbers={damageNumbers.filter(d => d.skillId === item.id)}
+                                mobName={getMobForSkill(item, skills[item.id])} 
+                                mobAura={getAuraForSkill(item, skills[item.id])}
+                                challenge={challengeData} isListening={isListening} spokenText={spokenText} damageNumbers={damageNumbers.filter(d => d.skillId === item.id)}
                                 onStartBattle={() => startBattle(item.id)} onEndBattle={endBattle}
                                 onMathSubmit={(val) => handleSuccessHit(item.id, val)} onMicClick={() => startVoiceListener(item.id)}
                                 difficulty={skills[item.id].difficulty || 1} 

@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
+import MobWithAura from '../ui/MobWithAura';
 import ParentalVerificationModal from '../ui/ParentalVerificationModal';
 import { BASE_ASSETS, FRIENDLY_MOBS, HOSTILE_MOBS, CHEST_BLOCKS, BOSS_MOBS, MINIBOSS_MOBS, DIFFICULTY_IMAGES, DIFFICULTY_CONTENT, HOMOPHONES } from '../../constants/gameData';
 import { playClick, getSfxVolume } from '../../utils/soundManager';
 import { calculateXPToLevel } from '../../utils/gameUtils';
+import { AURA_ADJECTIVES } from '../../utils/mobDisplayUtils';
 
 const PRESTIGE_LEVEL_THRESHOLD = 20;
 
@@ -25,21 +27,6 @@ const AXOLOTL_NOTE_MAP = {
     'Red': 'a4',
     'Green': 'b4',
     'Black': 'g5'
-};
-
-// Aura effects for battle mob display
-const AURA_EFFECTS = ['rainbow', 'frost', 'shadow', 'lava', 'gradient', 'sparkle', 'plasma', 'nature'];
-
-// Aura adjectives mapping
-const AURA_ADJECTIVES = {
-    'frost': 'Frozen',
-    'lava': 'Flaming',
-    'shadow': 'Shadowy',
-    'rainbow': 'Prismatic',
-    'gradient': 'Shifting',
-    'sparkle': 'Glittering',
-    'plasma': 'Volatile',
-    'nature': 'Overgrown'
 };
 
 // Helper: clamp a value between min and max
@@ -75,7 +62,7 @@ const getTempoDelays = (completedRounds, currentDifficulty) => {
     return { onDelay, offDelay };
 };
 
-const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, challenge, isListening, spokenText, damageNumbers, onStartBattle, onEndBattle, onMathSubmit, onMicClick, difficulty, setDifficulty, unlockedDifficulty, selectedBorder, borderColor, bossHealing }) => {
+const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mobAura, challenge, isListening, spokenText, damageNumbers, onStartBattle, onEndBattle, onMathSubmit, onMicClick, difficulty, setDifficulty, unlockedDifficulty, selectedBorder, borderColor, bossHealing }) => {
     const [mathInput, setMathInput] = useState('');
     const [isHit, setIsHit] = useState(false);
     const [isWrong, setIsWrong] = useState(false);
@@ -107,10 +94,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     
     // Ref to track if patterns game session was initialized for the current battle
     const simonSessionStartedRef = useRef(false);
-    
-    // Aura effect state for battle mob display
-    const [selectedAura, setSelectedAura] = useState(null);
-    const auraSelectedRef = useRef(false);
 
     // Helper function to play axolotl-specific note with fallback to click
     const playAxolotlNote = useCallback((color) => {
@@ -201,8 +184,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
     }
     
     // Add aura adjective to mob name when battling
-    const displayMobNameWithAura = isBattling && selectedAura && AURA_ADJECTIVES[selectedAura]
-        ? `${AURA_ADJECTIVES[selectedAura]} ${displayMobName}`
+    const displayMobNameWithAura = isBattling && mobAura && AURA_ADJECTIVES[mobAura]
+        ? `${AURA_ADJECTIVES[mobAura]} ${displayMobName}`
         : displayMobName;
     
     // Calculate mob/aura size based on skill and battle state
@@ -276,18 +259,6 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
         if (damageNumbers.length > prevDamageCount.current) { setIsHit(true); setTimeout(() => setIsHit(false), 400); }
         prevDamageCount.current = damageNumbers.length;
     }, [damageNumbers]);
-
-    // Select random aura when entering battle
-    useEffect(() => {
-        if (isBattling && !auraSelectedRef.current) {
-            const randomAura = AURA_EFFECTS[Math.floor(Math.random() * AURA_EFFECTS.length)];
-            setSelectedAura(randomAura);
-            auraSelectedRef.current = true;
-        } else if (!isBattling && auraSelectedRef.current) {
-            setSelectedAura(null);
-            auraSelectedRef.current = false;
-        }
-    }, [isBattling]);
 
     // Detect wrong reading answer based on spoken text changes
     useEffect(() => {
@@ -466,9 +437,17 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                     {!isBattling && <div className="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-white border border-white/20 z-20"><div className="text-xs text-gray-400 uppercase">{skillName}</div><div className="text-lg leading-none">{config.fantasyName}</div></div>}
                     {!isBattling && <div className="absolute top-2 right-2 z-20"><div className={`bg-black/60 px-3 py-1 rounded border border-white/20 text-3xl font-bold ${levelTextColor}`}>Lvl {data.level}</div></div>}
                     {showMob && <div className="relative z-10 flex items-center justify-center h-full max-h-[200px] w-full">
-                        {/* Centered anchor point for both aura and mob */}
-                        <div className="relative flex items-center justify-center">
-                            {/* Mob sprite - determines actual display size */}
+                        {/* Use MobWithAura component for battle mobs with aura, or plain image for non-battle */}
+                        {isBattling && mobAura ? (
+                            <MobWithAura
+                                mobSrc={mobSrc}
+                                aura={mobAura}
+                                displayName={displayMobNameWithAura}
+                                size={mobSize}
+                                isHit={isHit}
+                                bossHealing={bossHealing}
+                            />
+                        ) : (
                             <SafeImage 
                                 key={displayMobName} 
                                 src={mobSrc} 
@@ -481,14 +460,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                                     ${bossHealing ? 'brightness-150 hue-rotate-90' : ''}
                                 `}
                             />
-                            {/* Spinning aura circle - only during battle, centered on mob */}
-                            {isBattling && selectedAura && (
-                                <div 
-                                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-spin-aura opacity-60 z-0 aura-${selectedAura}`}
-                                    style={{ width: mobSize, height: mobSize }}
-                                ></div>
-                            )}
-                        </div>
+                        )}
                         {damageNumbers.map(dmg => (
                             <div 
                                 key={dmg.id} 
