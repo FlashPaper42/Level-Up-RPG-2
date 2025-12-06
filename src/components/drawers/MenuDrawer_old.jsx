@@ -1,18 +1,41 @@
 import React, { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, Trophy, Target, Zap } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { BADGE_TIERS, BASE_ASSETS, SKILL_DATA } from '../../constants/gameData';
-import { ACHIEVEMENTS, TIER_COLORS, TIER_NAMES } from '../../constants/achievements';
-import { 
-    isAchievementUnlocked, 
-    getCurrentTier, 
-    getNextTier, 
-    getTierProgress,
-    getAchievementDisplayName 
-} from '../../utils/achievementUtils';
 import { calculateXPToLevel } from '../../utils/gameUtils';
 
-const MenuDrawer = ({ isOpen, skills, stats }) => {
+// Placeholder achievements data structure
+const SPECIAL_ACHIEVEMENTS = [
+    {
+        id: 'phantom_hunter',
+        name: 'Phantom Hunter',
+        description: 'Collect 10 Phantoms',
+        icon: Trophy,
+        unlocked: false,
+        progress: 0,
+        target: 10
+    },
+    {
+        id: 'first_blood',
+        name: 'First Blood',
+        description: 'Defeat your first mob',
+        icon: Target,
+        unlocked: false,
+        progress: 0,
+        target: 1
+    },
+    {
+        id: 'completionist',
+        name: 'Completionist',
+        description: 'Unlock all badges for one skill',
+        icon: Zap,
+        unlocked: false,
+        progress: 0,
+        target: 1
+    }
+];
+
+const MenuDrawer = ({ isOpen, skills }) => {
     const [activeTab, setActiveTab] = useState('badges');
     const totalLevels = Object.values(skills).reduce((acc, s) => acc + s.level, 0);
     
@@ -26,12 +49,6 @@ const MenuDrawer = ({ isOpen, skills, stats }) => {
         return acc + count;
     }, 0);
     
-    // Count unlocked achievements
-    const unlockedAchievements = Object.keys(ACHIEVEMENTS).filter(id => 
-        isAchievementUnlocked(id, stats, skills)
-    ).length;
-    const totalAchievements = Object.keys(ACHIEVEMENTS).length;
-    
     return (
         <div 
             className={`fixed h-full w-[75%] md:w-[60%] bg-[#1a1a1a]/95 backdrop-blur-md z-50 border-l-4 border-stone-600 shadow-2xl transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
@@ -44,7 +61,6 @@ const MenuDrawer = ({ isOpen, skills, stats }) => {
                     <div className="flex gap-6 text-stone-400 text-2xl">
                         <p>Total Level: <span className="text-white font-bold">{totalLevels}</span></p>
                         <p>Badges: <span className="text-yellow-400 font-bold">{totalBadges}</span></p>
-                        <p>Achievements: <span className="text-green-400 font-bold">{unlockedAchievements}/{totalAchievements}</span></p>
                     </div>
                 </div>
                 
@@ -157,128 +173,53 @@ const MenuDrawer = ({ isOpen, skills, stats }) => {
                     ) : (
                         /* Special Achievements Section */
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            {Object.values(ACHIEVEMENTS).map(achievement => {
+                            {SPECIAL_ACHIEVEMENTS.map(achievement => {
                                 const Icon = achievement.icon;
-                                const unlocked = isAchievementUnlocked(achievement.id, stats, skills);
-                                
-                                // For tiered achievements
-                                if (achievement.isTiered) {
-                                    const currentTierIndex = getCurrentTier(achievement.id, stats, skills);
-                                    const nextTier = getNextTier(achievement.id, stats, skills);
-                                    const progress = achievement.getProgress(stats, skills);
-                                    const tierProgress = getTierProgress(achievement.id, stats, skills);
-                                    const displayName = getAchievementDisplayName(achievement.id, stats, skills);
-                                    
-                                    const tierColor = unlocked && currentTierIndex >= 0 
-                                        ? TIER_COLORS[currentTierIndex + 1] 
-                                        : null;
-                                    
-                                    return (
-                                        <div 
-                                            key={achievement.id}
-                                            className={`p-4 rounded-xl border-2 transition-all ${
-                                                unlocked
-                                                    ? `border-2`
-                                                    : 'bg-black/40 border-stone-600'
-                                            }`}
-                                            style={unlocked && tierColor ? {
-                                                borderColor: tierColor.border,
-                                                background: `linear-gradient(to bottom right, ${tierColor.bg}, rgba(0,0,0,0.4))`
-                                            } : {}}
-                                        >
-                                            <div className="flex flex-col gap-2">
-                                                {/* Icon */}
-                                                <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center mx-auto ${
-                                                    unlocked
-                                                        ? ''
-                                                        : 'border-stone-600 bg-stone-900/50'
-                                                }`}
-                                                style={unlocked && tierColor ? {
-                                                    borderColor: tierColor.border,
-                                                    backgroundColor: tierColor.bg
-                                                } : {}}
-                                                >
-                                                    {unlocked ? (
-                                                        <Icon size={24} className={tierColor ? tierColor.text : 'text-yellow-400'} />
-                                                    ) : (
-                                                        <Lock size={24} className="text-stone-500" />
-                                                    )}
-                                                </div>
-                                                
-                                                {/* Name & Description */}
-                                                <div className="text-center">
-                                                    <h4 className={`text-base font-bold ${
-                                                        unlocked ? (tierColor ? tierColor.text : 'text-yellow-400') : 'text-stone-500'
-                                                    }`}>
-                                                        {unlocked ? displayName : '???'}
-                                                    </h4>
-                                                    <p className="text-xs text-stone-400 mt-1">
-                                                        {unlocked ? achievement.description : 'Locked'}
-                                                    </p>
-                                                </div>
-                                                
-                                                {/* Progress Bar */}
-                                                {unlocked && nextTier && (
-                                                    <div className="mt-2">
-                                                        <div className="flex justify-between text-xs text-stone-400 mb-1">
-                                                            <span>{progress}</span>
-                                                            <span>{nextTier.level}</span>
-                                                        </div>
-                                                        <div className="w-full h-2 bg-stone-900 rounded-full border border-stone-600 overflow-hidden">
-                                                            <div 
-                                                                className="h-full transition-all duration-500"
-                                                                style={{ 
-                                                                    width: `${tierProgress}%`,
-                                                                    backgroundColor: tierColor ? tierColor.border : '#FFD700'
-                                                                }}
-                                                            ></div>
-                                                        </div>
-                                                        <p className="text-xs text-stone-500 mt-1 text-center">
-                                                            Next: {TIER_NAMES[currentTierIndex + 1]}
-                                                        </p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                }
-                                
-                                // For one-time achievements
                                 return (
                                     <div 
                                         key={achievement.id}
                                         className={`p-4 rounded-xl border-2 transition-all ${
-                                            unlocked
+                                            achievement.unlocked
                                                 ? 'bg-gradient-to-br from-yellow-900/40 to-stone-800/40 border-yellow-500'
                                                 : 'bg-black/40 border-stone-600'
                                         }`}
                                     >
                                         <div className="flex flex-col items-center text-center gap-2">
-                                            <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center ${
-                                                unlocked
+                                            <div className={`w-16 h-16 rounded-full border-2 flex items-center justify-center ${
+                                                achievement.unlocked
                                                     ? 'border-yellow-400 bg-yellow-900/50'
                                                     : 'border-stone-600 bg-stone-900/50'
                                             }`}>
-                                                {unlocked ? (
-                                                    <Icon size={24} className="text-yellow-400" />
+                                                {achievement.unlocked ? (
+                                                    <Icon size={32} className="text-yellow-400" />
                                                 ) : (
-                                                    <Lock size={24} className="text-stone-500" />
+                                                    <Lock size={32} className="text-stone-500" />
                                                 )}
                                             </div>
                                             <div>
-                                                <h4 className={`text-base font-bold ${
-                                                    unlocked ? 'text-yellow-400' : 'text-stone-500'
+                                                <h4 className={`text-lg font-bold ${
+                                                    achievement.unlocked ? 'text-yellow-400' : 'text-stone-500'
                                                 }`}>
-                                                    {unlocked ? achievement.name : '???'}
+                                                    {achievement.unlocked ? achievement.name : '???'}
                                                 </h4>
-                                                <p className="text-xs text-stone-400 mt-1">
-                                                    {unlocked ? achievement.description : 'Locked'}
+                                                <p className="text-sm text-stone-400 mt-1">
+                                                    {achievement.unlocked ? achievement.description : 'Locked'}
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
                                 );
                             })}
+                            
+                            {/* Placeholder for more achievements */}
+                            <div className="p-4 rounded-xl border-2 border-dashed border-stone-700 bg-stone-900/20">
+                                <div className="flex flex-col items-center justify-center text-center gap-2 h-full">
+                                    <div className="w-16 h-16 rounded-full border-2 border-dashed border-stone-700 flex items-center justify-center">
+                                        <span className="text-stone-600 text-2xl">+</span>
+                                    </div>
+                                    <p className="text-sm text-stone-600">More Coming Soon</p>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>

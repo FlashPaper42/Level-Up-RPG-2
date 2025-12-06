@@ -14,19 +14,24 @@ import CosmeticsDrawer from './components/drawers/CosmeticsDrawer';
 import MenuDrawer from './components/drawers/MenuDrawer';
 import SkillCard from './components/skills/SkillCard';
 import PhantomEvent from './components/PhantomEvent';
+import AchievementToast from './components/ui/AchievementToast';
 
 // Utils & Constants
 import { getRandomMob, getRandomFriendlyMob, getRandomMiniboss, getRandomBoss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getWordForDifficulty, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
-    HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS
+    HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS, BOSS_MOBS, MINIBOSS_MOBS
 } from './constants/gameData';
 import { 
     getBGMManager, setSfxVolume, 
     playActionCardLeft, playActionCardRight, playClick, 
     playDeath, playFail, playLevelUp, playNotification, playSuccessfulHit,
-    playMobHurt, playMobDeath
+    playMobHurt, playMobDeath, playAchievement
 } from './utils/soundManager';
+import { 
+    getDefaultStats, getNewlyUnlockedAchievements, getNewTierAchievements,
+    addUniqueToArray, recordLoginDate
+} from './utils/achievementUtils';
 
 // Parent verification privilege constants
 const PARENT_PRIVILEGE_LEVEL = 200;
@@ -149,6 +154,23 @@ const App = () => {
         return 'minecraft';
     };
     
+    const loadStats = (profileId) => {
+        let saved = localStorage.getItem(getStorageKey(profileId));
+        if (!saved && profileId === 1) {
+            saved = localStorage.getItem('heroSkills_v23');
+        }
+        try {
+            const data = JSON.parse(saved);
+            if (data.stats) {
+                // Merge with default stats to ensure all fields exist
+                return { ...getDefaultStats(), ...data.stats };
+            }
+        } catch (e) {
+            console.warn('Failed to parse stats:', e);
+        }
+        return getDefaultStats();
+    };
+    
     const getProfileStats = (id, liveSkills = null) => {
         const initial = {};
         SKILL_DATA.forEach(skill => { initial[skill.id] = { level: 1 }; });
@@ -191,6 +213,8 @@ const App = () => {
 
     const [skills, setSkills] = useState(() => loadSkills(currentProfile));
     const [activeTheme, setActiveTheme] = useState(() => loadTheme(currentProfile));
+    const [stats, setStats] = useState(() => loadStats(currentProfile));
+    const [achievementToast, setAchievementToast] = useState(null);
     const [battlingSkillId, setBattlingSkillId] = useState(null);
     const [battleDifficulty, setBattleDifficulty] = useState(null); // Track battle's starting difficulty for consistent challenge generation
     const [challengeData, setChallengeData] = useState(null);
@@ -228,12 +252,12 @@ const App = () => {
     });
 
     useEffect(() => { 
-        const dataToSave = { skills: skills, theme: activeTheme };
+        const dataToSave = { skills: skills, theme: activeTheme, stats: stats };
         localStorage.setItem(getStorageKey(currentProfile), JSON.stringify(dataToSave)); 
         localStorage.setItem('currentProfile_v1', currentProfile);
         localStorage.setItem('heroProfileNames_v1', JSON.stringify(profileNames));
         localStorage.setItem('heroParentStatus_v1', JSON.stringify(parentStatus));
-    }, [skills, currentProfile, activeTheme, profileNames, parentStatus]);
+    }, [skills, currentProfile, activeTheme, profileNames, parentStatus, stats]);
     
     // Save cosmetics preferences
     useEffect(() => {
@@ -379,6 +403,29 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [battlingSkillId, skills]); // Intentionally exclude battleDifficulty to prevent infinite loop
 
+    // Check for achievement unlocks
+    const checkAchievements = useCallback((oldStats, newStats, oldSkills, newSkills) => {
+        // Check for newly unlocked one-time achievements
+        const newlyUnlocked = getNewlyUnlockedAchievements(oldStats, newStats, oldSkills, newSkills);
+        
+        // Check for tiered achievement progress
+        const newTiers = getNewTierAchievements(oldStats, newStats, oldSkills, newSkills);
+        
+        // Show toast for the first achievement/tier unlocked
+        if (newlyUnlocked.length > 0) {
+            // Show first newly unlocked achievement
+            setAchievementToast({ achievementId: newlyUnlocked[0], tierIndex: null });
+            playAchievement();
+        } else if (newTiers.length > 0) {
+            // Show first new tier
+            setAchievementToast({ 
+                achievementId: newTiers[0].achievementId, 
+                tierIndex: newTiers[0].tierIndex 
+            });
+            playAchievement();
+        }
+    }, []);
+
     const handleSuccessHit = (skillId, isWrong) => {
         // Handle wrong answer
         if (isWrong === 'WRONG') {
@@ -417,6 +464,21 @@ const App = () => {
                     // Death sequence - play UI death sound
                     playDeath();
                     setShowDeathOverlay(true);
+                    
+                    // Track death in stats
+                    setStats(prevStats => {
+                        const newStats = {
+                            ...prevStats,
+                            totalDeaths: (prevStats.totalDeaths || 0) + 1
+                        };
+                        
+                        // Check achievements after death
+                        setTimeout(() => {
+                            checkAchievements(prevStats, newStats, skills, skills);
+                        }, 100);
+                        
+                        return newStats;
+                    });
                     
                     // Reduce player level by 1 for the active skill (minimum level 1)
                     if (battlingSkillId) {
@@ -533,6 +595,45 @@ const App = () => {
                 const xpAlreadyAwarded = hitsDealt * xpPerHit;
                 const remainingXP = totalXPReward - xpAlreadyAwarded;
                 newXp += remainingXP;
+                
+                // Track stats for mob defeat
+                const encounterType = getEncounterType(current.level);
+                setStats(prevStats => {
+                    const newStats = { ...prevStats };
+                    
+                    // Increment battle session counter
+                    newStats.battlesThisSession = (newStats.battlesThisSession || 0) + 1;
+                    
+                    if (encounterType === 'boss') {
+                        // Boss defeated
+                        newStats.totalBossesDefeated = (newStats.totalBossesDefeated || 0) + 1;
+                        newStats.uniqueBossesDefeated = addUniqueToArray(
+                            newStats.uniqueBossesDefeated || [], 
+                            current.currentBoss
+                        );
+                    } else if (encounterType === 'miniboss') {
+                        // Miniboss defeated
+                        newStats.totalMinibossesDefeated = (newStats.totalMinibossesDefeated || 0) + 1;
+                        newStats.uniqueMinibossesDefeated = addUniqueToArray(
+                            newStats.uniqueMinibossesDefeated || [],
+                            current.currentMiniboss
+                        );
+                    } else {
+                        // Regular mob defeated
+                        newStats.totalMobsDefeated = (newStats.totalMobsDefeated || 0) + 1;
+                        newStats.uniqueMobsDefeated = addUniqueToArray(
+                            newStats.uniqueMobsDefeated || [],
+                            current.currentMob
+                        );
+                    }
+                    
+                    // Check achievements after stats update
+                    setTimeout(() => {
+                        checkAchievements(prevStats, newStats, prev, { ...prev, [skillId]: { ...current, level: newLevel } });
+                    }, 100);
+                    
+                    return newStats;
+                });
                 
                 // Update stable mobs for memory and patterns skills on completion
                 if (skillConfig.id === 'memory') {
@@ -679,6 +780,46 @@ const App = () => {
             };
         });
     };
+    
+    // Wrapper for setActiveTheme to track theme changes
+    const handleThemeChange = useCallback((newTheme) => {
+        if (newTheme !== activeTheme) {
+            setActiveTheme(newTheme);
+            setStats(prevStats => {
+                const newStats = {
+                    ...prevStats,
+                    themeChanges: (prevStats.themeChanges || 0) + 1
+                };
+                
+                // Check achievements
+                setTimeout(() => {
+                    checkAchievements(prevStats, newStats, skills, skills);
+                }, 100);
+                
+                return newStats;
+            });
+        }
+    }, [activeTheme, skills, checkAchievements]);
+    
+    // Wrapper for setSelectedBorder to track border changes
+    const handleBorderChange = useCallback((newBorder) => {
+        if (newBorder !== selectedBorder) {
+            setSelectedBorder(newBorder);
+            setStats(prevStats => {
+                const newStats = {
+                    ...prevStats,
+                    borderChanges: (prevStats.borderChanges || 0) + 1
+                };
+                
+                // Check achievements
+                setTimeout(() => {
+                    checkAchievements(prevStats, newStats, skills, skills);
+                }, 100);
+                
+                return newStats;
+            });
+        }
+    }, [selectedBorder, skills, checkAchievements]);
 
     // Award a free level from phantom click
     const handlePhantomLevelAward = (skillId) => {
@@ -854,6 +995,21 @@ const App = () => {
 
     useEffect(() => { if(lootBox) setTimeout(() => setLootBox(null), 4000); }, [lootBox]);
     
+    // Achievement toast auto-dismiss
+    useEffect(() => { 
+        if(achievementToast) {
+            setTimeout(() => setAchievementToast(null), 6000); 
+        }
+    }, [achievementToast]);
+    
+    // Track login date (once per day)
+    useEffect(() => {
+        setStats(prev => ({
+            ...prev,
+            loginDates: recordLoginDate(prev.loginDates || [])
+        }));
+    }, []); // Run once on mount
+    
     const getVisibleItems = () => {
         const items = [];
         for (let i = -2; i <= 2; i++) {
@@ -935,9 +1091,9 @@ const App = () => {
             <CosmeticsDrawer 
                 isOpen={isCosmeticsOpen} 
                 activeTheme={activeTheme} 
-                setActiveTheme={setActiveTheme}
+                setActiveTheme={handleThemeChange}
                 selectedBorder={selectedBorder}
-                setSelectedBorder={setSelectedBorder}
+                setSelectedBorder={handleBorderChange}
                 borderColor={borderColor}
                 setBorderColor={setBorderColor}
                 unlockedBorders={unlockedBorders}
@@ -995,7 +1151,7 @@ const App = () => {
                     onClick={() => { setIsMenuOpen(false); playClick(); }}
                 />
             )}
-            <MenuDrawer isOpen={isMenuOpen} skills={skills} />
+            <MenuDrawer isOpen={isMenuOpen} skills={skills} stats={stats} />
             
             {/* Bottom Right Bug Report Button */}
             <button 
@@ -1128,6 +1284,14 @@ const App = () => {
             </main>
             {lootBox && <div className="fixed bottom-8 left-1/2 z-50 animate-toast w-full max-w-2xl pointer-events-none transform -translate-x-1/2"><div className="bg-black/80 border-4 border-yellow-500 rounded-full p-4 px-12 flex items-center justify-between shadow-[0_0_30px_rgba(255,215,0,0.6)] backdrop-blur-md mx-4"><div className="flex items-center gap-4"><div className="bg-yellow-500/20 p-3 rounded-full border-2 border-yellow-400"><Gift size={32} className="text-yellow-300 animate-bounce" /></div><div className="text-left"><h2 className="text-2xl text-yellow-400 font-bold leading-none mb-1">LEVEL {lootBox.level} REACHED!</h2><p className="text-stone-300 text-sm">{lootBox.skillName}</p></div></div><div className="text-right pl-8 border-l-2 border-stone-600 flex items-center gap-4"><SafeImage src={lootBox.img} alt="Badge" className="w-12 h-12 object-contain" /><div><p className="text-stone-400 text-xs uppercase tracking-wider">Unlocked</p><p className="text-2xl text-green-400 font-bold">{lootBox.item}</p></div></div></div></div>}
             
+            {/* Achievement Toast */}
+            {achievementToast && (
+                <AchievementToast 
+                    achievementId={achievementToast.achievementId}
+                    tierIndex={achievementToast.tierIndex}
+                />
+            )}
+            
             {/* Death Overlay - Minecraft-style YOU DIED screen */}
             {showDeathOverlay && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-red-900/60 animate-pulse pointer-events-none">
@@ -1156,7 +1320,22 @@ const App = () => {
             {/* Phantom Fly-By Bonus Event */}
             <PhantomEvent 
                 battlingSkillId={battlingSkillId} 
-                onAwardLevel={handlePhantomLevelAward} 
+                onAwardLevel={handlePhantomLevelAward}
+                onPhantomCaught={() => {
+                    setStats(prevStats => {
+                        const newStats = {
+                            ...prevStats,
+                            phantomsCaught: (prevStats.phantomsCaught || 0) + 1
+                        };
+                        
+                        // Check achievements
+                        setTimeout(() => {
+                            checkAchievements(prevStats, newStats, skills, skills);
+                        }, 100);
+                        
+                        return newStats;
+                    });
+                }}
             />
         </div>
     );
