@@ -466,7 +466,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                         {/* Spinning aura circle - only during battle */}
                         {isBattling && selectedAura && (
                             <div 
-                                className={`absolute w-40 h-40 rounded-full animate-spin-aura opacity-60 z-0 aura-${selectedAura}`}
+                                className={`absolute w-40 h-40 animate-spin-aura opacity-60 z-0 aura-${selectedAura}`}
                             ></div>
                         )}
                         <SafeImage 
