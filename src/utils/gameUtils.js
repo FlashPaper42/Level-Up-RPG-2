@@ -1,4 +1,4 @@
-import { HOSTILE_MOBS, FRIENDLY_MOBS, CHEST_BLOCKS, SPECIAL_CHESTS, MINIBOSS_MOBS, READING_WORDS, FUNNY_LONG_WORDS, SPELLING_ITEMS, DIFFICULTY_CONTENT, BASE_ASSETS, WRITING_WORD_INDEX, WRITING_DIFFICULTY_POOLS } from '../constants/gameData';
+import { HOSTILE_MOBS, FRIENDLY_MOBS, CHEST_BLOCKS, SPECIAL_CHESTS, MINIBOSS_MOBS, BOSS_MOBS, READING_WORDS, FUNNY_LONG_WORDS, SPELLING_ITEMS, DIFFICULTY_CONTENT, BASE_ASSETS, WRITING_WORD_INDEX, WRITING_DIFFICULTY_POOLS } from '../constants/gameData';
 
 export const getRandomMob = (exclude) => { 
     const pool = Object.keys(HOSTILE_MOBS).filter(m => m !== exclude); 
@@ -14,6 +14,11 @@ export const getRandomFriendlyMob = () => {
 export const getRandomMiniboss = () => {
     const minibossKeys = Object.keys(MINIBOSS_MOBS);
     return minibossKeys.length > 0 ? minibossKeys[Math.floor(Math.random() * minibossKeys.length)] : 'Wither Skeleton';
+};
+
+export const getRandomBoss = () => {
+    const bossKeys = Object.keys(BOSS_MOBS);
+    return bossKeys.length > 0 ? bossKeys[Math.floor(Math.random() * bossKeys.length)] : 'Wither';
 };
 
 // Determines encounter type based on level cycle pattern
@@ -46,7 +51,8 @@ export const getMobForSkill = (skillConfig, userSkill) => {
     const encounterType = getEncounterType(userSkill.level);
     
     if (encounterType === 'boss') {
-        return skillConfig.boss;
+        // Return stored boss to prevent random changes on re-render
+        return userSkill.currentBoss || getRandomBoss();
     }
     
     if (encounterType === 'miniboss') {

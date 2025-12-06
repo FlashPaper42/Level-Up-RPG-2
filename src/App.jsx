@@ -15,7 +15,7 @@ import SkillCard from './components/skills/SkillCard';
 import PhantomEvent from './components/PhantomEvent';
 
 // Utils & Constants
-import { getRandomMob, getRandomFriendlyMob, getRandomMiniboss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getWordForDifficulty, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
+import { getRandomMob, getRandomFriendlyMob, getRandomMiniboss, getRandomBoss, getMobForSkill, getEncounterType, generateMathProblem, getReadingWord, getWordForDifficulty, calculateDamage, calculateMobHealth, calculateXPReward, calculateXPToLevel } from './utils/gameUtils';
 import { 
     BASE_ASSETS, THEME_CONFIG, SKILL_DATA, 
     HOMOPHONES, DIFFICULTY_CONTENT, HOSTILE_MOBS
@@ -64,6 +64,7 @@ const App = () => {
                 memoryMob: skill.id === 'memory' ? getRandomFriendlyMob() : null, // Stable mob for Memory card display
                 patternMob: skill.id === 'patterns' ? getRandomMob(null) : null, // Stable hostile mob for Patterns card display
                 currentMiniboss: getRandomMiniboss(), // Stable miniboss for miniboss encounters
+                currentBoss: getRandomBoss(), // Stable boss for boss encounters
                 readingMob: skill.id === 'reading' ? getRandomMob(null) : null, // Stable mob for Reading card display
                 mathMob: skill.id === 'math' ? getRandomMob(null) : null, // Stable mob for Math card display
                 writingMob: skill.id === 'writing' ? getRandomMob(null) : null // Stable mob for Writing card display
@@ -489,6 +490,7 @@ const App = () => {
             let newMemoryMob = current.memoryMob;
             let newPatternMob = current.patternMob;
             let newMiniboss = current.currentMiniboss;
+            let newBoss = current.currentBoss;
             let newReadingMob = current.readingMob;
             let newMathMob = current.mathMob;
             let newWritingMob = current.writingMob;
@@ -540,6 +542,11 @@ const App = () => {
                 // Update miniboss when defeating a miniboss encounter
                 if (getEncounterType(current.level) === 'miniboss') {
                     newMiniboss = getRandomMiniboss();
+                }
+                
+                // Update boss when defeating a boss encounter
+                if (getEncounterType(current.level) === 'boss') {
+                    newBoss = getRandomBoss();
                 }
                 
                 // Check for level restoration first
@@ -618,6 +625,7 @@ const App = () => {
                     memoryMob: newMemoryMob,
                     patternMob: newPatternMob,
                     currentMiniboss: newMiniboss,
+                    currentBoss: newBoss,
                     readingMob: newReadingMob,
                     mathMob: newMathMob,
                     writingMob: newWritingMob
