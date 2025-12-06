@@ -620,7 +620,8 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                         className="fixed inset-0 z-50 flex items-center justify-center"
                         onClick={onEndBattle}
                     >
-                        <div className="flex items-start gap-6" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-center relative" onClick={(e) => e.stopPropagation()}>
+                            {/* Battle Card - Centered */}
                             <div 
                                 style={{
                                     transform: 'scale(1.5)',
@@ -629,48 +630,89 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                             >
                                 {cardContent}
                             </div>
-                            {/* Battle Info Side Panel */}
+                            {/* Battle Info Side Panel - Offset to the right with gap */}
                             <div 
-                                className="bg-[#2b2b2b] border-4 border-stone-700 rounded-lg p-6 w-[350px]"
+                                className="absolute left-[calc(50%+225px+20px)] top-1/2 -translate-y-1/2"
                                 style={{
-                                    transform: 'scale(1.5)',
-                                    transformOrigin: 'top left',
-                                    boxShadow: '0 0 30px rgba(0,0,0,0.8)',
+                                    transform: 'translateY(-50%) scale(1.5)',
+                                    transformOrigin: 'left center',
                                 }}
                             >
-                                {/* Retro pixel-style header */}
-                                <div className="border-b-2 border-stone-600 pb-3 mb-4">
-                                    <div className="text-yellow-400 text-xs uppercase tracking-widest mb-1 font-bold" style={{ textShadow: '2px 2px 0 #000' }}>
-                                        Battle Info
+                                <div 
+                                    className="relative w-[175px] bg-gradient-to-br from-amber-100 via-yellow-50 to-amber-50 border-4 border-amber-800 rounded-lg overflow-hidden"
+                                    style={{
+                                        boxShadow: '0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(251,191,36,0.3)',
+                                    }}
+                                >
+                                    {/* Decorative corner accents */}
+                                    <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-red-700"></div>
+                                    <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-red-700"></div>
+                                    <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-red-700"></div>
+                                    <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-red-700"></div>
+                                    
+                                    {/* "WANTED" poster style header */}
+                                    <div className="bg-gradient-to-b from-red-700 to-red-800 p-2 border-b-4 border-amber-900 relative">
+                                        <div className="text-yellow-300 text-sm font-black uppercase tracking-wider text-center" style={{ textShadow: '2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000' }}>
+                                            ⚔ BATTLE ⚔
+                                        </div>
+                                        {/* Decorative rivets */}
+                                        <div className="absolute top-1 left-2 w-2 h-2 bg-amber-900 rounded-full border border-amber-950"></div>
+                                        <div className="absolute top-1 right-2 w-2 h-2 bg-amber-900 rounded-full border border-amber-950"></div>
                                     </div>
-                                </div>
 
-                                {/* Skill Card Type */}
-                                <div className="mb-4 bg-black/30 p-3 rounded border border-stone-600">
-                                    <div className="text-xs text-gray-400 uppercase mb-1">Skill Type</div>
-                                    <div className="text-white font-bold text-lg">{skillName}</div>
-                                    <div className="text-gray-300 text-sm">{config.fantasyName}</div>
-                                </div>
-
-                                {/* Enemy/Mob Name */}
-                                <div className="mb-4 bg-black/30 p-3 rounded border border-stone-600">
-                                    <div className="text-xs text-gray-400 uppercase mb-1">Enemy</div>
-                                    <div className="text-white font-bold text-2xl tracking-wide">{displayMobName}</div>
-                                </div>
-
-                                {/* Level */}
-                                <div className="mb-4 bg-black/30 p-3 rounded border border-stone-600">
-                                    <div className="text-xs text-gray-400 uppercase mb-1">Level</div>
-                                    <div className={`font-bold text-3xl ${levelTextColor}`} style={{ textShadow: '2px 2px 0 #000' }}>
-                                        {data.level}
+                                    {/* Photo area with mob image */}
+                                    <div className="p-2 bg-gradient-to-b from-amber-50 to-stone-200">
+                                        <div className="bg-black/80 border-2 border-amber-900 p-1 relative overflow-hidden">
+                                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')] opacity-10"></div>
+                                            <div className="relative w-full h-20 flex items-center justify-center">
+                                                <img 
+                                                    src={mobSrc} 
+                                                    alt={displayMobName} 
+                                                    className="max-w-[60px] max-h-[60px] object-contain drop-shadow-lg"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                {/* Flavor Text */}
-                                <div className="bg-black/30 p-3 rounded border border-stone-600">
-                                    <div className="text-xs text-gray-400 uppercase mb-2">Quest</div>
-                                    <div className="text-gray-200 text-sm leading-relaxed italic">
-                                        {config.taskDescription}
+                                    {/* Info sections with vintage styling */}
+                                    <div className="p-2 space-y-1.5">
+                                        {/* Enemy Name */}
+                                        <div className="bg-amber-900/20 border-2 border-amber-900/40 rounded p-1.5">
+                                            <div className="text-[8px] text-amber-900 uppercase font-bold tracking-wide">Target</div>
+                                            <div className="text-stone-900 font-black text-sm leading-tight">{displayMobName}</div>
+                                        </div>
+
+                                        {/* Skill and Level in a row */}
+                                        <div className="flex gap-1.5">
+                                            <div className="flex-1 bg-amber-900/20 border-2 border-amber-900/40 rounded p-1.5">
+                                                <div className="text-[8px] text-amber-900 uppercase font-bold">Skill</div>
+                                                <div className="text-stone-900 font-bold text-xs leading-tight">{skillName}</div>
+                                            </div>
+                                            <div className="flex-1 bg-amber-900/20 border-2 border-amber-900/40 rounded p-1.5">
+                                                <div className="text-[8px] text-amber-900 uppercase font-bold">Level</div>
+                                                <div className="font-black text-base leading-tight text-stone-900" style={{ 
+                                                    WebkitTextStroke: '0.5px rgba(0,0,0,0.5)',
+                                                    filter: 'drop-shadow(1px 1px 0 rgba(0,0,0,0.3))'
+                                                }}>
+                                                    {data.level}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Quest/Task */}
+                                        <div className="bg-amber-900/20 border-2 border-amber-900/40 rounded p-1.5">
+                                            <div className="text-[8px] text-amber-900 uppercase font-bold mb-0.5">Quest</div>
+                                            <div className="text-stone-800 text-[10px] leading-snug italic font-medium">
+                                                {config.taskDescription}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom stamp/seal effect */}
+                                    <div className="bg-gradient-to-t from-amber-900 to-amber-800 p-1 border-t-4 border-amber-950">
+                                        <div className="text-center text-yellow-200 text-[8px] font-bold uppercase tracking-widest">
+                                            {config.fantasyName}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
