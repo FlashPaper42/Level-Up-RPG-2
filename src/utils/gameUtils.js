@@ -42,10 +42,6 @@ export const getMobForSkill = (skillConfig, userSkill) => {
     if (skillConfig.id === 'memory') {
         return userSkill.memoryMob || getRandomFriendlyMob();
     }
-    // Patterns skill: Return stored patternMob (hostile mob) to prevent random changes on re-render
-    if (skillConfig.id === 'patterns') {
-        return userSkill.patternMob || getRandomMob(null);
-    }
     
     // Determine encounter type based on level cycle
     const encounterType = getEncounterType(userSkill.level);
@@ -60,11 +56,12 @@ export const getMobForSkill = (skillConfig, userSkill) => {
         return userSkill.currentMiniboss || getRandomMiniboss();
     }
     
-    // Combat skills (reading, math, writing): Return stored mob to prevent random changes on re-render
+    // Combat skills (reading, math, writing, patterns): Return stored mob to prevent random changes on re-render
     const combatSkillMobs = {
         'reading': userSkill.readingMob,
         'math': userSkill.mathMob,
-        'writing': userSkill.writingMob
+        'writing': userSkill.writingMob,
+        'patterns': userSkill.patternMob
     };
     
     if (skillConfig.id in combatSkillMobs) {

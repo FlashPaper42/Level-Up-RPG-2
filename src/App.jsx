@@ -117,6 +117,13 @@ const App = () => {
                     if (key === 'writing' && !initial[key].writingMob) {
                         initial[key].writingMob = getRandomMob(null);
                     }
+                    // Ensure miniboss and boss mobs exist (backward compatibility)
+                    if (!initial[key].currentMiniboss) {
+                        initial[key].currentMiniboss = getRandomMiniboss();
+                    }
+                    if (!initial[key].currentBoss) {
+                        initial[key].currentBoss = getRandomBoss();
+                    }
                 }); 
                 return initial; 
             } 
