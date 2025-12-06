@@ -362,54 +362,377 @@ const GlobalStyles = () => (
     
     /* Spinning Aura Animation for Battle Mob Display */
     @keyframes spin-aura {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% { transform: rotate(0deg) scale(1); }
+        100% { transform: rotate(360deg) scale(1); }
     }
     .animate-spin-aura {
         animation: spin-aura 4s linear infinite;
     }
     
-    /* Aura Circle Border Effects */
-    .aura-rainbow {
-        border: 4px solid transparent;
-        background: linear-gradient(white, white) padding-box,
-                    linear-gradient(0deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff, #ff0000) border-box;
+    /* Breathing/Pulsing Animation for Organic Auras */
+    @keyframes aura-breathe {
+        0%, 100% { 
+            transform: scale(1);
+            opacity: 0.6;
+        }
+        50% { 
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
     }
     
-    .aura-frost {
-        border: 4px solid #87ceeb;
-        box-shadow: 0 0 20px #00ffff, 0 0 40px #87ceeb, inset 0 0 10px rgba(255, 255, 255, 0.3);
+    /* Pulsing for Spiky Auras (no scale, just opacity) */
+    @keyframes aura-pulse-spiky {
+        0%, 100% { 
+            opacity: 0.7;
+        }
+        50% { 
+            opacity: 0.9;
+        }
     }
     
-    .aura-shadow {
-        border: 4px solid #4b0082;
-        box-shadow: 0 0 20px #4b0082, 0 0 40px #2f1847, 0 0 60px rgba(0, 0, 0, 0.8);
-    }
-    
-    .aura-lava {
-        border: 4px solid #ff4500;
-        box-shadow: 0 0 20px #ff4500, 0 0 40px #ff8c00, 0 0 60px #ffd700;
-    }
-    
-    .aura-gradient {
-        border: 4px solid transparent;
-        background: linear-gradient(white, white) padding-box,
-                    linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4) border-box;
-    }
-    
-    .aura-sparkle {
-        border: 4px solid #FFD700;
-        box-shadow: 0 0 20px #FFD700, 10px 10px 5px rgba(255, 255, 255, 0.8), -10px -10px 5px rgba(255, 255, 255, 0.8);
-    }
-    
-    .aura-plasma {
-        border: 4px solid #00ffff;
-        box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
-    }
-    
+    /* Base Aura Styles - Organic Shapes */
+    .aura-rainbow,
+    .aura-shadow,
+    .aura-lava,
+    .aura-gradient,
+    .aura-sparkle,
     .aura-nature {
-        border: 4px solid #50C878;
-        box-shadow: 0 0 20px #50C878, 0 0 40px #3cb371, inset 0 0 10px rgba(80, 200, 120, 0.3);
+        position: relative;
+        border-radius: 47% 53% 45% 55% / 52% 48% 52% 48%; /* Organic shape */
+        filter: blur(3px);
+    }
+    
+    /* Spiky Auras - Frost and Plasma */
+    .aura-frost,
+    .aura-plasma {
+        position: relative;
+        clip-path: polygon(
+            50% 0%, 55% 10%, 65% 5%, 70% 15%, 80% 10%, 85% 20%, 95% 15%, 100% 25%,
+            95% 35%, 100% 45%, 95% 55%, 100% 65%, 95% 75%, 100% 85%, 90% 90%, 85% 100%,
+            75% 95%, 70% 100%, 60% 95%, 50% 100%, 40% 95%, 30% 100%, 25% 95%, 15% 100%,
+            10% 90%, 0% 85%, 5% 75%, 0% 65%, 5% 55%, 0% 45%, 5% 35%, 0% 25%,
+            5% 15%, 15% 10%, 20% 20%, 30% 5%, 35% 15%, 45% 10%
+        ); /* Jagged, spiky shape */
+        filter: blur(2px);
+    }
+    
+    /* Organic aura layers with pseudo-elements */
+    .aura-rainbow::before,
+    .aura-shadow::before,
+    .aura-lava::before,
+    .aura-gradient::before,
+    .aura-sparkle::before,
+    .aura-nature::before {
+        content: '';
+        position: absolute;
+        top: -15%;
+        left: -15%;
+        width: 130%;
+        height: 130%;
+        border-radius: 45% 55% 52% 48% / 48% 52% 48% 52%; /* Different organic shape */
+        animation: aura-breathe 3s ease-in-out infinite;
+        filter: blur(8px);
+    }
+    
+    .aura-rainbow::after,
+    .aura-shadow::after,
+    .aura-lava::after,
+    .aura-gradient::after,
+    .aura-sparkle::after,
+    .aura-nature::after {
+        content: '';
+        position: absolute;
+        top: -8%;
+        left: -8%;
+        width: 116%;
+        height: 116%;
+        border-radius: 52% 48% 47% 53% / 55% 45% 55% 45%; /* Another organic shape */
+        animation: aura-breathe 2.5s ease-in-out infinite 0.5s;
+        filter: blur(5px);
+    }
+    
+    /* Spiky aura layers - different clip-paths for variation */
+    .aura-frost::before,
+    .aura-plasma::before {
+        content: '';
+        position: absolute;
+        top: -20%;
+        left: -20%;
+        width: 140%;
+        height: 140%;
+        clip-path: polygon(
+            50% 5%, 53% 12%, 60% 8%, 67% 18%, 75% 12%, 82% 22%, 88% 18%, 95% 28%,
+            92% 38%, 97% 48%, 92% 58%, 97% 68%, 92% 78%, 95% 88%, 88% 92%, 82% 95%,
+            75% 90%, 67% 95%, 60% 90%, 50% 95%, 40% 90%, 33% 95%, 25% 90%, 18% 95%,
+            12% 92%, 5% 88%, 8% 78%, 3% 68%, 8% 58%, 3% 48%, 8% 38%, 5% 28%,
+            12% 18%, 18% 22%, 25% 12%, 33% 18%, 40% 8%, 47% 12%
+        );
+        animation: aura-pulse-spiky 2s ease-in-out infinite;
+        filter: blur(6px);
+    }
+    
+    .aura-frost::after,
+    .aura-plasma::after {
+        content: '';
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        clip-path: polygon(
+            50% 2%, 54% 12%, 62% 7%, 68% 17%, 77% 10%, 84% 20%, 90% 15%, 98% 25%,
+            93% 35%, 98% 45%, 93% 55%, 98% 65%, 93% 75%, 98% 85%, 90% 88%, 84% 93%,
+            77% 87%, 68% 93%, 62% 87%, 50% 98%, 38% 87%, 32% 93%, 23% 87%, 16% 93%,
+            10% 88%, 2% 85%, 7% 75%, 2% 65%, 7% 55%, 2% 45%, 7% 35%, 2% 25%,
+            10% 15%, 16% 20%, 23% 10%, 32% 17%, 38% 7%, 46% 12%
+        );
+        animation: aura-pulse-spiky 1.7s ease-in-out infinite 0.3s;
+        filter: blur(4px);
+    }
+    
+    /* Prismatic/Rainbow Aura */
+    .aura-rainbow {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 0, 0, 0.3) 0%,
+            rgba(255, 127, 0, 0.3) 14%,
+            rgba(255, 255, 0, 0.3) 28%,
+            rgba(0, 255, 0, 0.3) 42%,
+            rgba(0, 0, 255, 0.3) 57%,
+            rgba(75, 0, 130, 0.3) 71%,
+            rgba(143, 0, 255, 0.3) 85%,
+            transparent 100%
+        );
+        box-shadow: 
+            0 0 30px rgba(255, 0, 255, 0.6),
+            0 0 60px rgba(0, 255, 255, 0.4),
+            inset 0 0 30px rgba(255, 255, 255, 0.2);
+    }
+    
+    .aura-rainbow::before {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 127, 0, 0.4) 0%,
+            rgba(255, 255, 0, 0.3) 33%,
+            rgba(0, 255, 255, 0.2) 66%,
+            transparent 100%
+        );
+    }
+    
+    .aura-rainbow::after {
+        background: radial-gradient(ellipse at center,
+            rgba(143, 0, 255, 0.5) 0%,
+            rgba(255, 0, 127, 0.3) 50%,
+            transparent 100%
+        );
+    }
+    
+    /* Frozen/Frost Aura */
+    .aura-frost {
+        background: radial-gradient(ellipse at center,
+            rgba(135, 206, 235, 0.4) 0%,
+            rgba(0, 255, 255, 0.3) 50%,
+            transparent 100%
+        );
+        box-shadow: 
+            0 0 40px rgba(135, 206, 235, 0.8),
+            0 0 80px rgba(0, 255, 255, 0.5),
+            inset 0 0 40px rgba(255, 255, 255, 0.3);
+    }
+    
+    .aura-frost::before {
+        background: radial-gradient(ellipse at center,
+            rgba(173, 216, 230, 0.5) 0%,
+            rgba(135, 206, 235, 0.3) 60%,
+            transparent 100%
+        );
+    }
+    
+    .aura-frost::after {
+        background: radial-gradient(ellipse at center,
+            rgba(0, 255, 255, 0.6) 0%,
+            rgba(135, 206, 235, 0.2) 50%,
+            transparent 100%
+        );
+    }
+    
+    /* Shadowy/Dark Aura */
+    .aura-shadow {
+        background: radial-gradient(ellipse at center,
+            rgba(75, 0, 130, 0.5) 0%,
+            rgba(47, 24, 71, 0.4) 50%,
+            rgba(0, 0, 0, 0.6) 100%
+        );
+        box-shadow: 
+            0 0 40px rgba(75, 0, 130, 0.9),
+            0 0 80px rgba(47, 24, 71, 0.7),
+            inset 0 0 30px rgba(0, 0, 0, 0.8);
+    }
+    
+    .aura-shadow::before {
+        background: radial-gradient(ellipse at center,
+            rgba(75, 0, 130, 0.6) 0%,
+            rgba(30, 0, 60, 0.4) 60%,
+            transparent 100%
+        );
+    }
+    
+    .aura-shadow::after {
+        background: radial-gradient(ellipse at center,
+            rgba(47, 24, 71, 0.7) 0%,
+            rgba(0, 0, 0, 0.5) 50%,
+            transparent 100%
+        );
+    }
+    
+    /* Flaming/Lava Aura */
+    .aura-lava {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 69, 0, 0.5) 0%,
+            rgba(255, 140, 0, 0.4) 40%,
+            rgba(255, 215, 0, 0.3) 70%,
+            transparent 100%
+        );
+        box-shadow: 
+            0 0 40px rgba(255, 69, 0, 0.9),
+            0 0 80px rgba(255, 140, 0, 0.6),
+            0 0 120px rgba(255, 215, 0, 0.4);
+    }
+    
+    .aura-lava::before {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 140, 0, 0.6) 0%,
+            rgba(255, 69, 0, 0.4) 50%,
+            transparent 100%
+        );
+    }
+    
+    .aura-lava::after {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 215, 0, 0.7) 0%,
+            rgba(255, 140, 0, 0.3) 60%,
+            transparent 100%
+        );
+    }
+    
+    /* Shifting/Gradient Aura */
+    .aura-gradient {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 107, 107, 0.4) 0%,
+            rgba(78, 205, 196, 0.3) 33%,
+            rgba(69, 183, 209, 0.3) 66%,
+            transparent 100%
+        );
+        box-shadow: 
+            0 0 40px rgba(255, 107, 107, 0.6),
+            0 0 80px rgba(78, 205, 196, 0.5);
+    }
+    
+    .aura-gradient::before {
+        background: radial-gradient(ellipse at center,
+            rgba(78, 205, 196, 0.5) 0%,
+            rgba(150, 206, 180, 0.3) 60%,
+            transparent 100%
+        );
+    }
+    
+    .aura-gradient::after {
+        background: radial-gradient(ellipse at center,
+            rgba(69, 183, 209, 0.6) 0%,
+            rgba(255, 107, 107, 0.2) 50%,
+            transparent 100%
+        );
+    }
+    
+    /* Glittering/Sparkle Aura */
+    .aura-sparkle {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 215, 0, 0.5) 0%,
+            rgba(255, 223, 128, 0.3) 50%,
+            transparent 100%
+        );
+        box-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.9),
+            0 0 60px rgba(255, 215, 0, 0.6),
+            5px 5px 15px rgba(255, 255, 255, 0.8),
+            -5px -5px 15px rgba(255, 255, 255, 0.8),
+            10px -10px 15px rgba(255, 215, 0, 0.6),
+            -10px 10px 15px rgba(255, 215, 0, 0.6);
+    }
+    
+    .aura-sparkle::before {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 255, 255, 0.6) 0%,
+            rgba(255, 215, 0, 0.4) 50%,
+            transparent 100%
+        );
+    }
+    
+    .aura-sparkle::after {
+        background: radial-gradient(ellipse at center,
+            rgba(255, 215, 0, 0.7) 0%,
+            rgba(255, 255, 200, 0.3) 60%,
+            transparent 100%
+        );
+    }
+    
+    /* Volatile/Plasma Aura */
+    .aura-plasma {
+        background: radial-gradient(ellipse at center,
+            rgba(0, 255, 255, 0.5) 0%,
+            rgba(0, 200, 255, 0.4) 50%,
+            transparent 100%
+        );
+        box-shadow: 
+            0 0 30px rgba(0, 255, 255, 0.9),
+            0 0 60px rgba(0, 255, 255, 0.7),
+            0 0 90px rgba(0, 200, 255, 0.5),
+            3px 3px 10px rgba(255, 255, 255, 0.8);
+    }
+    
+    .aura-plasma::before {
+        background: radial-gradient(ellipse at center,
+            rgba(100, 255, 255, 0.6) 0%,
+            rgba(0, 255, 255, 0.3) 60%,
+            transparent 100%
+        );
+    }
+    
+    .aura-plasma::after {
+        background: radial-gradient(ellipse at center,
+            rgba(0, 255, 255, 0.8) 0%,
+            rgba(200, 255, 255, 0.2) 50%,
+            transparent 100%
+        );
+    }
+    
+    /* Overgrown/Nature Aura */
+    .aura-nature {
+        background: radial-gradient(ellipse at center,
+            rgba(80, 200, 120, 0.5) 0%,
+            rgba(60, 179, 113, 0.4) 50%,
+            rgba(34, 139, 34, 0.3) 80%,
+            transparent 100%
+        );
+        box-shadow: 
+            0 0 40px rgba(80, 200, 120, 0.8),
+            0 0 80px rgba(60, 179, 113, 0.6),
+            inset 0 0 30px rgba(144, 238, 144, 0.3);
+    }
+    
+    .aura-nature::before {
+        background: radial-gradient(ellipse at center,
+            rgba(144, 238, 144, 0.6) 0%,
+            rgba(80, 200, 120, 0.3) 60%,
+            transparent 100%
+        );
+    }
+    
+    .aura-nature::after {
+        background: radial-gradient(ellipse at center,
+            rgba(60, 179, 113, 0.7) 0%,
+            rgba(34, 139, 34, 0.2) 50%,
+            transparent 100%
+        );
     }
   `}</style>
 );

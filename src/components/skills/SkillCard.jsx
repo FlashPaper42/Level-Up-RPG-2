@@ -466,8 +466,7 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                         {/* Spinning aura circle - only during battle */}
                         {isBattling && selectedAura && (
                             <div 
-                                className={`absolute w-40 h-40 rounded-full animate-spin-aura opacity-60 aura-${selectedAura}`}
-                                style={{ zIndex: 1 }}
+                                className={`absolute w-40 h-40 animate-spin-aura opacity-60 z-0 aura-${selectedAura}`}
                             ></div>
                         )}
                         <SafeImage 
@@ -475,12 +474,12 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, cha
                             src={mobSrc} 
                             alt={displayMobName} 
                             className={`
+                                relative z-10
                                 ${config.id === 'patterns' && isBattling ? 'max-w-[80px] max-h-[80px]' : 'max-w-[160px] max-h-[160px]'} 
                                 w-auto h-auto object-contain drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-transform duration-100 
                                 ${isHit ? 'animate-knockback' : bossHealing ? 'animate-shake' : 'animate-bob'} 
                                 ${bossHealing ? 'brightness-150 hue-rotate-90' : ''}
                             `}
-                            style={{ zIndex: 10, position: 'relative' }}
                         />
                         {damageNumbers.map(dmg => (
                             <div 
