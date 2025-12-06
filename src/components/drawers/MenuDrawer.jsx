@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Lock } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
 import { BADGE_TIERS, BASE_ASSETS, SKILL_DATA } from '../../constants/gameData';
@@ -13,7 +13,6 @@ import {
 import { calculateXPToLevel } from '../../utils/gameUtils';
 
 const MenuDrawer = ({ isOpen, skills, stats }) => {
-    const [activeTab, setActiveTab] = useState('badges');
     const totalLevels = Object.values(skills).reduce((acc, s) => acc + s.level, 0);
     
     // Calculate total badges earned
@@ -48,34 +47,9 @@ const MenuDrawer = ({ isOpen, skills, stats }) => {
                     </div>
                 </div>
                 
-                {/* Tab Navigation */}
-                <div className="shrink-0 flex gap-2 mb-4">
-                    <button
-                        onClick={() => setActiveTab('badges')}
-                        className={`flex-1 py-3 px-4 rounded-lg font-bold uppercase text-2xl transition-all ${
-                            activeTab === 'badges'
-                                ? 'bg-yellow-600 text-white border-2 border-yellow-400'
-                                : 'bg-stone-800 text-stone-400 border-2 border-stone-600 hover:bg-stone-700'
-                        }`}
-                    >
-                        Skill Badges
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('special')}
-                        className={`flex-1 py-3 px-4 rounded-lg font-bold uppercase text-2xl transition-all ${
-                            activeTab === 'special'
-                                ? 'bg-yellow-600 text-white border-2 border-yellow-400'
-                                : 'bg-stone-800 text-stone-400 border-2 border-stone-600 hover:bg-stone-700'
-                        }`}
-                    >
-                        Special
-                    </button>
-                </div>
-                
-                {/* Content Area */}
+                {/* Content Area - Single scrollable view */}
                 <div className="flex-1 overflow-y-auto pr-2 scrollbar-hide">
-                    {activeTab === 'badges' ? (
-                        /* Skill Badges Section */
+                    {/* Skill Badges Section */}
                         <div className="grid grid-cols-2 gap-4">
                             {Object.keys(skills).map(key => {
                                 const userSkill = skills[key];
@@ -154,133 +128,127 @@ const MenuDrawer = ({ isOpen, skills, stats }) => {
                                 );
                             })}
                         </div>
-                    ) : (
-                        /* Special Achievements Section */
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            {Object.values(ACHIEVEMENTS).map(achievement => {
+                    
+                    {/* Special Achievements Section */}
+                    <div className="mt-8">
+                        <h3 className="text-3xl text-yellow-400 font-bold uppercase tracking-widest mb-4 border-b-2 border-stone-600 pb-2">
+                            Special Achievements
+                        </h3>
+                        <div className="grid grid-cols-6 gap-3">
+                            {Object.values(ACHIEVEMENTS).map((achievement, index) => {
                                 const Icon = achievement.icon;
                                 const unlocked = isAchievementUnlocked(achievement.id, stats, skills);
                                 
                                 // For tiered achievements
+                                let currentTierIndex = -1;
+                                let nextTier = null;
+                                let progress = 0;
+                                let tierProgress = 0;
+                                let displayName = achievement.name;
+                                let tierColor = null;
+                                
                                 if (achievement.isTiered) {
-                                    const currentTierIndex = getCurrentTier(achievement.id, stats, skills);
-                                    const nextTier = getNextTier(achievement.id, stats, skills);
-                                    const progress = achievement.getProgress(stats, skills);
-                                    const tierProgress = getTierProgress(achievement.id, stats, skills);
-                                    const displayName = getAchievementDisplayName(achievement.id, stats, skills);
+                                    currentTierIndex = getCurrentTier(achievement.id, stats, skills);
+                                    nextTier = getNextTier(achievement.id, stats, skills);
+                                    progress = achievement.getProgress(stats, skills);
+                                    tierProgress = getTierProgress(achievement.id, stats, skills);
+                                    displayName = getAchievementDisplayName(achievement.id, stats, skills);
                                     
-                                    const tierColor = unlocked && currentTierIndex >= 0 
-                                        ? TIER_COLORS[currentTierIndex + 1] 
-                                        : null;
-                                    
-                                    return (
+                                    if (unlocked && currentTierIndex >= 0) {
+                                        tierColor = TIER_COLORS[currentTierIndex + 1];
+                                    }
+                                }
+                                
+                                // Calculate tooltip position (grid-cols-6)
+                                const columnIndex = index % 6;
+                                const tooltipPosition = columnIndex >= 4 ? 'right-full mr-2' : 'left-full ml-2';
+                                
+                                return (
+                                    <div key={achievement.id} className="relative group">
+                                        {/* Achievement Square */}
                                         <div 
-                                            key={achievement.id}
-                                            className={`p-4 rounded-xl border-2 transition-all ${
+                                            className={`w-16 h-16 rounded-lg border-2 flex items-center justify-center transition-all duration-300 cursor-pointer ${
                                                 unlocked
-                                                    ? `border-2`
-                                                    : 'bg-black/40 border-stone-600'
+                                                    ? tierColor
+                                                        ? 'hover:scale-110'
+                                                        : 'border-yellow-500 bg-yellow-900/20 hover:scale-110'
+                                                    : 'border-stone-600 bg-stone-900/50 opacity-60 hover:opacity-80'
                                             }`}
                                             style={unlocked && tierColor ? {
                                                 borderColor: tierColor.border,
-                                                background: `linear-gradient(to bottom right, ${tierColor.bg}, rgba(0,0,0,0.4))`
+                                                backgroundColor: tierColor.bg
                                             } : {}}
                                         >
-                                            <div className="flex flex-col gap-2">
-                                                {/* Icon */}
-                                                <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center mx-auto ${
+                                            <Icon 
+                                                size={32} 
+                                                className={
                                                     unlocked
-                                                        ? ''
-                                                        : 'border-stone-600 bg-stone-900/50'
-                                                }`}
-                                                style={unlocked && tierColor ? {
-                                                    borderColor: tierColor.border,
-                                                    backgroundColor: tierColor.bg
-                                                } : {}}
+                                                        ? tierColor ? tierColor.text : 'text-yellow-400'
+                                                        : 'text-stone-500'
+                                                }
+                                            />
+                                        </div>
+                                        
+                                        {/* Hover Popup */}
+                                        <div className={`absolute z-50 ${tooltipPosition} top-0 w-64 bg-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none`}>
+                                            <div className="flex items-start gap-2 mb-2">
+                                                <div className={`p-1.5 rounded ${unlocked ? (tierColor ? 'bg-opacity-20' : 'bg-yellow-400/20') : 'bg-slate-700'}`}
+                                                    style={unlocked && tierColor ? { backgroundColor: tierColor.bg } : {}}
                                                 >
-                                                    {unlocked ? (
-                                                        <Icon size={24} className={tierColor ? tierColor.text : 'text-yellow-400'} />
-                                                    ) : (
-                                                        <Lock size={24} className="text-stone-500" />
-                                                    )}
+                                                    <Icon 
+                                                        size={20} 
+                                                        className={unlocked ? (tierColor ? tierColor.text : 'text-yellow-400') : 'text-slate-400'}
+                                                    />
                                                 </div>
-                                                
-                                                {/* Name & Description */}
-                                                <div className="text-center">
-                                                    <h4 className={`text-base font-bold ${
-                                                        unlocked ? (tierColor ? tierColor.text : 'text-yellow-400') : 'text-stone-500'
-                                                    }`}>
-                                                        {unlocked ? displayName : '???'}
+                                                <div className="flex-1">
+                                                    <h4 className={`text-sm font-bold ${unlocked ? (tierColor ? tierColor.text : 'text-yellow-400') : 'text-slate-400'}`}>
+                                                        {displayName}
                                                     </h4>
-                                                    <p className="text-xs text-stone-400 mt-1">
-                                                        {unlocked ? achievement.description : 'Locked'}
+                                                    <p className="text-xs text-slate-400 mt-0.5">
+                                                        {achievement.description}
                                                     </p>
                                                 </div>
-                                                
-                                                {/* Progress Bar */}
-                                                {unlocked && nextTier && (
-                                                    <div className="mt-2">
-                                                        <div className="flex justify-between text-xs text-stone-400 mb-1">
-                                                            <span>{progress}</span>
-                                                            <span>{nextTier.level}</span>
-                                                        </div>
-                                                        <div className="w-full h-2 bg-stone-900 rounded-full border border-stone-600 overflow-hidden">
-                                                            <div 
-                                                                className="h-full transition-all duration-500"
-                                                                style={{ 
-                                                                    width: `${tierProgress}%`,
-                                                                    backgroundColor: tierColor ? tierColor.border : '#FFD700'
-                                                                }}
-                                                            ></div>
-                                                        </div>
-                                                        <p className="text-xs text-stone-500 mt-1 text-center">
-                                                            Next: {TIER_NAMES[currentTierIndex + 1]}
-                                                        </p>
+                                            </div>
+                                            
+                                            {/* Progress Bar for Tiered Achievements */}
+                                            {achievement.isTiered && (
+                                                <div className="mb-2">
+                                                    <div className="flex justify-between text-xs text-slate-400 mb-1">
+                                                        <span>Progress: {progress}</span>
+                                                        {nextTier && <span>Next: {nextTier.level}</span>}
                                                     </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                }
-                                
-                                // For one-time achievements
-                                return (
-                                    <div 
-                                        key={achievement.id}
-                                        className={`p-4 rounded-xl border-2 transition-all ${
-                                            unlocked
-                                                ? 'bg-gradient-to-br from-yellow-900/40 to-stone-800/40 border-yellow-500'
-                                                : 'bg-black/40 border-stone-600'
-                                        }`}
-                                    >
-                                        <div className="flex flex-col items-center text-center gap-2">
-                                            <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center ${
-                                                unlocked
-                                                    ? 'border-yellow-400 bg-yellow-900/50'
-                                                    : 'border-stone-600 bg-stone-900/50'
-                                            }`}>
-                                                {unlocked ? (
-                                                    <Icon size={24} className="text-yellow-400" />
-                                                ) : (
-                                                    <Lock size={24} className="text-stone-500" />
-                                                )}
-                                            </div>
-                                            <div>
-                                                <h4 className={`text-base font-bold ${
-                                                    unlocked ? 'text-yellow-400' : 'text-stone-500'
-                                                }`}>
-                                                    {unlocked ? achievement.name : '???'}
-                                                </h4>
-                                                <p className="text-xs text-stone-400 mt-1">
-                                                    {unlocked ? achievement.description : 'Locked'}
-                                                </p>
+                                                    {nextTier && (
+                                                        <>
+                                                            <div className="w-full h-2 bg-stone-900 rounded-full border border-stone-600 overflow-hidden">
+                                                                <div 
+                                                                    className="h-full transition-all duration-500"
+                                                                    style={{ 
+                                                                        width: `${tierProgress}%`,
+                                                                        backgroundColor: tierColor ? tierColor.border : '#FFD700'
+                                                                    }}
+                                                                ></div>
+                                                            </div>
+                                                            <p className="text-xs text-slate-500 mt-1">
+                                                                Next: {TIER_NAMES[currentTierIndex + 1]}
+                                                            </p>
+                                                        </>
+                                                    )}
+                                                    {!nextTier && unlocked && (
+                                                        <p className="text-xs text-green-400 font-bold">MAX TIER REACHED!</p>
+                                                    )}
+                                                </div>
+                                            )}
+                                            
+                                            {/* Unlock Status */}
+                                            <div className={`text-xs px-2 py-1 rounded ${unlocked ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
+                                                {unlocked ? '✓ Unlocked' : '🔒 Locked'}
                                             </div>
                                         </div>
                                     </div>
                                 );
                             })}
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </div>
