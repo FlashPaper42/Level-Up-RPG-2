@@ -412,6 +412,175 @@ const GlobalStyles = () => (
         }
     }
     
+    /* Frozen Aura Color-Cycling Animation */
+    @keyframes aura-frost-cycle {
+        0%, 100% {
+            box-shadow: 
+                0 0 40px rgba(135, 206, 235, 0.9),
+                0 0 80px rgba(0, 255, 255, 0.6),
+                0 0 120px rgba(173, 216, 230, 0.4),
+                inset 0 0 40px rgba(255, 255, 255, 0.3);
+        }
+        25% {
+            box-shadow: 
+                0 0 50px rgba(0, 255, 255, 1),
+                0 0 90px rgba(176, 224, 230, 0.7),
+                0 0 130px rgba(135, 206, 235, 0.5),
+                inset 0 0 45px rgba(255, 255, 255, 0.4);
+        }
+        50% {
+            box-shadow: 
+                0 0 45px rgba(173, 216, 230, 0.95),
+                0 0 85px rgba(255, 255, 255, 0.65),
+                0 0 125px rgba(0, 255, 255, 0.45),
+                inset 0 0 50px rgba(176, 224, 230, 0.35);
+        }
+        75% {
+            box-shadow: 
+                0 0 55px rgba(176, 224, 230, 1),
+                0 0 95px rgba(135, 206, 235, 0.75),
+                0 0 135px rgba(255, 255, 255, 0.5),
+                inset 0 0 40px rgba(0, 255, 255, 0.3);
+        }
+    }
+    
+    /* Volatile/Plasma Aura Electric Zapping Animation */
+    @keyframes aura-plasma-cycle {
+        0%, 100% {
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.9),
+                0 0 60px rgba(0, 255, 255, 0.7),
+                0 0 90px rgba(255, 255, 255, 0.5),
+                3px 3px 10px rgba(255, 255, 255, 0.8);
+        }
+        10%, 30%, 50%, 70%, 90% {
+            box-shadow: 
+                0 0 50px rgba(255, 255, 0, 1),
+                0 0 100px rgba(0, 255, 255, 0.8),
+                0 0 150px rgba(255, 255, 255, 0.6),
+                5px 5px 15px rgba(255, 255, 255, 1);
+        }
+        20%, 40%, 60%, 80% {
+            box-shadow: 
+                0 0 40px rgba(255, 255, 255, 1),
+                0 0 80px rgba(255, 255, 0, 0.9),
+                0 0 120px rgba(0, 255, 255, 0.7),
+                -3px -3px 12px rgba(255, 255, 0, 0.9);
+        }
+    }
+    
+    /* Flaming/Lava Aura Fire Animation */
+    @keyframes aura-lava-cycle {
+        0%, 100% {
+            box-shadow: 
+                0 0 50px rgba(255, 69, 0, 1),
+                0 0 100px rgba(255, 140, 0, 0.8),
+                0 0 150px rgba(255, 215, 0, 0.6);
+        }
+        20% {
+            box-shadow: 
+                0 0 60px rgba(255, 140, 0, 1),
+                0 0 110px rgba(255, 0, 0, 0.85),
+                0 0 160px rgba(255, 69, 0, 0.65);
+        }
+        40% {
+            box-shadow: 
+                0 0 55px rgba(255, 215, 0, 1),
+                0 0 105px rgba(255, 140, 0, 0.9),
+                0 0 155px rgba(255, 69, 0, 0.7);
+        }
+        60% {
+            box-shadow: 
+                0 0 65px rgba(255, 0, 0, 1),
+                0 0 115px rgba(255, 69, 0, 0.9),
+                0 0 165px rgba(255, 215, 0, 0.7);
+        }
+        80% {
+            box-shadow: 
+                0 0 58px rgba(255, 140, 0, 1),
+                0 0 108px rgba(255, 215, 0, 0.85),
+                0 0 158px rgba(255, 0, 0, 0.65);
+        }
+    }
+    
+    /* Overgrown/Nature Aura Green Animation */
+    @keyframes aura-nature-cycle {
+        0%, 100% {
+            box-shadow: 
+                0 0 45px rgba(80, 200, 120, 0.9),
+                0 0 85px rgba(60, 179, 113, 0.7),
+                0 0 125px rgba(144, 238, 144, 0.5),
+                inset 0 0 35px rgba(144, 238, 144, 0.3);
+        }
+        25% {
+            box-shadow: 
+                0 0 50px rgba(60, 179, 113, 1),
+                0 0 90px rgba(46, 139, 87, 0.75),
+                0 0 130px rgba(80, 200, 120, 0.55),
+                inset 0 0 40px rgba(60, 179, 113, 0.35);
+        }
+        50% {
+            box-shadow: 
+                0 0 55px rgba(144, 238, 144, 1),
+                0 0 95px rgba(80, 200, 120, 0.8),
+                0 0 135px rgba(60, 179, 113, 0.6),
+                inset 0 0 45px rgba(80, 200, 120, 0.4);
+        }
+        75% {
+            box-shadow: 
+                0 0 48px rgba(46, 139, 87, 0.95),
+                0 0 88px rgba(34, 139, 34, 0.7),
+                0 0 128px rgba(144, 238, 144, 0.52),
+                inset 0 0 38px rgba(46, 139, 87, 0.32);
+        }
+    }
+    
+    /* Shifting/Gradient Aura Rainbow-like Shifting */
+    @keyframes aura-gradient-cycle {
+        0% {
+            box-shadow: 
+                0 0 45px rgba(255, 107, 107, 0.8),
+                0 0 85px rgba(78, 205, 196, 0.6),
+                0 0 125px rgba(69, 183, 209, 0.4);
+        }
+        16% {
+            box-shadow: 
+                0 0 50px rgba(78, 205, 196, 0.85),
+                0 0 90px rgba(69, 183, 209, 0.65),
+                0 0 130px rgba(150, 206, 180, 0.45);
+        }
+        33% {
+            box-shadow: 
+                0 0 48px rgba(69, 183, 209, 0.9),
+                0 0 88px rgba(150, 206, 180, 0.7),
+                0 0 128px rgba(255, 107, 107, 0.5);
+        }
+        50% {
+            box-shadow: 
+                0 0 52px rgba(150, 206, 180, 0.85),
+                0 0 92px rgba(255, 107, 107, 0.65),
+                0 0 132px rgba(78, 205, 196, 0.45);
+        }
+        66% {
+            box-shadow: 
+                0 0 47px rgba(255, 107, 107, 0.8),
+                0 0 87px rgba(150, 206, 180, 0.6),
+                0 0 127px rgba(69, 183, 209, 0.4);
+        }
+        83% {
+            box-shadow: 
+                0 0 49px rgba(69, 183, 209, 0.88),
+                0 0 89px rgba(255, 107, 107, 0.68),
+                0 0 129px rgba(78, 205, 196, 0.48);
+        }
+        100% {
+            box-shadow: 
+                0 0 45px rgba(255, 107, 107, 0.8),
+                0 0 85px rgba(78, 205, 196, 0.6),
+                0 0 125px rgba(69, 183, 209, 0.4);
+        }
+    }
+    
     /* Pulsing for Spiky Auras (no scale, just opacity) */
     @keyframes aura-pulse-spiky {
         0%, 100% { 
@@ -560,28 +729,25 @@ const GlobalStyles = () => (
     /* Frozen/Frost Aura */
     .aura-frost {
         background: radial-gradient(ellipse at center,
-            rgba(135, 206, 235, 0.4) 0%,
-            rgba(0, 255, 255, 0.3) 50%,
+            rgba(135, 206, 235, 0.5) 0%,
+            rgba(0, 255, 255, 0.4) 50%,
             transparent 100%
         );
-        box-shadow: 
-            0 0 40px rgba(135, 206, 235, 0.8),
-            0 0 80px rgba(0, 255, 255, 0.5),
-            inset 0 0 40px rgba(255, 255, 255, 0.3);
+        animation: aura-frost-cycle 3s ease-in-out infinite;
     }
     
     .aura-frost::before {
         background: radial-gradient(ellipse at center,
-            rgba(173, 216, 230, 0.5) 0%,
-            rgba(135, 206, 235, 0.3) 60%,
+            rgba(173, 216, 230, 0.6) 0%,
+            rgba(135, 206, 235, 0.4) 60%,
             transparent 100%
         );
     }
     
     .aura-frost::after {
         background: radial-gradient(ellipse at center,
-            rgba(0, 255, 255, 0.6) 0%,
-            rgba(135, 206, 235, 0.2) 50%,
+            rgba(0, 255, 255, 0.7) 0%,
+            rgba(255, 255, 255, 0.3) 50%,
             transparent 100%
         );
     }
@@ -618,29 +784,26 @@ const GlobalStyles = () => (
     /* Flaming/Lava Aura */
     .aura-lava {
         background: radial-gradient(ellipse at center,
-            rgba(255, 69, 0, 0.5) 0%,
-            rgba(255, 140, 0, 0.4) 40%,
-            rgba(255, 215, 0, 0.3) 70%,
+            rgba(255, 69, 0, 0.6) 0%,
+            rgba(255, 140, 0, 0.5) 40%,
+            rgba(255, 215, 0, 0.4) 70%,
             transparent 100%
         );
-        box-shadow: 
-            0 0 40px rgba(255, 69, 0, 0.9),
-            0 0 80px rgba(255, 140, 0, 0.6),
-            0 0 120px rgba(255, 215, 0, 0.4);
+        animation: aura-lava-cycle 2s ease-in-out infinite;
     }
     
     .aura-lava::before {
         background: radial-gradient(ellipse at center,
-            rgba(255, 140, 0, 0.6) 0%,
-            rgba(255, 69, 0, 0.4) 50%,
+            rgba(255, 140, 0, 0.7) 0%,
+            rgba(255, 0, 0, 0.5) 50%,
             transparent 100%
         );
     }
     
     .aura-lava::after {
         background: radial-gradient(ellipse at center,
-            rgba(255, 215, 0, 0.7) 0%,
-            rgba(255, 140, 0, 0.3) 60%,
+            rgba(255, 215, 0, 0.8) 0%,
+            rgba(255, 69, 0, 0.4) 60%,
             transparent 100%
         );
     }
@@ -648,28 +811,26 @@ const GlobalStyles = () => (
     /* Shifting/Gradient Aura */
     .aura-gradient {
         background: radial-gradient(ellipse at center,
-            rgba(255, 107, 107, 0.4) 0%,
-            rgba(78, 205, 196, 0.3) 33%,
-            rgba(69, 183, 209, 0.3) 66%,
+            rgba(255, 107, 107, 0.5) 0%,
+            rgba(78, 205, 196, 0.4) 33%,
+            rgba(69, 183, 209, 0.4) 66%,
             transparent 100%
         );
-        box-shadow: 
-            0 0 40px rgba(255, 107, 107, 0.6),
-            0 0 80px rgba(78, 205, 196, 0.5);
+        animation: aura-gradient-cycle 4s ease-in-out infinite;
     }
     
     .aura-gradient::before {
         background: radial-gradient(ellipse at center,
-            rgba(78, 205, 196, 0.5) 0%,
-            rgba(150, 206, 180, 0.3) 60%,
+            rgba(78, 205, 196, 0.6) 0%,
+            rgba(150, 206, 180, 0.4) 60%,
             transparent 100%
         );
     }
     
     .aura-gradient::after {
         background: radial-gradient(ellipse at center,
-            rgba(69, 183, 209, 0.6) 0%,
-            rgba(255, 107, 107, 0.2) 50%,
+            rgba(69, 183, 209, 0.7) 0%,
+            rgba(255, 107, 107, 0.3) 50%,
             transparent 100%
         );
     }
@@ -709,29 +870,25 @@ const GlobalStyles = () => (
     /* Volatile/Plasma Aura */
     .aura-plasma {
         background: radial-gradient(ellipse at center,
-            rgba(0, 255, 255, 0.5) 0%,
-            rgba(0, 200, 255, 0.4) 50%,
+            rgba(0, 255, 255, 0.6) 0%,
+            rgba(255, 255, 0, 0.5) 50%,
             transparent 100%
         );
-        box-shadow: 
-            0 0 30px rgba(0, 255, 255, 0.9),
-            0 0 60px rgba(0, 255, 255, 0.7),
-            0 0 90px rgba(0, 200, 255, 0.5),
-            3px 3px 10px rgba(255, 255, 255, 0.8);
+        animation: aura-plasma-cycle 1.5s ease-in-out infinite;
     }
     
     .aura-plasma::before {
         background: radial-gradient(ellipse at center,
-            rgba(100, 255, 255, 0.6) 0%,
-            rgba(0, 255, 255, 0.3) 60%,
+            rgba(255, 255, 255, 0.7) 0%,
+            rgba(0, 255, 255, 0.4) 60%,
             transparent 100%
         );
     }
     
     .aura-plasma::after {
         background: radial-gradient(ellipse at center,
-            rgba(0, 255, 255, 0.8) 0%,
-            rgba(200, 255, 255, 0.2) 50%,
+            rgba(255, 255, 0, 0.8) 0%,
+            rgba(255, 255, 255, 0.3) 50%,
             transparent 100%
         );
     }
@@ -739,29 +896,26 @@ const GlobalStyles = () => (
     /* Overgrown/Nature Aura */
     .aura-nature {
         background: radial-gradient(ellipse at center,
-            rgba(80, 200, 120, 0.5) 0%,
-            rgba(60, 179, 113, 0.4) 50%,
-            rgba(34, 139, 34, 0.3) 80%,
+            rgba(80, 200, 120, 0.6) 0%,
+            rgba(60, 179, 113, 0.5) 50%,
+            rgba(34, 139, 34, 0.4) 80%,
             transparent 100%
         );
-        box-shadow: 
-            0 0 40px rgba(80, 200, 120, 0.8),
-            0 0 80px rgba(60, 179, 113, 0.6),
-            inset 0 0 30px rgba(144, 238, 144, 0.3);
+        animation: aura-nature-cycle 3.5s ease-in-out infinite;
     }
     
     .aura-nature::before {
         background: radial-gradient(ellipse at center,
-            rgba(144, 238, 144, 0.6) 0%,
-            rgba(80, 200, 120, 0.3) 60%,
+            rgba(144, 238, 144, 0.7) 0%,
+            rgba(80, 200, 120, 0.4) 60%,
             transparent 100%
         );
     }
     
     .aura-nature::after {
         background: radial-gradient(ellipse at center,
-            rgba(60, 179, 113, 0.7) 0%,
-            rgba(34, 139, 34, 0.2) 50%,
+            rgba(60, 179, 113, 0.8) 0%,
+            rgba(46, 139, 87, 0.3) 50%,
             transparent 100%
         );
     }
