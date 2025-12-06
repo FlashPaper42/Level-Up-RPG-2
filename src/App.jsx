@@ -990,10 +990,17 @@ const App = () => {
     
     // Track login date (once per day)
     useEffect(() => {
-        setStats(prev => ({
-            ...prev,
-            loginDates: recordLoginDate(prev.loginDates || [])
-        }));
+        setStats(prev => {
+            const newLoginDates = recordLoginDate(prev.loginDates || []);
+            // Only update if loginDates actually changed to prevent infinite loop
+            if (newLoginDates !== prev.loginDates && newLoginDates.length !== (prev.loginDates || []).length) {
+                return {
+                    ...prev,
+                    loginDates: newLoginDates
+                };
+            }
+            return prev;
+        });
     }, []); // Run once on mount
     
     const getVisibleItems = () => {
