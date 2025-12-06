@@ -226,6 +226,12 @@ export const playNotification = () => playUISound('notification');
 export const playSuccessfulHit = () => playUISound('successful_hit');
 
 /**
+ * Play achievement unlock sound
+ * Uses the notification sound for achievement unlocks
+ */
+export const playAchievement = () => playUISound('notification');
+
+/**
  * Get the folder name for a mob
  * @param {string} mobName - Display name of the mob
  * @returns {string|null} - Folder name or null if not found/mapped

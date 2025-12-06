@@ -8,7 +8,7 @@ const MAX_COOLDOWN_MS = 10 * 60 * 1000; // 10 minutes
 const FLIGHT_DURATION_MS = 8000; // 8 seconds to cross the screen (slow enough for a child to click)
 const PHANTOM_OFFSCREEN_LEFT = '-120px'; // Start position offscreen on the left
 
-const PhantomEvent = ({ battlingSkillId, onAwardLevel }) => {
+const PhantomEvent = ({ battlingSkillId, onAwardLevel, onPhantomCaught }) => {
     const [isActive, setIsActive] = useState(false);
     const [fromLeft, setFromLeft] = useState(true);
     const [clicked, setClicked] = useState(false);
@@ -78,6 +78,11 @@ const PhantomEvent = ({ battlingSkillId, onAwardLevel }) => {
         // Play successful hit sound
         playSuccessfulHit();
         
+        // Track phantom caught
+        if (onPhantomCaught) {
+            onPhantomCaught();
+        }
+        
         // Award level if skill is active
         if (battlingSkillId) {
             onAwardLevel(battlingSkillId);
@@ -91,7 +96,7 @@ const PhantomEvent = ({ battlingSkillId, onAwardLevel }) => {
             }
             scheduleNextSpawn();
         }, 200);
-    }, [clicked, battlingSkillId, onAwardLevel, scheduleNextSpawn]);
+    }, [clicked, battlingSkillId, onAwardLevel, onPhantomCaught, scheduleNextSpawn]);
 
     // Initialize on mount
     useEffect(() => {
