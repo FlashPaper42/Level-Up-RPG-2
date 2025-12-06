@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-    Menu, Sparkles, ChevronLeft, ChevronRight, Gift, Maximize, Minimize, Settings
+    Menu, Sparkles, Gift, Maximize, Minimize, Settings
 } from 'lucide-react';
 
 // Modules
