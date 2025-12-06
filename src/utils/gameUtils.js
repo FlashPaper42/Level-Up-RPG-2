@@ -99,17 +99,58 @@ export const calculateMobHealth = (difficulty) => {
     return BASE_MOB_HEALTH * multiplier;
 };
 
-// Calculate XP reward for defeating a mob - scales with difficulty
-// Note: second parameter kept for backward compatibility but not used
-export const calculateXPReward = (difficulty) => {
-    const multiplier = getDifficultyMultiplier(difficulty);
-    return BASE_XP_REWARD * multiplier;
+// Calculate expected difficulty based on player level
+// Difficulty unlocks every 20 levels: 1-20 → Diff 1, 21-40 → Diff 2, etc.
+export const getExpectedDifficulty = (playerLevel) => {
+    return Math.min(7, Math.floor((playerLevel - 1) / 20) + 1);
 };
 
-// Calculate XP required to level up - scales with difficulty
-export const calculateXPToLevel = (difficulty) => {
-    const multiplier = getDifficultyMultiplier(difficulty);
-    return BASE_XP_TO_LEVEL * multiplier;
+// Calculate XP reward for defeating a mob
+// Scales with difficulty played, but with diminishing returns when playing below expected difficulty
+export const calculateXPReward = (difficulty, playerLevel) => {
+    const baseDifficultyReward = getDifficultyMultiplier(difficulty) * BASE_XP_REWARD;
+    
+    // If playerLevel is not provided, return base reward (backward compatibility)
+    if (playerLevel === undefined) {
+        return baseDifficultyReward;
+    }
+    
+    const expectedDifficulty = getExpectedDifficulty(playerLevel);
+    
+    // If playing at or above expected difficulty, full reward
+    if (difficulty >= expectedDifficulty) {
+        return baseDifficultyReward;
+    }
+    
+    // If playing below expected difficulty, apply exponential penalty
+    // The penalty increases dramatically as the gap widens
+    const difficultyGap = expectedDifficulty - difficulty;
+    const penaltyFactor = Math.pow(0.3, difficultyGap); // Each level below reduces reward to 30%
+    
+    return Math.floor(baseDifficultyReward * penaltyFactor);
+};
+
+// Calculate XP required to level up
+// Scales exponentially with player level to ensure high-level players need many kills at low difficulties
+export const calculateXPToLevel = (difficulty, playerLevel) => {
+    // If playerLevel is not provided, use old formula (backward compatibility)
+    if (playerLevel === undefined) {
+        const multiplier = getDifficultyMultiplier(difficulty);
+        return BASE_XP_TO_LEVEL * multiplier;
+    }
+    
+    const expectedDifficulty = getExpectedDifficulty(playerLevel);
+    
+    // Base XP requirement grows exponentially with player level
+    // Using a small scaling factor (1.035) so it grows significantly over 300+ levels
+    const levelScalingFactor = 1.035;
+    const baseXPForLevel = BASE_XP_TO_LEVEL * Math.pow(levelScalingFactor, playerLevel - 1);
+    
+    // At expected difficulty, the XP to level should equal the XP from one mob kill
+    // This maintains the "1 kill = 1 level" progression on the optimal path
+    const expectedDifficultyMultiplier = getDifficultyMultiplier(expectedDifficulty);
+    
+    return Math.floor(baseXPForLevel * expectedDifficultyMultiplier);
 };
 
 // ===== Reading Word Selection =====
