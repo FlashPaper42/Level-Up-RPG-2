@@ -35,6 +35,9 @@ const PARENT_PRIVILEGE_BADGES = [1, 2, 3, 4, 5, 6, 7, 8];
 // Voice recognition constants
 const MIN_SPOKEN_TEXT_LENGTH = 2;
 
+// Boss healing animation duration (ms)
+const BOSS_HEALING_ANIMATION_DURATION = 600;
+
 const App = () => {
     const [currentProfile, setCurrentProfile] = useState(() => localStorage.getItem('currentProfile_v1') ? parseInt(localStorage.getItem('currentProfile_v1')) : 1);
     const [profileNames, setProfileNames] = useState(() => localStorage.getItem('heroProfileNames_v1') ? JSON.parse(localStorage.getItem('heroProfileNames_v1')) : { 1: "Player 1", 2: "Player 2", 3: "Player 3" });
@@ -193,6 +196,7 @@ const App = () => {
     const [showDeathOverlay, setShowDeathOverlay] = useState(false);
     const [showLevelRestored, setShowLevelRestored] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [bossHealing, setBossHealing] = useState(null); // skillId of boss being healed
     const recognitionRef = useRef(null);
     const challengeDataRef = useRef(null);
     const [bgmVol, setBgmVol] = useState(0.3);
@@ -361,8 +365,37 @@ const App = () => {
     }, [battlingSkillId, skills]); // Intentionally exclude battleDifficulty to prevent infinite loop
 
     const handleSuccessHit = (skillId, isWrong) => {
-        // Handle wrong answer - damage player
+        // Handle wrong answer
         if (isWrong === 'WRONG') {
+            // Check if player is fighting a boss
+            if (battlingSkillId) {
+                const currentSkillState = skills[battlingSkillId];
+                const encounterType = getEncounterType(currentSkillState.level);
+                
+                // Boss fights: heal the boss instead of damaging the player
+                if (encounterType === 'boss') {
+                    setSkills(prev => {
+                        const current = prev[battlingSkillId];
+                        return {
+                            ...prev,
+                            [battlingSkillId]: {
+                                ...current,
+                                mobHealth: current.mobMaxHealth // Fully heal the boss
+                            }
+                        };
+                    });
+                    
+                    // Trigger boss healing animation
+                    setBossHealing(battlingSkillId);
+                    setTimeout(() => setBossHealing(null), BOSS_HEALING_ANIMATION_DURATION);
+                    
+                    // Play fail sound to indicate mistake
+                    playFail();
+                    return;
+                }
+            }
+            
+            // Non-boss encounters: damage player
             setPlayerHealth(h => {
                 const newH = h - 1;
                 if (newH <= 0) {
@@ -462,7 +495,7 @@ const App = () => {
             
             // Calculate XP reward for this hit
             // Total XP is split evenly among all hits required to defeat the mob
-            const totalXPReward = calculateXPReward(skillDifficulty);
+            const totalXPReward = calculateXPReward(skillDifficulty, playerLevel);
             // For instant-defeat mobs (miniboss, cleaning, memory), actualDamage = full health, so hitsToKill = 1
             // For regular mobs, actualDamage = damage, so hitsToKill = mobMaxHealth / damage
             const effectiveDamage = isInstantDefeat ? current.mobMaxHealth : damage;
@@ -520,7 +553,7 @@ const App = () => {
                 }
                 
                 // Process level ups - use difficulty-scaled XP requirement
-                const xpToLevel = calculateXPToLevel(newDifficulty);
+                const xpToLevel = calculateXPToLevel(newDifficulty, newLevel);
                 if (newXp >= xpToLevel) {
                     const levelsGained = Math.floor(newXp / xpToLevel);
                     const oldLevel = newLevel;
@@ -1008,6 +1041,7 @@ const App = () => {
                                 unlockedDifficulty={Math.min(7, Math.floor(skills[item.id].level / 20) + 1)}
                                 selectedBorder={selectedBorder}
                                 borderColor={borderColor}
+                                bossHealing={bossHealing === item.id}
                             />
                         </div>
                         );
