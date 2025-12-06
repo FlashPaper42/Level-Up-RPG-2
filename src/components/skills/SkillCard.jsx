@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { Mic, Plus, Minus } from 'lucide-react';
 import SafeImage from '../ui/SafeImage';
@@ -322,8 +322,11 @@ const SkillCard = ({ config, data, themeData, isCenter, isBattling, mobName, mob
 
     // Simon Says initialization and sequence playback
     // Only use the number of axolotls specified by difficulty
-    const allAxolotlColors = Object.keys(BASE_ASSETS.axolotls);
-    const axolotlColors = allAxolotlColors.slice(0, Math.min(axolotlCount, allAxolotlColors.length));
+    // Memoize axolotlColors to prevent infinite loop in startSimonGame callback
+    const axolotlColors = useMemo(() => {
+        const allAxolotlColors = Object.keys(BASE_ASSETS.axolotls);
+        return allAxolotlColors.slice(0, Math.min(axolotlCount, allAxolotlColors.length));
+    }, [axolotlCount]);
     
     const playSequence = useCallback((sequence) => {
         setIsShowingSequence(true);
